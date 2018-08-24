@@ -21,7 +21,7 @@ Explain how to use your package.
 To run the phpUnit tests, please use:
 
 ```bash
-bundle exec rake redmine:plugins:test NAME=redmine_pull_requests
+bundle exec rake redmine:plugins:test NAME=redmine_pulls
 ```
 
 ## Contributing
