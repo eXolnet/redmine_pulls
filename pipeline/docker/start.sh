@@ -8,10 +8,10 @@ fi
 docker run \
     -d \
     --rm \
-    --name redmine-queries-issues-count \
+    --name redmine_pulls \
     -e REDMINE_PLUGINS_MIGRATE=1 \
     -p 3000:3000 \
-    -v $(pwd):/usr/src/redmine/plugins/redmine_queries_issues_count \
+    -v $(pwd):/usr/src/redmine/plugins/redmine_pulls \
     redmine \
 	$@
 
