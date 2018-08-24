@@ -5,7 +5,7 @@ Redmine::Plugin.register :redmine_pulls do
   author 'eXolnet'
   description 'Allows users to create pull requests for repositories linked to projects.'
   version '0.1.0'
-  url 'https://github.com/eXolnet/redmine-pull-requests'
+  url 'https://github.com/eXolnet/redmine-pulls'
   author_url 'https://www.exolnet.com'
 
   requires_redmine :version_or_higher => '2.3'
