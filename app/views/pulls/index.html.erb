@@ -1,0 +1,49 @@
+<div class="contextual">
+  <%= link_to l(:label_new_pull), new_project_pull_path, :class => 'icon icon-add' %>
+</div>
+
+<h2><%= l(:label_pulls) %></h2>
+
+<% if ! @pulls.empty? %>
+  <table class="list list-pulls">
+    <thead>
+    <tr>
+      <% @query.inline_columns.each do |column| %>
+        <%= column_header(column) %>
+      <% end %>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% for pull in @pulls %>
+      <tr id="pull-<%= pull.id %>" class="<%= cycle("odd", "even") %>">
+        <% @query.inline_columns.each do |column| %>
+          <td class="<%= column.css_classes %>">
+            <%=
+              if column.name == :id
+                link_to_pull(pull, :text => pull.id)
+              elsif column.name == :revision
+                link_to_revision(pull.changeset, pull.changeset.repository)
+              elsif column.name == :summary
+                link_to_pull(pull)
+              elsif column.name == :status
+                column_value(column, pull, pull.status_label)
+              elsif column.name == :committer
+                column_value(column, pull, pull.changeset.author)
+              elsif column.name == :committed_on
+                column_value(column, pull, pull.changeset.committed_on)
+              else
+                column_content(column, pull)
+              end
+            %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <p class="pagination"><%= pagination_links_full @pull_pages, @pull_count %></p>
+<% else %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>

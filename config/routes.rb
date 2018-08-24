@@ -4,5 +4,3 @@
 resources :projects do
   resources :pulls
 end
-
-get '/projects/:project_id/pulls', :to => 'pulls#index'
