@@ -14,7 +14,7 @@ env:
   - REDMINE_VER=3.4.6 DB=postgresql
 
 before_install:
-  - export PLUGIN_NAME=redmine_pull_requests
+  - export PLUGIN_NAME=redmine_pulls
   - export REDMINE_PATH=$HOME/redmine
   - svn co http://svn.redmine.org/redmine/tags/$REDMINE_VER $REDMINE_PATH
   - ln -s $TRAVIS_BUILD_DIR $REDMINE_PATH/plugins/$PLUGIN_NAME
