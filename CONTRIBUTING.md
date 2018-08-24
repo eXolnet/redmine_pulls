@@ -25,7 +25,7 @@ We accept contributions via Pull Requests on [Github](https://github.com/eXolnet
 ## Running Tests
 
 ``` bash
-$ bundle exec rake redmine:plugins:test NAME=redmine_pull_requests
+$ bundle exec rake redmine:plugins:test NAME=redmine_pulls
 ```
 
 **Happy coding**!
