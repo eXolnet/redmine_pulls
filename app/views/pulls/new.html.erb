@@ -1,0 +1,19 @@
+<%= title l(:label_new_pull) %>
+
+<%= call_hook(:view_pull_new_top, {:pull => @pull}) %>
+
+<%= labelled_form_for @pull, :url => project_pulls_path(@project), :html => {:id => 'pull-form'} do |f| %>
+  <%= error_messages_for 'pull' %>
+  <div class="box tabular">
+    <div id="all_attributes">
+      <%= render :partial => 'form', :locals => {:f => f} %>
+    </div>
+  </div>
+
+  <%= submit_tag l(:button_create) %>
+  <%= submit_tag l(:button_create_and_continue), :name => 'continue' %>
+<% end %>
+
+<% content_for :header_tags do %>
+  <%= robot_exclusion_tag %>
+<% end %>

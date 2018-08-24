@@ -1,0 +1,35 @@
+<%= labelled_fields_for :pull, @pull do |f| %>
+  <% if @pull.safe_attribute?('branch_base') && @pull.safe_attribute?('branch_compare') %>
+    <p>
+      <%= f.label_for_field :branches, :required => true %>
+      <%= f.select :branch_base, ['Choose base branch'], {:required => true, :no_label => true} %>
+      <%= f.select :branch_compare, ['Chose compared branch'], {:required => true, :no_label => true} %>
+    </p>
+  <% end %>
+
+  <% if @pull.safe_attribute? 'subject' %>
+    <p><%= f.text_field :subject, :size => 80, :maxlength => 255, :required => true %></p>
+  <% end %>
+
+  <% if @pull.safe_attribute? 'description' %>
+    <p>
+      <%= f.label_for_field :description, :required => true %>
+      <%= link_to_function content_tag(:span, l(:button_edit), :class => 'icon icon-edit'), '$(this).hide(); $("#pull_description_and_toolbar").show()' unless @pull.new_record? %>
+      <%= content_tag 'span', :id => "pull_description_and_toolbar", :style => (@pull.new_record? ? nil : 'display:none') do %>
+        <%= f.text_area :description,
+                        :cols => 60,
+                        :rows => [[10, @pull.description.to_s.length / 50].max, 20].min,
+                        :accesskey => accesskey(:edit),
+                        :class => 'wiki-edit',
+                        :no_label => true %>
+      <% end %>
+    </p>
+    <%= wikitoolbar_for 'pull_description' %>
+  <% end %>
+
+  <div id="attributes" class="attributes">
+    <%= render :partial => 'pulls/attributes' %>
+  </div>
+
+  <%= call_hook(:view_pulls_form_details_bottom, { :pull => @pull, :form => f }) %>
+<% end %>
