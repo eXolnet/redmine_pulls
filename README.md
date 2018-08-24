@@ -1,7 +1,7 @@
 # Redmine Pulls
 
 [![Build Status](https://img.shields.io/travis/eXolnet/redmine-pulls/master.svg?style=flat-square)](https://travis-ci.org/eXolnet/redmine-pulls)
-[![Latest Release](https://img.shields.io/github/release/eXolnet/redmine-pulls.svg?style=flat-square)](https://packagist.org/packages/eXolnet/redmine-pulls/releases)
+[![Latest Release](https://img.shields.io/github/release/eXolnet/redmine-pulls.svg?style=flat-square)](https://github.com/eXolnet/redmine-pulls/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-8469ad.svg?style=flat-square)](LICENSE)
 
 **Warning! This project is a work in progress.**
