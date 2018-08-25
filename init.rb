@@ -14,7 +14,16 @@ Redmine::Plugin.register :redmine_pulls do
   menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => 'Pull requests', :after => :issues, :param => :project_id
 
   project_module :pulls do
-    permission :view_pulls, { :pulls => [:index] }
+    permission :view_pulls,           { :pulls => [:index, :show] }
+    permission :add_pulls,            { :pulls => [:new, :create] }
+    permission :edit_pulls,           { :pulls => [:edit, :update] }
+    permission :delete_pulls,         { :pulls => [:destroy] }
+    permission :add_pull_notes,       { :pulls => [] }
+    permission :edit_pull_notes,      { :pulls => [] }
+    permission :edit_own_pull_notes,  { :pulls => [] }
+    permission :view_pull_watchers,   { :pulls => [] }
+    permission :add_pull_watchers,    { :pulls => [] }
+    permission :delete_pull_watchers, { :pulls => [] }
   end
 end
 
