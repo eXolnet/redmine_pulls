@@ -29,6 +29,26 @@ class Pull < ActiveRecord::Base
                   'branch_base',
                   'branch_compare'
 
+  # Returns true if user or current user is allowed to edit or add notes to the issue
+  def editable?(user=User.current)
+    attributes_editable?(user) || notes_addable?(user)
+  end
+
+  # Returns true if user or current user is allowed to edit the issue
+  def attributes_editable?(user=User.current)
+    user_permission?(user, :edit_pulls)
+  end
+
+  # Returns true if user or current user is allowed to add notes to the issue
+  def notes_addable?(user=User.current)
+    user_permission?(user, :add_pull_notes)
+  end
+
+  # Returns true if user or current user is allowed to delete the issue
+  def deletable?(user=User.current)
+    user_permission?(user, :delete_pulls)
+  end
+
   # Users the pull request can be assigned to
   def assignable_users
     users = project.assignable_users.to_a
@@ -68,5 +88,16 @@ class Pull < ActiveRecord::Base
       s << ' assigned-to-my-group' if user.groups.any? {|g| g.id == assigned_to_id}
     end
     s
+  end
+
+  private
+
+  def user_permission?(user, permission)
+    if project && !project.active?
+      perm = Redmine::AccessControl.permission(permission)
+      return false unless perm && perm.read?
+    end
+
+    user.allowed_to?(permission, project)
   end
 end

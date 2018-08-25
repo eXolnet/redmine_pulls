@@ -11,7 +11,7 @@ class CreatePulls < ActiveRecord::Migration
         t.integer  :assigned_to_id
         t.integer  :priority_id,       :null => false
         t.integer  :fixed_version_id
-        t.integer  :author_id
+        t.integer  :author_id,         :null => false
         t.datetime :created_on,        :null => false
         t.datetime :updated_on,        :null => false
         t.datetime :merged_on

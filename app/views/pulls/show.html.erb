@@ -1,0 +1,34 @@
+<%= render :partial => 'action_menu' %>
+
+<h2><%= l(:label_pull_request) %> #<%= @pull.id %></h2>
+
+<div class="<%= @pull.css_classes %> issue details">
+  <div class="subject">
+    <h3><%= @pull.subject %></h3>
+  </div>
+
+  <p class="author">
+    <%= authoring @pull.created_on, @pull.author %>.
+    <% if @pull.created_on != @pull.updated_on %>
+      <%= l(:label_updated_time, time_tag(@pull.updated_on)).html_safe %>.
+    <% end %>
+  </p>
+
+  <div class="attributes">
+    <%= issue_fields_rows do |rows|
+      rows.left l(:field_priority), @pull.priority.name, :class => 'priority'
+
+      rows.left l(:field_assigned_to), (@pull.assigned_to ? link_to_user(@pull.assigned_to) : "-"), :class => 'assigned-to'
+
+      unless @pull.category.nil? && @pull.project.issue_categories.none?
+        rows.left l(:field_category), (@pull.category ? @pull.category.name : "-"), :class => 'category'
+      end
+
+      unless @pull.fixed_version.nil? && @pull.assignable_versions.none?
+        rows.left l(:field_fixed_version), (@pull.fixed_version ? link_to_version(@pull.fixed_version) : "-"), :class => 'fixed-version'
+      end
+    end %>
+  </div>
+</div>
+
+<%= render :partial => 'action_menu' %>

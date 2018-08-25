@@ -2,16 +2,19 @@ class PullsController < ApplicationController
   default_search_scope :pulls
   menu_item :pulls
 
+  before_action :find_pull, :only => [:show, :edit, :update]
   before_action :find_optional_project, :only => [:index, :new, :create]
   before_action :build_new_pull_from_params, :only => [:new, :create]
 
   rescue_from Query::StatementInvalid, :with => :query_statement_invalid
 
   helper :projects
+  helper :issues
   helper :watchers
   helper :queries
   include QueriesHelper
   helper :repositories
+  helper RedminePulls::Helpers
 
   def index
     retrieve_query(PullQuery)
@@ -55,7 +58,7 @@ class PullsController < ApplicationController
   end
 
   def show
-    # TODO
+    puts "SHOW"
   end
 
   def edit
@@ -68,6 +71,13 @@ class PullsController < ApplicationController
 
   def destroy
     # TODO
+  end
+
+  def find_pull
+    @pull = Pull.find(params[:id])
+    @project = @pull.project
+  rescue ActiveRecord::RecordNotFound
+    render_404
   end
 
   def build_new_pull_from_params

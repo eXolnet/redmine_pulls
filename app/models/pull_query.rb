@@ -10,15 +10,54 @@ class PullQuery < Query
     QueryColumn.new(:assigned_to, :sortable => lambda {User.fields_for_order_statement}, :groupable => "#{Pull.table_name}.assigned_to_id"),
     QueryColumn.new(:author, :sortable => lambda {User.fields_for_order_statement("authors")}, :groupable => true),
     QueryColumn.new(:assigned_to, :sortable => lambda {User.fields_for_order_statement}, :groupable => true),
+    QueryColumn.new(:created_on, :sortable => "#{Pull.table_name}.created_on", :default_order => 'desc'),
     QueryColumn.new(:updated_on, :sortable => "#{Pull.table_name}.updated_on", :default_order => 'desc'),
+    QueryColumn.new(:closed_on, :sortable => "#{Pull.table_name}.closed_on", :default_order => 'desc'),
     QueryColumn.new(:category, :sortable => "#{IssueCategory.table_name}.name", :groupable => true),
-    QueryColumn.new(:fixed_version, :sortable => lambda {Version.fields_for_order_statement}, :groupable => true)
+    QueryColumn.new(:fixed_version, :sortable => lambda {Version.fields_for_order_statement}, :groupable => true),
+    QueryColumn.new(:description, :inline => false)
   ]
 
   def initialize(attributes=nil, *args)
     super attributes
-    self.filters = {}
-    #self.filters ||= { 'status_id' => {:operator => "o", :values => [""]} }
+    self.filters ||= { 'closed_on' => {:operator => "!*", :values => [""]} }
+  end
+
+  def initialize_available_filters
+    add_available_filter"project_id",
+      :type => :list, :values => lambda { project_values } if project.nil?
+
+    add_available_filter "priority_id",
+      :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s] }
+
+    add_available_filter"author_id",
+      :type => :list, :values => lambda { author_values }
+
+    add_available_filter("assigned_to_id",
+      :type => :list_optional, :values => lambda { assigned_to_values }
+    )
+
+    add_available_filter "fixed_version_id",
+      :type => :list_optional, :values => lambda { fixed_version_values }
+
+    add_available_filter "fixed_version.due_date",
+      :type => :date,
+      :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
+
+    add_available_filter "fixed_version.status",
+      :type => :list,
+      :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)),
+      :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
+
+    add_available_filter "category_id",
+      :type => :list_optional,
+      :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
+
+    add_available_filter "subject", :type => :text
+    add_available_filter "description", :type => :text
+    add_available_filter "created_on", :type => :date_past
+    add_available_filter "updated_on", :type => :date_past
+    add_available_filter "closed_on", :type => :date_past
   end
 
   # Returns true if the query is visible to +user+ or the current user.
@@ -27,7 +66,11 @@ class PullQuery < Query
   end
 
   def default_columns_names
-    @default_columns_names = [:id, :subject, :author, :updated_on]
+    @default_columns_names = [:id, :priority, :subject, :author, :updated_on]
+  end
+
+  def default_sort_criteria
+    [['id', 'desc']]
   end
 
   def base_scope
