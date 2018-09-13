@@ -4,4 +4,7 @@ en:
   label_pull_request: Pull request
   label_pull_id: '#'
   label_new_pull: New pull request
-  field_branches: Branches
+  field_between: Between
+  notice_pull_successful_create: "Pull request successfully created."
+  notice_pull_successful_delete: "Pull request successfully deleted."
+  text_issues_destroy_confirmation: 'Are you sure you want to delete the selected pull request(s)?'

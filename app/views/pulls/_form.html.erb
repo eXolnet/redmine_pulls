@@ -1,9 +1,12 @@
 <%= labelled_fields_for :pull, @pull do |f| %>
-  <% if @pull.safe_attribute?('branch_base') && @pull.safe_attribute?('branch_compare') %>
+  <% if @pull.safe_attribute?('commit_base') && @pull.safe_attribute?('commit_compare') %>
     <p>
-      <%= f.label_for_field :branches, :required => true %>
-      <%= f.select :branch_base, ['Choose base branch'], {:required => true, :no_label => true} %>
-      <%= f.select :branch_compare, ['Chose compared branch'], {:required => true, :no_label => true} %>
+      <%= f.label_for_field :between, :required => true %>
+      <%= f.text_field :commit_base, {:placeholder => 'Base commit', :required => true, :no_label => true} %>
+      ...
+      <%= f.text_field :commit_compare, {:placeholder => 'Compare commit', :required => true, :no_label => true} %>
+
+      <em class="info">Compare changes across branches, commits, tags and more.</em>
     </p>
   <% end %>
 
@@ -13,7 +16,7 @@
 
   <% if @pull.safe_attribute? 'description' %>
     <p>
-      <%= f.label_for_field :description, :required => true %>
+      <%= f.label_for_field :description %>
       <%= link_to_function content_tag(:span, l(:button_edit), :class => 'icon icon-edit'), '$(this).hide(); $("#pull_description_and_toolbar").show()' unless @pull.new_record? %>
       <%= content_tag 'span', :id => "pull_description_and_toolbar", :style => (@pull.new_record? ? nil : 'display:none') do %>
         <%= f.text_area :description,

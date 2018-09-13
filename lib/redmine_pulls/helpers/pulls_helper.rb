@@ -5,7 +5,7 @@ module RedminePulls
 
       text = options.delete(:text) || pull.summary
 
-      link_to(h(text), {:controller => 'pulls', :action => 'show', :project_id => project, :id => pull}, :title => text)
+      link_to(h(text), {:controller => 'pulls', :action => 'show', :id => pull}, :title => text)
     end
 
     def column_value(column, item, value)

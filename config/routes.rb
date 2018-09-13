@@ -2,5 +2,7 @@
 # See: http://guides.rubyonrails.org/routing.html
 
 resources :projects do
-  resources :pulls
+  resources :pulls, :only => [:index, :new, :create]
 end
+
+resources :pulls

@@ -1,10 +1,10 @@
 <div class="contextual">
-  <%= link_to l(:label_new_pull), new_project_pull_path, :class => 'icon icon-add' %>
+  <%= link_to l(:label_new_pull), _new_project_pull_path(@project), :class => 'icon icon-add' %>
 </div>
 
 <h2><%= l(:label_pulls) %></h2>
 
-<%= form_tag(project_pulls_path(@project), :method => :get, :id => 'query_form') do %>
+<%= form_tag(_project_pulls_path(@project), :method => :get, :id => 'query_form') do %>
   <%= render :partial => 'queries/query_form' %>
 <% end %>
 

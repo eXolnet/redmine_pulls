@@ -2,8 +2,9 @@ class PullsController < ApplicationController
   default_search_scope :pulls
   menu_item :pulls
 
-  before_action :find_pull, :only => [:show, :edit, :update]
+  before_action :find_pull, :only => [:show, :edit, :update, :destroy]
   before_action :find_optional_project, :only => [:index, :new, :create]
+  before_action :ensure_project_has_repository
   before_action :build_new_pull_from_params, :only => [:new, :create]
 
   rescue_from Query::StatementInvalid, :with => :query_statement_invalid
@@ -54,7 +55,39 @@ class PullsController < ApplicationController
   end
 
   def create
-    # TODO
+    unless User.current.allowed_to?(:add_pulls, @pull.project, :global => true)
+      raise ::Unauthorized
+    end
+
+    if @pull.save
+      respond_to do |format|
+        format.html {
+          flash[:notice] = l(:notice_pull_successful_create, :id => view_context.link_to("##{@pull.id}", pull_path(@pull), :title => @pull.subject))
+
+          if params[:continue]
+            url_params = {}
+            url_params[:back_url] = params[:back_url].presence
+
+            redirect_to _new_project_pull_path(@project, url_params)
+          else
+            redirect_back_or_default pull_path(@issue)
+          end
+        }
+        format.api  { render :action => 'show', :status => :created, :location => pull_path(@pull) }
+      end
+      return
+    else
+      respond_to do |format|
+        format.html {
+          if @pull.project.nil?
+            render_error :status => 422
+          else
+            render :action => 'new'
+          end
+        }
+        format.api  { render_validation_errors(@pull) }
+      end
+    end
   end
 
   def show
@@ -70,7 +103,16 @@ class PullsController < ApplicationController
   end
 
   def destroy
-    # TODO
+    raise Unauthorized unless @pull.deletable?
+
+    @pull.destroy
+
+    flash[:notice] = l(:notice_pull_successful_delete)
+
+    respond_to do |format|
+      format.html { redirect_back_or_default _project_pulls_path(@project) }
+      format.api  { render_api_ok }
+    end
   end
 
   def find_pull
@@ -80,10 +122,20 @@ class PullsController < ApplicationController
     render_404
   end
 
+  def ensure_project_has_repository
+    if @project && ! @project.repository
+      render :template => 'pulls/no_repository'
+    end
+  end
+
   def build_new_pull_from_params
     @pull = Pull.new
     @pull.project = @project
     @pull.author ||= User.current
+    @pull.repository ||= @project.repository
+
+    attrs = (params[:pull] || {}).deep_dup
+    @pull.safe_attributes = attrs
 
     @priorities = IssuePriority.active
   end

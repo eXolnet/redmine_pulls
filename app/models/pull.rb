@@ -2,16 +2,18 @@ class Pull < ActiveRecord::Base
   include Redmine::SafeAttributes
 
   belongs_to :project
-  belongs_to :status, :class_name => 'IssueStatus'
+  belongs_to :repository
   belongs_to :author, :class_name => 'User'
   belongs_to :assigned_to, :class_name => 'Principal'
   belongs_to :fixed_version, :class_name => 'Version'
   belongs_to :priority, :class_name => 'IssuePriority'
   belongs_to :category, :class_name => 'IssueCategory'
 
-  validates_presence_of :subject, :project
+  acts_as_customizable
+  acts_as_watchable
+
+  validates_presence_of :subject, :project, :commit_base, :commit_compare
   validates_presence_of :priority, :if => Proc.new {|issue| issue.new_record? || issue.priority_id_changed?}
-  validates_presence_of :status, :if => Proc.new {|issue| issue.new_record? || issue.status_id_changed?}
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
 
   validates_length_of :subject, :maximum => 255
@@ -19,15 +21,17 @@ class Pull < ActiveRecord::Base
 
   safe_attributes 'project_id',
                   'repository_id',
-                  'status_id',
                   'category_id',
                   'assigned_to_id',
                   'priority_id',
                   'fixed_version_id',
                   'subject',
                   'description',
-                  'branch_base',
-                  'branch_compare'
+                  'commit_base',
+                  'commit_compare'
+
+  safe_attributes 'watcher_user_ids',
+                  :if => lambda {|pull, user| pull.new_record? && user.allowed_to?(:add_pull_watchers, pull.project)}
 
   # Returns true if user or current user is allowed to edit or add notes to the issue
   def editable?(user=User.current)
@@ -47,6 +51,14 @@ class Pull < ActiveRecord::Base
   # Returns true if user or current user is allowed to delete the issue
   def deletable?(user=User.current)
     user_permission?(user, :delete_pulls)
+  end
+
+  def initialize(attributes=nil, *args)
+    super
+    if new_record?
+      # set default values for new records only
+      self.priority ||= IssuePriority.default
+    end
   end
 
   # Users the pull request can be assigned to
