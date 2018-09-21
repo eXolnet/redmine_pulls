@@ -91,11 +91,28 @@ class PullsController < ApplicationController
   end
 
   def show
-    puts "SHOW"
+    @journals = @pull.visible_journals_with_index
+
+    if User.current.wants_comments_in_reverse_order?
+      @journals.reverse!
+    end
+
+    respond_to do |format|
+      format.html {
+        @priorities = IssuePriority.active
+        render :template => 'pulls/show'
+      }
+      format.api
+    end
   end
 
   def edit
-    # TODO
+    return unless update_pull_from_params
+
+    respond_to do |format|
+      format.html { }
+      format.js
+    end
   end
 
   def update
@@ -116,7 +133,7 @@ class PullsController < ApplicationController
   end
 
   def preview
-    @pull = Pull.visible.find_by_id(params[:id]) unless params[:id].blank?
+    @pull = Pull.find_by_id(params[:id]) unless params[:id].blank?
 
     if @pull
       @description = params[:pull] && params[:pull][:description]
@@ -134,6 +151,8 @@ class PullsController < ApplicationController
     render :layout => false
   end
 
+  private
+
   def find_pull
     @pull = Pull.find(params[:id])
     @project = @pull.project
@@ -145,6 +164,29 @@ class PullsController < ApplicationController
     if @project && ! @project.repository
       render :template => 'pulls/no_repository'
     end
+  end
+
+  # Used by #edit and #update to set some common instance variables
+  # from the params
+  def update_pull_from_params
+    #@issue.init_journal(User.current)
+
+    pull_attributes = params[:pull]
+    if pull_attributes && params[:conflict_resolution]
+      case params[:conflict_resolution]
+        when 'overwrite'
+          pull_attributes = pull_attributes.dup
+          pull_attributes.delete(:lock_version)
+        when 'add_notes'
+          pull_attributes = pull_attributes.slice(:notes, :private_notes)
+        when 'cancel'
+          redirect_to pull_path(@pull)
+          return false
+      end
+    end
+    @pull.safe_attributes = pull_attributes
+    @priorities = IssuePriority.active
+    true
   end
 
   def build_new_pull_from_params

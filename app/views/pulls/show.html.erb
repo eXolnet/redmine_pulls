@@ -47,6 +47,22 @@
   <% end -%>
 </div>
 
+<% if @journals.present? %>
+  <div id="history">
+    <h3><%=l(:label_history)%></h3>
+    <%= render :partial => 'history', :locals => { :issue => @pull, :journals => @journals } %>
+  </div>
+<% end %>
+
+<% if @pull.editable? %>
+  <div id="update" style="display:none;">
+    <h3><%= l(:button_edit) %></h3>
+    <%= render :partial => 'edit' %>
+  </div>
+<% end %>
+
+<% html_title l(:label_pull_request) + " ##{@pull.id}: #{@pull.subject}" %>
+
 <% content_for :sidebar do %>
   <%= render :partial => 'pulls/sidebar' %>
 

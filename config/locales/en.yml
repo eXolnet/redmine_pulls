@@ -9,4 +9,8 @@ en:
   field_between: Between
   notice_pull_successful_create: "Pull request successfully created."
   notice_pull_successful_delete: "Pull request successfully deleted."
+  notice_pull_update_conflict: The pull request has been updated by an other user while you were editing it.
+  text_pull_conflict_resolution_overwrite: Apply my changes anyway (previous notes will be kept but some changes may be overwritten)
+  text_pull_conflict_resolution_add_notes: Add my notes and discard my other changes
+  text_pull_conflict_resolution_cancel: Discard all my changes and redisplay %{link}
   text_issues_destroy_confirmation: 'Are you sure you want to delete the selected pull request(s)?'

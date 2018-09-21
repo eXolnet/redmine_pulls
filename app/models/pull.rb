@@ -9,8 +9,13 @@ class Pull < ActiveRecord::Base
   belongs_to :priority, :class_name => 'IssuePriority'
   belongs_to :category, :class_name => 'IssueCategory'
 
+  has_many :journals, :as => :journalized, :dependent => :destroy, :inverse_of => :journalized
+
   acts_as_customizable
   acts_as_watchable
+
+  attr_reader :current_journal
+  delegate :notes, :notes=, :private_notes, :private_notes=, :to => :current_journal, :allow_nil => true
 
   validates_presence_of :subject, :project, :commit_base, :commit_compare
   validates_presence_of :priority, :if => Proc.new {|issue| issue.new_record? || issue.priority_id_changed?}
@@ -26,9 +31,11 @@ class Pull < ActiveRecord::Base
                   'priority_id',
                   'fixed_version_id',
                   'subject',
-                  'description',
-                  'commit_base',
-                  'commit_compare'
+                  'description'
+
+  safe_attributes 'commit_base',
+                  'commit_compare',
+                  :if => lambda {|pull, user| pull.new_record? }
 
   safe_attributes 'watcher_user_ids',
                   :if => lambda {|pull, user| pull.new_record? && user.allowed_to?(:add_pull_watchers, pull.project)}
@@ -105,6 +112,63 @@ class Pull < ActiveRecord::Base
       s << ' assigned-to-my-group' if user.groups.any? {|g| g.id == assigned_to_id}
     end
     s
+  end
+
+  def init_journal(user, notes = "")
+    @current_journal ||= Journal.new(:journalized => self, :user => user, :notes => notes)
+  end
+
+  # Returns the current journal or nil if it's not initialized
+  def current_journal
+    @current_journal
+  end
+
+  # Clears the current journal
+  def clear_journal
+    @current_journal = nil
+  end
+
+  # Returns the names of attributes that are journalized when updating the issue
+  def journalized_attribute_names
+    Pull.column_names - %w(id created_on updated_on merged_on closed_on)
+  end
+
+  # Returns the id of the last journal or nil
+  def last_journal_id
+    if new_record?
+      nil
+    else
+      journals.maximum(:id)
+    end
+  end
+
+  # Returns a scope for journals that have an id greater than journal_id
+  def journals_after(journal_id)
+    scope = journals.reorder("#{Journal.table_name}.id ASC")
+    if journal_id.present?
+      scope = scope.where("#{Journal.table_name}.id > ?", journal_id.to_i)
+    end
+    scope
+  end
+
+  # Returns the journals that are visible to user with their index
+  # Used to display the issue history
+  def visible_journals_with_index(user=User.current)
+    result = journals.
+      preload(:details).
+      preload(:user => :email_address).
+      reorder(:created_on, :id).to_a
+
+    result.each_with_index {|j,i| j.indice = i+1}
+
+    unless user.allowed_to?(:view_private_notes, project)
+      result.select! do |journal|
+        !journal.private_notes? || journal.user == user
+      end
+    end
+    Journal.preload_journals_details_custom_fields(result)
+    result.select! {|journal| journal.notes? || journal.visible_details.any?}
+    result
   end
 
   private

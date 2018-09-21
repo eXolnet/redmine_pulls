@@ -1,0 +1,7 @@
+<h2><%= l(:label_pull_request) %> #<%= @pull.id %></h2>
+
+<%= render :partial => 'edit' %>
+
+<% content_for :header_tags do %>
+    <%= robot_exclusion_tag %>
+<% end %>

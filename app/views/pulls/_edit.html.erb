@@ -1,0 +1,28 @@
+<%= labelled_form_for @pull, :html => {:id => 'pull-form'} do |f| %>
+  <%= error_messages_for 'pull' %>
+  <%= render :partial => 'conflict' if @conflict %>
+
+  <div class="box">
+    <% if @pull.attributes_editable? %>
+      <fieldset class="tabular"><legend><%= l(:label_change_properties) %></legend>
+        <div id="all_attributes">
+          <%= render :partial => 'form', :locals => {:f => f} %>
+        </div>
+      </fieldset>
+    <% end %>
+
+    <% if @pull.notes_addable? %>
+      <fieldset><legend><%= l(:field_notes) %></legend>
+        <%= f.text_area :notes, :cols => 60, :rows => 10, :class => 'wiki-edit', :no_label => true %>
+        <%= wikitoolbar_for 'pull_notes' %>
+      </fieldset>
+    <% end %>
+  </div>
+
+  <%= hidden_field_tag 'last_journal_id', params[:last_journal_id] || @pull.last_journal_id %>
+  <%= submit_tag l(:button_submit) %>
+  <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-form' %>
+  | <%= link_to l(:button_cancel), pull_path(id: @pull.id), :onclick => params[:action] == 'show' ? "$('#update').hide(); return false;" : '' %>
+<% end %>
+
+<div id="preview" class="wiki"></div>
