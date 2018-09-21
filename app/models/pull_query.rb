@@ -14,7 +14,6 @@ class PullQuery < Query
     QueryColumn.new(:updated_on, :sortable => "#{Pull.table_name}.updated_on", :default_order => 'desc'),
     QueryColumn.new(:closed_on, :sortable => "#{Pull.table_name}.closed_on", :default_order => 'desc'),
     QueryColumn.new(:category, :sortable => "#{IssueCategory.table_name}.name", :groupable => true),
-    QueryColumn.new(:fixed_version, :sortable => lambda {Version.fields_for_order_statement}, :groupable => true),
     QueryColumn.new(:description, :inline => false)
   ]
 
@@ -36,18 +35,6 @@ class PullQuery < Query
     add_available_filter("assigned_to_id",
       :type => :list_optional, :values => lambda { assigned_to_values }
     )
-
-    add_available_filter "fixed_version_id",
-      :type => :list_optional, :values => lambda { fixed_version_values }
-
-    add_available_filter "fixed_version.due_date",
-      :type => :date,
-      :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
-
-    add_available_filter "fixed_version.status",
-      :type => :list,
-      :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)),
-      :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
 
     add_available_filter "category_id",
       :type => :list_optional,
@@ -100,7 +87,7 @@ class PullQuery < Query
       limit(options[:limit]).
       offset(options[:offset])
 
-    scope = scope.preload([:author, :assigned_to, :fixed_version, :category] & columns.map(&:name))
+    scope = scope.preload([:author, :assigned_to, :category] & columns.map(&:name))
 
     scope.to_a
   rescue ::ActiveRecord::StatementInvalid => e

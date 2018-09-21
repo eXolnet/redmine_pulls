@@ -9,7 +9,9 @@ class PullsController < ApplicationController
 
   rescue_from Query::StatementInvalid, :with => :query_statement_invalid
 
+  helper :journals
   helper :projects
+  helper :custom_fields
   helper :issues
   helper :watchers
   helper :queries
@@ -103,7 +105,33 @@ class PullsController < ApplicationController
   end
 
   def update
-    # TODO
+    return unless update_pull_from_params
+
+    saved = false
+    begin
+      saved = save_pull
+    rescue ActiveRecord::StaleObjectError
+      @conflict = true
+
+      if params[:last_journal_id]
+        @conflict_journals = @pull.journals_after(params[:last_journal_id]).to_a
+        @conflict_journals.reject!(&:private_notes?) unless User.current.allowed_to?(:view_private_notes, @pull.project)
+      end
+    end
+
+    if saved
+      flash[:notice] = l(:notice_successful_update) unless @pull.current_journal.new_record?
+
+      respond_to do |format|
+        format.html { redirect_back_or_default pull_path(@pull) }
+        format.api  { render_api_ok }
+      end
+    else
+      respond_to do |format|
+        format.html { render :action => 'edit' }
+        format.api  { render_validation_errors(@pull) }
+      end
+    end
   end
 
   def destroy
@@ -156,7 +184,7 @@ class PullsController < ApplicationController
   # Used by #edit and #update to set some common instance variables
   # from the params
   def update_pull_from_params
-    #@issue.init_journal(User.current)
+    @pull.init_journal(User.current)
 
     pull_attributes = params[:pull]
     if pull_attributes && params[:conflict_resolution]
@@ -186,5 +214,17 @@ class PullsController < ApplicationController
     @pull.safe_attributes = attrs
 
     @priorities = IssuePriority.active
+  end
+
+  # Saves @pull from the parameters
+  def save_pull
+    Pull.transaction do
+      call_hook(:controller_pulls_edit_before_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
+      if @pull.save
+        call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
+      else
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 end

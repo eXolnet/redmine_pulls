@@ -25,10 +25,6 @@
       unless @pull.category.nil? && @pull.project.issue_categories.none?
         rows.left l(:field_category), (@pull.category ? @pull.category.name : "-"), :class => 'category'
       end
-
-      unless @pull.fixed_version.nil? && @pull.assignable_versions.none?
-        rows.left l(:field_fixed_version), (@pull.fixed_version ? link_to_version(@pull.fixed_version) : "-"), :class => 'fixed-version'
-      end
     end %>
   </div>
 
@@ -50,7 +46,7 @@
 <% if @journals.present? %>
   <div id="history">
     <h3><%=l(:label_history)%></h3>
-    <%= render :partial => 'history', :locals => { :issue => @pull, :journals => @journals } %>
+    <%= render :partial => 'history', :locals => { :pull => @pull, :journals => @journals } %>
   </div>
 <% end %>
 
