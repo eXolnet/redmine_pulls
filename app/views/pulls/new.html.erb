@@ -8,12 +8,20 @@
     <div id="all_attributes">
       <%= render :partial => 'form', :locals => {:f => f} %>
     </div>
+
+    <div id="watchers_form_container">
+      <%= render :partial => 'pulls/watchers_form' %>
+    </div>
   </div>
 
   <%= submit_tag l(:button_create) %>
   <%= submit_tag l(:button_create_and_continue), :name => 'continue' %>
+  <%= preview_link preview_new_pull_path(:project_id => @pull.project), 'pull-form' %>
 <% end %>
+
+<div id="preview" class="wiki"></div>
 
 <% content_for :header_tags do %>
   <%= robot_exclusion_tag %>
 <% end %>
+

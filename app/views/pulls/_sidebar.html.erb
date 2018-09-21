@@ -1,0 +1,11 @@
+<h3><%= l(:label_pulls) %></h3>
+
+<ul>
+  <li><%= link_to l(:label_pull_view_all), _project_pulls_path(@project, :set_filter => 1) %></li>
+</ul>
+
+<%= call_hook(:view_pulls_sidebar_pulls_bottom) %>
+<%= call_hook(:view_pulls_sidebar_planning_bottom) %>
+
+<%= render_sidebar_queries(PullQuery, @project) %>
+<%= call_hook(:view_pulls_sidebar_queries_bottom) %>

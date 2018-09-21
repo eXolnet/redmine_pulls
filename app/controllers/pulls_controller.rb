@@ -70,7 +70,7 @@ class PullsController < ApplicationController
 
             redirect_to _new_project_pull_path(@project, url_params)
           else
-            redirect_back_or_default pull_path(@issue)
+            redirect_back_or_default pull_path(@pull)
           end
         }
         format.api  { render :action => 'show', :status => :created, :location => pull_path(@pull) }
@@ -113,6 +113,25 @@ class PullsController < ApplicationController
       format.html { redirect_back_or_default _project_pulls_path(@project) }
       format.api  { render_api_ok }
     end
+  end
+
+  def preview
+    @pull = Pull.visible.find_by_id(params[:id]) unless params[:id].blank?
+
+    if @pull
+      @description = params[:pull] && params[:pull][:description]
+
+      if @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
+        @description = nil
+      end
+
+      #@notes = params[:journal] ? params[:journal][:notes] : nil
+      #@notes ||= params[:pull] ? params[:pull][:notes] : nil
+    else
+      @description = (params[:pull] ? params[:pull][:description] : nil)
+    end
+
+    render :layout => false
   end
 
   def find_pull

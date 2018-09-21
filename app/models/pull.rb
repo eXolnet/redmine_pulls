@@ -58,6 +58,7 @@ class Pull < ActiveRecord::Base
     if new_record?
       # set default values for new records only
       self.priority ||= IssuePriority.default
+      self.watcher_user_ids = []
     end
   end
 
@@ -88,6 +89,10 @@ class Pull < ActiveRecord::Base
       end
     end
     @assignable_versions = versions.uniq.sort
+  end
+
+  def commit_between
+    commit_base + ".." + commit_compare
   end
 
   # Returns a string of css classes that apply to the issue

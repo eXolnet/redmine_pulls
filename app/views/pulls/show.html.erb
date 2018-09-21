@@ -16,6 +16,8 @@
 
   <div class="attributes">
     <%= issue_fields_rows do |rows|
+      rows.left l(:field_between), @pull.commit_between, :class => 'between'
+
       rows.left l(:field_priority), @pull.priority.name, :class => 'priority'
 
       rows.left l(:field_assigned_to), (@pull.assigned_to ? link_to_user(@pull.assigned_to) : "-"), :class => 'assigned-to'
@@ -29,6 +31,31 @@
       end
     end %>
   </div>
+
+  <% if @pull.description? -%>
+    <hr />
+    <% if @pull.description? %>
+      <div class="description">
+        <%# TODO - Add quoted pull patch %>
+
+        <p><strong><%=l(:field_description)%></strong></p>
+        <div class="wiki">
+          <%= textilizable @pull, :description %>
+        </div>
+      </div>
+    <% end %>
+  <% end -%>
 </div>
+
+<% content_for :sidebar do %>
+  <%= render :partial => 'pulls/sidebar' %>
+
+  <% if User.current.allowed_to?(:add_pull_watchers, @project) ||
+    (@pull.watchers.present? && User.current.allowed_to?(:view_pull_watchers, @project)) %>
+    <div id="watchers">
+      <%= render :partial => 'watchers/watchers', :locals => {:watched => @pull} %>
+    </div>
+  <% end %>
+<% end %>
 
 <%= render :partial => 'action_menu' %>

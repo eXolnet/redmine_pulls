@@ -14,3 +14,7 @@
   <%= render :partial => 'pulls/list', :locals => {:pulls => @pulls, :query => @query} %>
   <span class="pagination"><%= pagination_links_full @pull_pages, @pull_count %></span>
 <% end %>
+
+<% content_for :sidebar do %>
+  <%= render :partial => 'pulls/sidebar' %>
+<% end %>
