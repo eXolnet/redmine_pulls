@@ -11,8 +11,9 @@ Redmine::Plugin.register :redmine_pulls do
   requires_redmine :version_or_higher => '2.3'
   #requires_redmine_plugin :redmine_git_hosting, :version_or_higher => '1.2.0'
 
-  menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => 'Pull requests', :after => :issues
-  menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => 'Pull requests', :after => :issues, :param => :project_id
+  menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues
+  menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues, :param => :project_id
+  menu :project_menu, :new_pull, { :controller => 'pulls', :action => 'new' }, :caption => :label_new_pull, :after => :new_issue_sub, :param => :project_id, :parent => :new_object
 
   project_module :pulls do
     permission :view_pulls,           { :pulls => [:index, :show] }
