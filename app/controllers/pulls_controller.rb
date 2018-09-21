@@ -28,19 +28,10 @@ class PullsController < ApplicationController
           @pulls = @query.pulls(:offset => @pull_pages.offset, :limit => @pull_pages.per_page)
           render :layout => !request.xhr?
         }
-        format.api  {
-          @offset, @limit = api_offset_and_limit
-          @query.column_names = %w(author)
-          @pull_count = @query.pull_count
-          @pulls = @query.pulls(:offset => @offset, :limit => @limit)
-          Issue.load_visible_relations(@pulls) if include_in_api_response?('relations')
-        }
       end
     else
       respond_to do |format|
         format.html { render :layout => !request.xhr? }
-        format.any(:atom, :csv, :pdf) { head 422 }
-        format.api { render_validation_errors(@query) }
       end
     end
   rescue ActiveRecord::RecordNotFound
@@ -73,7 +64,6 @@ class PullsController < ApplicationController
             redirect_back_or_default pull_path(@pull)
           end
         }
-        format.api  { render :action => 'show', :status => :created, :location => pull_path(@pull) }
       end
       return
     else
@@ -85,7 +75,6 @@ class PullsController < ApplicationController
             render :action => 'new'
           end
         }
-        format.api  { render_validation_errors(@pull) }
       end
     end
   end
@@ -102,7 +91,6 @@ class PullsController < ApplicationController
         @priorities = IssuePriority.active
         render :template => 'pulls/show'
       }
-      format.api
     end
   end
 
@@ -111,7 +99,6 @@ class PullsController < ApplicationController
 
     respond_to do |format|
       format.html { }
-      format.js
     end
   end
 
