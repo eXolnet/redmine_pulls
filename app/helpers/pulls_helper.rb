@@ -18,4 +18,12 @@ module PullsHelper
                   :class => "floating"
     end.join.html_safe
   end
+
+  def pull_tabs
+    tabs = [
+      {:name => 'history', :partial => 'pulls/history', :label => :label_history},
+      {:name => 'commits', :partial => 'pulls/commits', :label => :label_commits},
+      {:name => 'files', :partial => 'pulls/files', :label => :label_files},
+    ]
+  end
 end

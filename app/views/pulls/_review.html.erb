@@ -1,0 +1,30 @@
+<h3><%= l(:label_review_changes) %></h3>
+
+<div class="box">
+    <p>
+      <textarea class="wiki-edit" cols="60" name="review[comment]" id="review_comment" rows="8" placeholder="<%= l(:label_review_summary) %>"></textarea>
+    </p>
+    <%= wikitoolbar_for 'review_comment' %>
+
+    <label class="pulls__status">
+      <input type="radio" name="review[status]">
+      <strong><%= l(:label_comment) %></strong>
+      <em class="info"><%= l(:label_comment_help) %></em>
+    </label>
+
+    <label class="pulls__status">
+      <input type="radio" name="review[status]">
+      <strong><%= l(:label_approve) %></strong>
+      <em class="info"><%= l(:label_approve_help) %></em>
+    </label>
+
+    <label class="pulls__status">
+      <input type="radio" name="review[status]">
+      <strong><%= l(:label_request_changes) %></strong>
+      <em class="info"><%= l(:label_request_changes_help) %></em>
+    </label>
+</div>
+
+<p class="audit-buttons">
+  <%= submit_tag l(:button_submit_review) %>
+</p>

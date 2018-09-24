@@ -1,0 +1,24 @@
+<div id="commits">
+  <table class="list changesets">
+    <thead><tr>
+      <th>#</th>
+      <th><%= l(:label_date) %></th>
+      <th><%= l(:field_author) %></th>
+      <th><%= l(:field_comments) %></th>
+    </tr></thead>
+    <tbody>
+    <% line_num = 1 %>
+    <% @revisions.each do |changeset| %>
+      <tr class="changeset">
+        <%= content_tag(:td, :class => 'id') do %>
+          <%= link_to_revision(changeset, @repository) %>
+        <% end %>
+        <td class="committed_on"><%= format_time(changeset.committed_on) %></td>
+        <td class="author"><%= changeset.user.blank? ? changeset.author.to_s.truncate(30) : link_to_user(changeset.user) %></td>
+        <td class="comments"><%= textilizable(truncate_at_line_break(changeset.comments), :formatting => Setting.commit_logs_formatting?) %></td>
+      </tr>
+      <% line_num += 1 %>
+    <% end %>
+    </tbody>
+  </table>
+</div>

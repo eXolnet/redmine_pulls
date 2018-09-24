@@ -6,7 +6,18 @@ en:
   label_new_pull: New pull request
   label_pull_watchers: Watchers
   label_pull_view_all: View all pull requests
+  label_commits: Commits
+  label_files: Files changed
+  label_review_changes: Review changes
+  label_review_summary: Review summary
   field_between: Between
+  label_comment: Comment
+  label_comment_help: Submit general feedback without explicit approval.
+  label_approve: Approve
+  label_approve_help: Submit feedback and approve merging these changes.
+  label_request_changes: Request changes
+  label_request_changes_help: Submit feedback that must be addressed before merging.
+  button_submit_review: Submit review
   notice_pull_successful_create: "Pull request successfully created."
   notice_pull_successful_delete: "Pull request successfully deleted."
   notice_pull_update_conflict: The pull request has been updated by an other user while you were editing it.
