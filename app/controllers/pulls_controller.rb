@@ -88,6 +88,14 @@ class PullsController < ApplicationController
       @journals.reverse!
     end
 
+    # Prepare diff
+    @repository = @pull.repository
+    @diff = @repository.diff(nil, @pull.commit_compare, @pull.commit_base)
+    @diff_type = params[:type] || User.current.pref[:diff_type] || 'inline'
+    @diff_type = 'inline' unless %w(inline sbs).include?(@diff_type)
+    @revision_ids = @repository.scm.revisions(nil, @pull.commit_base, @pull.commit_compare).collect {|revision| revision.identifier}
+    @revisions = @repository.changesets.where(revision: @revision_ids).all
+
     respond_to do |format|
       format.html {
         @priorities = IssuePriority.active

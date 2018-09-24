@@ -1,0 +1,14 @@
+.pulls__files .line-code {
+  width: 48%;
+}
+
+.pulls__status {
+  display: block;
+  margin-top: 10px;
+}
+
+.pulls__status input {
+  float: left;
+  margin: 2px 7px 5px 0;
+  vertical-align: middle;
+}

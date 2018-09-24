@@ -1,7 +1,0 @@
-<% if @journals.present? %>
-  <div id="history">
-    <%= render :partial => 'history', :locals => { :pull => @pull, :journals => @journals } %>
-  </div>
-<% else %>
-  <p class="nodata"><%= l(:label_no_data) %></p>
-<% end %>

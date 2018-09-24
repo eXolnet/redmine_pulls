@@ -43,14 +43,14 @@
   <% end -%>
 </div>
 
-<%= render_tabs pull_tabs %>
-
 <% if @pull.editable? %>
   <div id="update" style="display:none;">
     <h3><%= l(:button_edit) %></h3>
     <%= render :partial => 'edit' %>
   </div>
 <% end %>
+
+<%= render_tabs pull_tabs %>
 
 <% html_title l(:label_pull_request) + " ##{@pull.id}: #{@pull.subject}" %>
 
@@ -65,4 +65,9 @@
   <% end %>
 <% end %>
 
-<%= render :partial => 'action_menu' %>
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag "scm" %>
+  <%= stylesheet_link_tag 'pulls', :plugin => 'redmine_pulls' %>
+  <%= javascript_include_tag 'pulls', :plugin => 'redmine_pulls' %>
+<% end %>
+

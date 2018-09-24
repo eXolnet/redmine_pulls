@@ -21,7 +21,7 @@ module PullsHelper
 
   def pull_tabs
     tabs = [
-      {:name => 'conversation', :partial => 'pulls/conversation', :label => :label_conversation},
+      {:name => 'history', :partial => 'pulls/history', :label => :label_history},
       {:name => 'commits', :partial => 'pulls/commits', :label => :label_commits},
       {:name => 'files', :partial => 'pulls/files', :label => :label_files},
     ]
