@@ -5,8 +5,8 @@ class CreatePulls < ActiveRecord::Migration
         t.string   :subject,           :null => false
         t.text     :description
         t.integer  :repository_id,     :null => false
-        t.string   :commit_base,        :null => false
-        t.string   :commit_compare,     :null => false
+        t.string   :commit_base,       :null => false
+        t.string   :commit_compare,    :null => false
         t.integer  :category_id
         t.integer  :assigned_to_id
         t.integer  :priority_id,       :null => false

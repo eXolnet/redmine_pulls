@@ -12,3 +12,7 @@
   margin: 2px 7px 5px 0;
   vertical-align: middle;
 }
+
+.pulls__merge input + em.info {
+  display: inline;
+}

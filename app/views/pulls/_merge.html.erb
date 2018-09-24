@@ -1,0 +1,17 @@
+<%= labelled_form_for pull, :html => {:id => 'pull-comment-form'} do |f| %>
+  <div class="box pulls__merge">
+    <strong>This branch has no conflicts with the base branch</strong>
+    <em class="info">Only those with write access to this repository can merge pull requests.</em>
+
+    <hr>
+
+    <%= submit_tag l(:button_merge_pull_request), :name => 'merge' %>
+    <em class="info">or view <a href="#">command line instructions</a>.</em>
+  </div>
+
+  <%= f.text_area :notes, :cols => 60, :rows => 10, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment) %>
+  <%= wikitoolbar_for 'pull_notes' %>
+
+  <%= submit_tag l(:button_comment) %>
+  <%= submit_tag l(:button_close_pull_request), :name => 'close' %>
+<% end %>
