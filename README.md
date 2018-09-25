@@ -12,16 +12,26 @@ Allows users to create pull requests for repositories linked to projects.
 
 Explain how to install your package.
 
+```bash
+bundle exec rake redmine:plugins:migrate NAME=redmine_pulls RAILS_ENV=development
+```
+
 ## Usage
 
 Explain how to use your package.
+
+You can start a development server using:
+
+```bash
+bundle exec rails server webrick -e development
+```
 
 ## Testing
 
 To run the phpUnit tests, please use:
 
 ```bash
-bundle exec rake redmine:plugins:test NAME=redmine_pulls
+bundle exec rake redmine:plugins:test NAME=redmine_pulls RAILS_ENV=development
 ```
 
 ## Contributing
