@@ -1,0 +1,9 @@
+<% if User.current.allowed_to?(:edit_pulls, pull.project) && pull.reviewable? %>
+  <div class="contextual">
+    <%= link_to l(:button_add), new_pull_reviewer_path(pull), :remote => true, :method => 'get' %>
+  </div>
+<% end %>
+
+<h3><%= l(:label_reviewers) %> (<%= pull.reviews.size %>)</h3>
+
+<%= reviewers_list(pull) %>

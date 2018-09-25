@@ -9,7 +9,8 @@ class Pull < ActiveRecord::Base
   belongs_to :category, :class_name => 'IssueCategory'
 
   has_many :journals, :as => :journalized, :dependent => :destroy, :inverse_of => :journalized
-  has_many :reviewers, :class_name => 'PullReviewer', :dependent => :delete_all
+  has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all
+  has_many :reviewers, :through => :reviews, :source => :reviewer, :validate => false
 
   acts_as_customizable
   acts_as_watchable
@@ -70,22 +71,35 @@ class Pull < ActiveRecord::Base
   after_save :create_journal
   after_create :send_notification
 
-# Returns true if user or current user is allowed to edit or add notes to the issue
+  # Returns true if user or current user is allowed to edit or add notes to the issue
   def editable?(user=User.current)
     attributes_editable?(user) || notes_addable?(user)
   end
 
-# Returns true if user or current user is allowed to edit the issue
+  def closable?(user=User.current)
+    editable?(user) && ! closed?
+  end
+
+  def reviewable?(user=User.current)
+    closable?(user)
+  end
+
+  # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
+  def mergable?(user=User.current)
+    closable?(user)
+  end
+
+  # Returns true if user or current user is allowed to edit the issue
   def attributes_editable?(user=User.current)
     user_permission?(user, :edit_pulls)
   end
 
-# Returns true if user or current user is allowed to add notes to the issue
+  # Returns true if user or current user is allowed to add notes to the issue
   def notes_addable?(user=User.current)
     user_permission?(user, :add_pull_notes)
   end
 
-# Returns true if user or current user is allowed to delete the issue
+  # Returns true if user or current user is allowed to delete the issue
   def deletable?(user=User.current)
     user_permission?(user, :delete_pulls)
   end
@@ -121,10 +135,10 @@ class Pull < ActiveRecord::Base
     self.project_id
   end
 
-# Sets the project.
-# This will:
-# * set the category to the category with the same name in the new
-#   project if it exists, or clear it if it doesn't.
+  # Sets the project.
+  # This will:
+  # * set the category to the category with the same name in the new
+  #   project if it exists, or clear it if it doesn't.
   def project=(project, keep_tracker=false)
     project_was = self.project
     association(:project).writer(project)
@@ -158,6 +172,11 @@ class Pull < ActiveRecord::Base
       arg = arg.gsub(/(\r\n|\n|\r)/, "\r\n")
     end
     write_attribute(:description, arg)
+  end
+
+  def merged_on=(arg)
+    write_attribute(:merged_on, arg)
+    write_attribute(:closed_on, arg)
   end
 
   # Overrides assign_attributes so that project get assigned first
@@ -259,12 +278,12 @@ class Pull < ActiveRecord::Base
     result
   end
 
-  # Return true if the issue is closed, otherwise false
+  # Return true if the pull is closed, otherwise false
   def closed?
     closed_on.present?
   end
 
-  # Return true if the issue is being closed
+  # Return true if the pull is being closed
   def closing?
     if new_record?
       closed?
@@ -344,6 +363,20 @@ class Pull < ActiveRecord::Base
       s << ' assigned-to-my-group' if user.groups.any? {|g| g.id == assigned_to_id}
     end
     s
+  end
+
+  def review(user=User.current)
+    review = self.reviews.where(:reviewer_id => user.id).first
+
+    unless review
+      review = PullReview.new(:reviewer => user, :status => PullReview::STATUS_REQUESTED)
+
+      # Rails does not reset the has_many :through association
+      reviewers.reset
+      self.reviews << PullReview.new(:reviewer => user, :status => PullReview::STATUS_REQUESTED)
+    end
+
+    review
   end
 
   private

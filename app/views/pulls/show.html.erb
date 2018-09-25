@@ -12,6 +12,11 @@
     <% if @pull.created_on != @pull.updated_on %>
       <%= l(:label_updated_time, time_tag(@pull.updated_on)).html_safe %>.
     <% end %>
+    <% if @pull.merged_on %>
+      <%= l(:label_merged_time, time_tag(@pull.updated_on)).html_safe %>.
+    <% elsif @pull.closed_on %>
+      <%= l(:label_closed_time, time_tag(@pull.updated_on)).html_safe %>.
+    <% end %>
   </p>
 
   <div class="attributes">
@@ -53,7 +58,7 @@
   <%= render :partial => 'pulls/sidebar' %>
 
   <div id="reviewers">
-    <%= render :partial => 'pulls/reviewers', :locals => {:pull => @pull} %>
+    <%= render :partial => 'pull_reviewers/reviewers', :locals => {:pull => @pull} %>
   </div>
 
   <% if User.current.allowed_to?(:add_pull_watchers, @project) ||

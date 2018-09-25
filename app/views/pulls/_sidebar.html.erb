@@ -3,7 +3,7 @@
 <ul>
   <li><%= link_to l(:label_authored), _project_pulls_path(@project, :utf8 => '✓', :set_filter => 1, :f => ['author_id'], :op => {:author_id => '='}, :v => {:author_id => ['me']}) %></li>
   <li><%= link_to l(:label_assigned), _project_pulls_path(@project, :set_filter => 1) %></li>
-  <li><%= link_to l(:label_changed_requested), _project_pulls_path(@project, :set_filter => 1) %></li>
+  <li><%= link_to l(:label_changes_requested), _project_pulls_path(@project, :set_filter => 1) %></li>
   <li><%= link_to l(:label_review_requested), _project_pulls_path(@project, :set_filter => 1) %></li>
   <li><%= link_to l(:label_pull_view_all), _project_pulls_path(@project, :set_filter => 1) %></li>
 </ul>

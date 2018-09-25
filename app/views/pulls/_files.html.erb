@@ -9,5 +9,5 @@
   <% end %>
 
   <%= render :partial => 'common/diff', :locals => {:diff => @diff, :diff_type => @diff_type, :diff_style => @repository.class.scm_name} %>
-  <%= render :partial => 'pulls/review', :locals => {:pull => @pull} %>
+  <%= render :partial => 'pulls/review', :locals => {:pull => @pull} if @pull.reviewable? %>
 </div>

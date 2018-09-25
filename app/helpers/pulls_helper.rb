@@ -19,6 +19,36 @@ module PullsHelper
     end.join.html_safe
   end
 
+  def pull_review_title(pull)
+    changes_count = pull.reviews.where(:status => PullReview::STATUS_CHANGES_REQUESTED).count
+    pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
+    approved_count = pull.reviews.where(:status => PullReview::STATUS_APPROVED).count
+
+    if changes_count > 0
+      l(:label_changes_requested)
+    elsif pending_count > 0
+      l(:label_review_requested)
+    elsif approved_count > 0
+      l(:label_changes_approved)
+    else
+      l(:label_no_review_requested)
+    end
+  end
+
+  def pull_review_description(pull)
+    changes_count = pull.reviews.where(:status => PullReview::STATUS_CHANGES_REQUESTED).count
+    approved_count = pull.reviews.where(:status => PullReview::STATUS_APPROVED).count
+    pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
+
+    list = []
+
+    list << l(:label_x_review_requesting_changes, changes_count) if changes_count > 0
+    list << l(:label_x_approving_review, approved_count) if approved_count > 0
+    list << l(:label_x_pending_reviews, pending_count) if pending_count > 0
+
+    list.join(', ')
+  end
+
   def pull_tabs
     tabs = [
       {:name => 'conversation', :partial => 'pulls/conversation', :label => :label_conversation},

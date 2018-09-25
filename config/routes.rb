@@ -8,4 +8,8 @@ resources :projects do
   resources :pulls, :only => [:index, :new, :create]
 end
 
-resources :pulls
+resources :pulls do
+  get 'reviewers/autocomplete_for_user', :to => 'pull_reviewers#autocomplete_for_user'
+  resources :reviewers, :controller => 'pull_reviewers', :only => [:new, :create]
+  delete 'reviewers', :to => 'pull_reviewers#destroy'
+end

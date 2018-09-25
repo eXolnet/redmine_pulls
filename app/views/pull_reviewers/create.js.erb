@@ -1,0 +1,2 @@
+$('#ajax-modal').html('<%= escape_javascript(render(:partial => 'pull_reviewers/new', :locals => {:pull => @pull, :users => @users})) %>');
+$('#reviewers').html('<%= escape_javascript(render(:partial => 'pull_reviewers/reviewers', :locals => {:pull => @pull})) %>');

@@ -17,6 +17,7 @@ class PullsController < ApplicationController
   helper :queries
   include QueriesHelper
   helper :repositories
+  helper :pull_reviewers
   helper RedminePulls::Helpers
 
   def index
@@ -207,8 +208,23 @@ class PullsController < ApplicationController
           return false
       end
     end
+
     @pull.safe_attributes = pull_attributes
     @priorities = IssuePriority.active
+
+    if params[:merge]
+      @pull.merged_on = Time.now
+    elsif params[:close]
+      @pull.closed_on = Time.now
+    end
+
+    if params[:review_status]
+      review = @pull.review
+
+      review.status = params[:review_status]
+      review.save
+    end
+
     true
   end
 

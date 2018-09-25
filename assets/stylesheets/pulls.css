@@ -25,3 +25,30 @@
 .pulls__merge h4 {
   margin-top: 15px;
 }
+
+#users_for_reviewer label {
+  display: block;
+}
+
+.review-status {
+  width: 6px;
+  height: 6px;
+  display: inline-block;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+  margin-top: -2px;
+}
+
+.review-status--requested {
+  background-color: #E5A935;
+}
+
+.review-status--approved {
+  background-color: #00BC5B;
+}
+
+.review-status--changes_requested {
+  background-color: #DA2634;
+}

@@ -8,19 +8,19 @@
       </p>
 
       <label class="pulls__status">
-        <input type="radio" name="review[status]">
+        <input type="radio" name="review_status">
         <strong><%= l(:label_comment) %></strong>
         <em class="info"><%= l(:label_comment_help) %></em>
       </label>
 
       <label class="pulls__status">
-        <input type="radio" name="review[status]">
+        <input type="radio" name="review_status" value="<%= PullReview::STATUS_APPROVED %>">
         <strong><%= l(:label_approve) %></strong>
         <em class="info"><%= l(:label_approve_help) %></em>
       </label>
 
       <label class="pulls__status">
-        <input type="radio" name="review[status]">
+        <input type="radio" name="review_status" value="<%= PullReview::STATUS_CHANGES_REQUESTED %>">
         <strong><%= l(:label_request_changes) %></strong>
         <em class="info"><%= l(:label_request_changes_help) %></em>
       </label>

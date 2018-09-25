@@ -1,0 +1,3 @@
+$('#ajax-modal').html('<%= escape_javascript(render :partial => 'pull_reviewers/new', :locals => {:pull => @pull, :users => @users}) %>');
+showModal('ajax-modal', '400px');
+$('#ajax-modal').addClass('new-reviewer');
