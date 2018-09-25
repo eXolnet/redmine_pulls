@@ -13,6 +13,10 @@ en:
   label_review_summary: Review summary
   label_leave_comment: Leave a comment
   label_reviewers: Reviewers
+  label_authored: Authored
+  label_assigned: Assigned
+  label_changed_requested: Changes requested
+  label_review_requested: Review requested
   field_between: Between
   label_comment: Comment
   label_comment_help: Submit general feedback without explicit approval.
