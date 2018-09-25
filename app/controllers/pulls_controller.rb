@@ -3,9 +3,9 @@ class PullsController < ApplicationController
   menu_item :pulls
 
   before_action :find_pull, :only => [:show, :edit, :update, :destroy]
-  before_action :find_optional_project, :only => [:index, :new, :create]
+  before_action :find_optional_project, :only => [:index, :new, :create, :commit]
   before_action :ensure_project_has_repository
-  before_action :build_new_pull_from_params, :only => [:new, :create]
+  before_action :build_new_pull_from_params, :only => [:new, :create, :commit]
 
   rescue_from Query::StatementInvalid, :with => :query_statement_invalid
 
@@ -154,6 +154,10 @@ class PullsController < ApplicationController
       format.html { redirect_back_or_default _project_pulls_path(@project) }
       format.api  { render_api_ok }
     end
+  end
+
+  def commit
+    @kind = params[:kind] || 'base'
   end
 
   def preview

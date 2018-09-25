@@ -52,3 +52,24 @@
 .review-status--changes_requested {
   background-color: #DA2634;
 }
+
+a.pull__commit {
+  border: 1px solid #ccc;
+  display: inline-block;
+  border-radius: 3px;
+  color: #505050;
+  padding: 3px 7px;
+  text-decoration: none;
+  background-color: #eff3f6;
+  background-image: linear-gradient(-180deg,#fafbfc 0%,#eff3f6 90%);
+}
+
+a.pull__commit:hover {
+  background-color: #e6ebf1;
+  background-image: linear-gradient(-180deg,#f0f3f6 0%,#e6ebf1 90%);
+  background-position: -0.5em;
+}
+
+.new-pull-commit input[type=text] {
+  width: 100%;
+}

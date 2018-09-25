@@ -38,6 +38,9 @@ en:
   label_approve_help: Submit feedback and approve merging these changes.
   label_request_changes: Request changes
   label_request_changes_help: Submit feedback that must be addressed before merging.
+  label_choose_base_branch: Choose a base branch
+  label_choose_head_branch: Choose a head branch
+  button_select: Select
   button_submit_review: Submit review
   button_merge_pull_request: Merge pull request
   button_comment: Comment

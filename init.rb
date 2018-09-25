@@ -17,7 +17,7 @@ Redmine::Plugin.register :redmine_pulls do
 
   project_module :pulls do
     permission :view_pulls,           { :pulls => [:index, :show] }
-    permission :add_pulls,            { :pulls => [:new, :create] }
+    permission :add_pulls,            { :pulls => [:new, :create, :commit] }
     permission :edit_pulls,           { :pulls => [:edit, :update] }
     permission :delete_pulls,         { :pulls => [:destroy] }
     permission :add_pull_notes,       { :pulls => [] }

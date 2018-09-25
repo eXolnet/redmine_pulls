@@ -8,6 +8,10 @@ var pullToggleSidebarDisplay = function () {
 };
 
 $(document).ready(function() {
+  if (! document.body.classList.contains('action-show')) {
+    return;
+  }
+
   $('.pull__tabs').click(pullToggleSidebarDisplay);
 
   pullToggleSidebarDisplay();
@@ -18,3 +22,12 @@ $(document).ready(function() {
     return false;
   });
 });
+
+window.pullSelectBranch = function(kind, branch) {
+  if (! branch) {
+    branch = document.getElementById('pull-commit-custom').value;
+  }
+
+  document.getElementById('pull-commit-label-' + kind).innerText = branch;
+  document.getElementById('pull-commit-input-' + kind).value = branch;
+};

@@ -23,5 +23,7 @@
 
 <% content_for :header_tags do %>
   <%= robot_exclusion_tag %>
+  <%= stylesheet_link_tag 'pulls', :plugin => 'redmine_pulls' %>
+  <%= javascript_include_tag 'pulls', :plugin => 'redmine_pulls' %>
 <% end %>
 
