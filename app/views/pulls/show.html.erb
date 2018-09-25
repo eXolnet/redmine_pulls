@@ -43,7 +43,9 @@
   <% end -%>
 </div>
 
-<%= render_tabs pull_tabs %>
+<div class="pull__tabs">
+  <%= render_tabs pull_tabs %>
+</div>
 
 <% html_title l(:label_pull_request) + " ##{@pull.id}: #{@pull.subject}" %>
 

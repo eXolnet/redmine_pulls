@@ -13,6 +13,15 @@
   vertical-align: middle;
 }
 
+.pulls__merge {
+  border-color: #00BC5B;
+  margin-top: 15px;
+}
+
 .pulls__merge input + em.info {
   display: inline;
+}
+
+.pulls__merge h4 {
+  margin-top: 15px;
 }
