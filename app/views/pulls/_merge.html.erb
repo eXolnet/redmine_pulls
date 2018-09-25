@@ -1,4 +1,4 @@
-<%= labelled_form_for pull, :html => {:id => 'pull-comment-form'} do |f| %>
+<%= labelled_form_for pull, :html => {:id => 'pull-merge-form'} do |f| %>
   <div class="box pulls__merge">
     <strong>This branch has no conflicts with the base branch</strong>
     <em class="info">Only those with write access to this repository can merge pull requests.</em>
@@ -7,6 +7,21 @@
 
     <%= submit_tag l(:button_merge_pull_request), :name => 'merge' %>
     <em class="info">or view <a href="#">command line instructions</a>.</em>
+
+    <div id="pull-merge-instructions" style="display: none;">
+      <h4>Merging via command line</h4>
+      <p>If you do not want to use the merge button or an automatic merge cannot be performed, you can perform a manual merge on the command line.</p>
+
+      <h5>Step 1: From your project repository, bring in the changes and test.</h5>
+      <pre>git fetch origin
+git checkout -b <%= pull.commit_compare %> origin/<%= pull.commit_compare %>
+git merge master</pre>
+
+      <h5>Step 2: Merge the changes and update on GitHub.</h5>
+      <pre>git checkout <%= pull.commit_base %>
+git merge --no-ff <%= pull.commit_compare %>
+git push origin master</pre>
+    </div>
   </div>
 
   <%= f.text_area :notes, :cols => 60, :rows => 10, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment) %>
