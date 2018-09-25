@@ -9,6 +9,7 @@ class Pull < ActiveRecord::Base
   belongs_to :category, :class_name => 'IssueCategory'
 
   has_many :journals, :as => :journalized, :dependent => :destroy, :inverse_of => :journalized
+  has_many :reviewers, :class_name => 'PullReviewer', :dependent => :delete_all
 
   acts_as_customizable
   acts_as_watchable

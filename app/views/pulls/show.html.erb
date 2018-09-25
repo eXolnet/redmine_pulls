@@ -50,6 +50,10 @@
 <% content_for :sidebar do %>
   <%= render :partial => 'pulls/sidebar' %>
 
+  <div id="reviewers">
+    <%= render :partial => 'pulls/reviewers', :locals => {:pull => @pull} %>
+  </div>
+
   <% if User.current.allowed_to?(:add_pull_watchers, @project) ||
     (@pull.watchers.present? && User.current.allowed_to?(:view_pull_watchers, @project)) %>
     <div id="watchers">

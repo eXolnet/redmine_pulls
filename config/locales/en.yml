@@ -12,6 +12,7 @@ en:
   label_review_changes: Review changes
   label_review_summary: Review summary
   label_leave_comment: Leave a comment
+  label_reviewers: Reviewers
   field_between: Between
   label_comment: Comment
   label_comment_help: Submit general feedback without explicit approval.
