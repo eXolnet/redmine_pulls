@@ -8,7 +8,7 @@ rvm:
   - 2.3.1
 
 gemfile:
-- $REDMINE_PATH/Gemfile
+  - $REDMINE_PATH/Gemfile
 
 env:
   - REDMINE_VER=3.3.8 DB=mysql
