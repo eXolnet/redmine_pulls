@@ -22,12 +22,12 @@
 
           <h5>Step 1: From your project repository, bring in the changes and test.</h5>
           <pre>git fetch origin
-    git checkout -b <%= pull.commit_compare %> origin/<%= pull.commit_compare %>
+    git checkout -b <%= pull.commit_head %> origin/<%= pull.commit_head %>
     git merge master</pre>
 
           <h5>Step 2: Merge the changes and update on GitHub.</h5>
           <pre>git checkout <%= pull.commit_base %>
-    git merge --no-ff <%= pull.commit_compare %>
+    git merge --no-ff <%= pull.commit_head %>
     git push origin master</pre>
         </div>
       <% end %>
