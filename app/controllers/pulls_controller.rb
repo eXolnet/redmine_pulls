@@ -18,7 +18,6 @@ class PullsController < ApplicationController
   include QueriesHelper
   helper :repositories
   helper :pull_reviewers
-  helper RedminePulls::Helpers
 
   def index
     retrieve_query(PullQuery)
