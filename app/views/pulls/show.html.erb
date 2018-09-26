@@ -41,7 +41,9 @@
     <hr />
     <% if @pull.description? %>
       <div class="description">
-        <%# TODO - Add quoted pull patch %>
+        <div class="contextual">
+          <%= link_to l(:button_quote), quoted_pull_path(@pull), :remote => true, :method => 'post', :class => 'icon icon-comment' if @pull.notes_addable? %>
+        </div>
 
         <p><strong><%=l(:field_description)%></strong></p>
         <div class="wiki">

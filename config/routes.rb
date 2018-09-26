@@ -3,6 +3,7 @@
 
 match '/pulls/preview/new/:project_id', :to => 'pulls#preview', :as => 'preview_new_pull', :via => [:get, :post, :put, :patch]
 match '/pulls/preview/edit/:id', :to => 'pulls#preview', :as => 'preview_edit_pull', :via => [:get, :post, :put, :patch]
+match '/pulls/:id/quoted', :to => 'pulls#quoted', :id => /\d+/, :via => :post, :as => 'quoted_pull'
 get '/pulls/commit/new/:project_id', :to => 'pulls#commit', :as => 'commit_new_pull'
 
 resources :projects do
