@@ -24,10 +24,4 @@ class PullsControllerTest < ActionController::TestCase
     assert_response :success
     assert_template :index
   end
-
-  def test_get_create
-    get :create, :project_id => "ecookbook"
-    assert_response :success
-    assert_template :new
-  end
 end
