@@ -8,12 +8,15 @@
   <%= render :partial => 'queries/query_form' %>
 <% end %>
 
-<% if @pulls.empty? %>
-  <p class="nodata"><%= l(:label_no_data) %></p>
-<% else %>
-  <%= render :partial => 'pulls/list', :locals => {:pulls => @pulls, :query => @query} %>
-  <span class="pagination"><%= pagination_links_full @pull_pages, @pull_count %></span>
+<% if @query.valid? %>
+  <% if @pulls.empty? %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% else %>
+    <%= render :partial => 'pulls/list', :locals => {:pulls => @pulls, :query => @query} %>
+    <span class="pagination"><%= pagination_links_full @pull_pages, @pull_count %></span>
+  <% end %>
 <% end %>
+
 
 <% content_for :sidebar do %>
   <%= render :partial => 'pulls/sidebar' %>
