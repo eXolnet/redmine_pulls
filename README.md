@@ -26,6 +26,16 @@ This plugin version is compatible only with Redmine 3.3 and later.
 
 4. Login and enable the "Pulls" module on projects you want to use it.
 
+### Uninstall
+
+1. Make a backup of your database, then run the following command to update it:
+   
+       ```
+       bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_pulls VERSION=0
+       ```
+       
+2. Remove the plugin's folder from `#{REDMINE_ROOT}/plugins`.
+
 ## Usage
 
 Explain how to use your package.
