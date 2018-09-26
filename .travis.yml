@@ -7,8 +7,7 @@ services:
 rvm:
   - 2.3.1
 
-gemfile:
-  - $REDMINE_PATH/Gemfile
+cache: bundler
 
 env:
   - REDMINE_VER=3.3.8 DB=mysql
@@ -19,6 +18,7 @@ env:
 before_install:
   - export PLUGIN_NAME=redmine_pulls
   - export REDMINE_PATH=$HOME/redmine
+  - export BUNDLE_GEMFILE=$REDMINE_PATH/Gemfile
   - svn co http://svn.redmine.org/redmine/tags/$REDMINE_VER $REDMINE_PATH
   - ln -s $TRAVIS_BUILD_DIR $REDMINE_PATH/plugins/$PLUGIN_NAME
   - cp pipeline/travis/database-$DB.yml $REDMINE_PATH/config/database.yml
