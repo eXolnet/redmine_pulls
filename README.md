@@ -8,13 +8,23 @@
 
 Allows users to create pull requests for repositories linked to projects.
 
+## Compatibility
+
+This plugin version is compatible only with Redmine 3.3 and later.
+
 ## Installation
 
-Explain how to install your package.
+1. Download the .ZIP archive, extract files and copy the plugin directory into `#{REDMINE_ROOT}/plugins`.
 
-```bash
-bundle exec rake redmine:plugins:migrate NAME=redmine_pulls RAILS_ENV=development
-```
+2. Make a backup of your database, then run the following command to update it:
+
+    ```
+    bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_pulls
+    ```
+    
+3. Restart Redmine.
+
+4. Login and enable the "Pulls" module on projects you want to use it.
 
 ## Usage
 
