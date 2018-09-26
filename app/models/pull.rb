@@ -327,6 +327,30 @@ class Pull < ActiveRecord::Base
   safe_attributes 'watcher_user_ids',
                   :if => lambda {|pull, user| pull.new_record? && user.allowed_to?(:add_pull_watchers, pull.project)}
 
+  # Safely sets attributes
+  # Should be called from controllers instead of #attributes=
+  # attr_accessible is too rough because we still want things like
+  # Issue.new(:project => foo) to work
+  def safe_attributes=(attrs, user=User.current)
+    @attributes_set_by = user
+    return unless attrs.is_a?(Hash)
+
+    attrs = attrs.deep_dup
+
+    if attrs['custom_field_values'].present?
+      editable_custom_field_ids = editable_custom_field_values(user).map {|v| v.custom_field_id.to_s}
+      attrs['custom_field_values'].select! {|k, v| editable_custom_field_ids.include?(k.to_s)}
+    end
+
+    if attrs['custom_fields'].present?
+      editable_custom_field_ids = editable_custom_field_values(user).map {|v| v.custom_field_id.to_s}
+      attrs['custom_fields'].select! {|c| editable_custom_field_ids.include?(c['id'].to_s)}
+    end
+
+    # mass-assignment security bypass
+    assign_attributes attrs, :without_protection => true
+  end
+
   def init_journal(user, notes = "")
     @current_journal ||= Journal.new(:journalized => self, :user => user, :notes => notes)
   end
