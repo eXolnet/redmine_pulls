@@ -113,6 +113,13 @@ class Pull < ActiveRecord::Base
     end
   end
 
+  alias :base_reload :reload
+  def reload(*args)
+    @last_updated_by = nil
+    @last_notes = nil
+    base_reload(*args)
+  end
+
   def priority_id=(pid)
     self.priority = nil
     write_attribute(:priority_id, pid)
@@ -347,6 +354,61 @@ class Pull < ActiveRecord::Base
 
   def notify=(arg)
     @notify = arg
+  end
+
+  def last_updated_by
+    if @last_updated_by
+      @last_updated_by.presence
+    else
+      journals.reorder(:id => :desc).first.try(:user)
+    end
+  end
+
+  def last_notes
+    if @last_notes
+      @last_notes
+    else
+      journals.where.not(notes: '').reorder(:id => :desc).first.try(:notes)
+    end
+  end
+
+  # Preloads users who updated last a collection of issues
+  def self.load_visible_last_updated_by(pulls, user=User.current)
+    if pulls.any?
+      pull_ids = pulls.map(&:id)
+      journal_ids = Journal.joins(pull: :project).
+        where(:journalized_type => 'Pull', :journalized_id => pull_ids).
+        where(Journal.visible_notes_condition(user, :skip_pre_condition => true)).
+        group(:journalized_id).
+        maximum(:id).
+        values
+      journals = Journal.where(:id => journal_ids).preload(:user).to_a
+
+      pulls.each do |pull|
+        journal = journals.detect {|j| j.journalized_id == pull.id}
+        pull.instance_variable_set("@last_updated_by", journal.try(:user) || '')
+      end
+    end
+  end
+
+  # Preloads visible last notes for a collection of pulls
+  def self.load_visible_last_notes(pulls, user=User.current)
+    if pulls.any?
+      pull_ids = pulls.map(&:id)
+      journal_ids = Journal.joins(pull: :project).
+        where(:journalized_type => 'Pull', :journalized_id => pull_ids).
+        where(Journal.visible_notes_condition(user, :skip_pre_condition => true)).
+        where.not(notes: '').
+        group(:journalized_id).
+        maximum(:id).
+        values
+      journals = Journal.where(:id => journal_ids).to_a
+
+      pulls.each do |pull|
+        journal = journals.detect {|j| j.journalized_id == pull.id}
+        pull.instance_variable_set("@last_notes", journal.try(:notes) || '')
+      end
+    end
   end
 
   def commit_between

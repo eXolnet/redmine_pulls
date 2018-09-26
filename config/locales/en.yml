@@ -32,6 +32,8 @@ en:
     one:   "1 approving review"
     other: "%{count} approving reviews"
   field_between: Between
+  field_commit_base: Commit base
+  field_commit_head: Commit head
   field_merged_on: Merged
   label_comment: Comment
   label_comment_help: Submit general feedback without explicit approval.
