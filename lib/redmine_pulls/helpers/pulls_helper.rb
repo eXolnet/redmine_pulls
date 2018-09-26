@@ -14,6 +14,8 @@ module RedminePulls
           link_to_pull item, :text => value
         when :description
           item.description? ? content_tag('div', textilizable(item, :description), :class => "wiki") : ''
+        when :last_notes
+          item.last_notes.present? ? content_tag('div', textilizable(item, :last_notes), :class => "wiki") : ''
         else
           format_object(value)
       end
