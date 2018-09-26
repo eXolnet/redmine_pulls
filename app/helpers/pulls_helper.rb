@@ -1,20 +1,4 @@
 module PullsHelper
-  def _project_pulls_path(project, *args)
-    if project
-      project_pulls_path(project, *args)
-    else
-      pulls_path(*args)
-    end
-  end
-
-  def _new_project_pull_path(project, *args)
-    if project
-      new_project_pull_path(project, *args)
-    else
-      new_pull_path(*args)
-    end
-  end
-
   # Returns an array of users that are proposed as watchers
   # on the new issue form
   def users_for_new_pull_watchers(pull)

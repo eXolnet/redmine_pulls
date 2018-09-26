@@ -68,4 +68,4 @@ en:
   text_pull_conflict_resolution_overwrite: Apply my changes anyway (previous notes will be kept but some changes may be overwritten)
   text_pull_conflict_resolution_add_notes: Add my notes and discard my other changes
   text_pull_conflict_resolution_cancel: Discard all my changes and redisplay %{link}
-  text_issues_destroy_confirmation: 'Are you sure you want to delete the selected pull request(s)?'
+  text_pulls_destroy_confirmation: 'Are you sure you want to delete the selected pull request(s)?'
