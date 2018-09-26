@@ -28,7 +28,7 @@ class Pull < ActiveRecord::Base
   attr_reader :current_journal
   delegate :notes, :notes=, :private_notes, :private_notes=, :to => :current_journal, :allow_nil => true
 
-  validates_presence_of :subject, :project, :commit_base, :commit_compare
+  validates_presence_of :subject, :project, :commit_base, :commit_head
   validates_presence_of :priority, :if => Proc.new {|issue| issue.new_record? || issue.priority_id_changed?}
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
 
@@ -209,7 +209,7 @@ class Pull < ActiveRecord::Base
 
   safe_attributes 'repository_id',
                   'commit_base',
-                  'commit_compare',
+                  'commit_head',
                   :if => lambda {|pull, user| pull.new_record? }
 
   safe_attributes 'notes',
@@ -350,7 +350,7 @@ class Pull < ActiveRecord::Base
   end
 
   def commit_between
-    commit_base + ".." + commit_compare
+    commit_base + ".." + commit_head
   end
 
   # Returns a string of css classes that apply to the issue
