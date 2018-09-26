@@ -7,6 +7,9 @@ services:
 rvm:
   - 2.3.1
 
+gemfile:
+- $REDMINE_PATH/Gemfile
+
 env:
   - REDMINE_VER=3.3.8 DB=mysql
   - REDMINE_VER=3.4.6 DB=mysql
@@ -22,7 +25,6 @@ before_install:
   - cd $REDMINE_PATH
 
 before_script:
-  - bundle install --jobs=3 --retry=3
   - bundle exec rake db:create
   - bundle exec rake db:migrate
   - bundle exec rake redmine:plugins:migrate
