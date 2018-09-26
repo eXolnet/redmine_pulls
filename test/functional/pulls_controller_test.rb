@@ -14,8 +14,8 @@ class PullsControllerTest < ActionController::TestCase
   def setup
     @project1 = Project.find(1)
     @project2 = Project.find(5)
-    EnabledModule.create(:project => @project1, :name => 'pull_requests')
-    EnabledModule.create(:project => @project2, :name => 'pull_requests')
+    EnabledModule.create(:project => @project1, :name => 'pulls')
+    EnabledModule.create(:project => @project2, :name => 'pulls')
     @request.session[:user_id] = 1
   end
 
