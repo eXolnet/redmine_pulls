@@ -16,15 +16,21 @@ This plugin version is compatible only with Redmine 3.3 and later.
 
 1. Download the .ZIP archive, extract files and copy the plugin directory into `#{REDMINE_ROOT}/plugins`.
 
-2. Make a backup of your database, then run the following command to update it:
+2. Install the plugin's dependencies:
+
+    ```
+    bundle install
+    ```
+
+3. Make a backup of your database, then run the following command to update it:
 
     ```
     bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_pulls
     ```
     
-3. Restart Redmine.
+4. Restart Redmine.
 
-4. Login and enable the "Pulls" module on projects you want to use it.
+5. Login and enable the "Pulls" module on projects you want to use it.
 
 ### Uninstall
 

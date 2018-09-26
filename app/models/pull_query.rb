@@ -14,6 +14,7 @@ class PullQuery < Query
     QueryColumn.new(:merged_on, :sortable => "#{Pull.table_name}.merged_on", :default_order => 'desc'),
     QueryColumn.new(:closed_on, :sortable => "#{Pull.table_name}.closed_on", :default_order => 'desc'),
     QueryColumn.new(:category, :sortable => "#{IssueCategory.table_name}.name", :groupable => true),
+    QueryColumn.new(:fixed_version, :sortable => lambda {Version.fields_for_order_statement}, :groupable => true),
     QueryColumn.new(:last_updated_by, :sortable => lambda {User.fields_for_order_statement("last_journal_user")}),
     QueryColumn.new(:description, :inline => false),
     QueryColumn.new(:last_notes, :caption => :label_last_notes, :inline => false)
@@ -21,7 +22,7 @@ class PullQuery < Query
 
   def initialize(attributes=nil, *args)
     super attributes
-    self.filters ||= { 'closed_on' => {:operator => "!*", :values => [""]} }
+    self.filters ||= { 'status' => {:operator => "=", :values => ["opened"]} }
   end
 
   def initialize_available_filters
@@ -46,9 +47,30 @@ class PullQuery < Query
                          :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
     )
 
+    add_available_filter "fixed_version_id",
+                         :type => :list_optional, :values => lambda { fixed_version_values }
+
+    add_available_filter "fixed_version.due_date",
+                         :type => :date,
+                         :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
+
+    add_available_filter "fixed_version.status",
+                         :type => :list,
+                         :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)),
+                         :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
+
     add_available_filter "category_id",
       :type => :list_optional,
       :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
+
+    add_available_filter"status",
+                        :type => :list, :values => lambda { Pull.state_machines[:status].states.collect{|s| [ l(("label_status_" + s.name.to_s).to_sym), s.name ] } }
+
+    add_available_filter"review_status",
+                        :type => :list, :values => lambda { Pull.state_machines[:review_status].states.collect{|s| [ l(("label_review_status_" + s.name.to_s).to_sym), s.name ] } }
+
+    add_available_filter"merge_status",
+                        :type => :list, :values => lambda { Pull.state_machines[:merge_status].states.collect{|s| [ l(("label_merge_status_" + s.name.to_s).to_sym), s.name ] } }
 
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
@@ -78,7 +100,7 @@ class PullQuery < Query
                            :values => lambda { subproject_values }
     end
 
-    add_associations_custom_fields_filters :project, :author, :assigned_to
+    add_associations_custom_fields_filters :project, :author, :assigned_to, :fixed_version
   end
 
   # Returns true if the query is visible to +user+ or the current user.
@@ -205,6 +227,22 @@ class PullQuery < Query
     end
   end
 
+  def sql_for_fixed_version_status_field(field, operator, value)
+    where = sql_for_field(field, operator, value, Version.table_name, "status")
+    version_ids = versions(:conditions => [where]).map(&:id)
+
+    nl = operator == "!" ? "#{Pull.table_name}.fixed_version_id IS NULL OR" : ''
+    "(#{nl} #{sql_for_field("fixed_version_id", "=", version_ids, Pull.table_name, "fixed_version_id")})"
+  end
+
+  def sql_for_fixed_version_due_date_field(field, operator, value)
+    where = sql_for_field(field, operator, value, Version.table_name, "effective_date")
+    version_ids = versions(:conditions => [where]).map(&:id)
+
+    nl = operator == "!*" ? "#{Pull.table_name}.fixed_version_id IS NULL OR" : ''
+    "(#{nl} #{sql_for_field("fixed_version_id", "=", version_ids, Pull.table_name, "fixed_version_id")})"
+  end
+
   def sql_for_updated_on_field(field, operator, value)
     case operator
     when "!*"
@@ -230,6 +268,9 @@ class PullQuery < Query
         joins << "LEFT OUTER JOIN #{Journal.table_name} ON #{Journal.table_name}.id = (SELECT MAX(#{Journal.table_name}.id) FROM #{Journal.table_name}" +
           " WHERE #{Journal.table_name}.journalized_type='Pull' AND #{Journal.table_name}.journalized_id=#{Pull.table_name}.id AND #{Journal.visible_notes_condition(User.current, :skip_pre_condition => true)})" +
           " LEFT OUTER JOIN #{User.table_name} last_journal_user ON last_journal_user.id = #{Journal.table_name}.user_id";
+      end
+      if order_options.include?('versions')
+        joins << "LEFT OUTER JOIN #{Version.table_name} ON #{Version.table_name}.id = #{queried_table_name}.fixed_version_id"
       end
       if order_options.include?('issue_categories')
         joins << "LEFT OUTER JOIN #{IssueCategory.table_name} ON #{IssueCategory.table_name}.id = #{queried_table_name}.category_id"

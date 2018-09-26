@@ -5,8 +5,10 @@ class Pull < ActiveRecord::Base
   belongs_to :repository
   belongs_to :author, :class_name => 'User'
   belongs_to :assigned_to, :class_name => 'Principal'
+  belongs_to :fixed_version, :class_name => 'Version'
   belongs_to :priority, :class_name => 'IssuePriority'
   belongs_to :category, :class_name => 'IssueCategory'
+  belongs_to :merge_user, :class_name => 'User'
 
   has_many :journals, :as => :journalized, :dependent => :destroy, :inverse_of => :journalized
   has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all
@@ -52,6 +54,11 @@ class Pull < ActiveRecord::Base
       where(:projects => {:status => Project::STATUS_ACTIVE})
   }
 
+  scope :fixed_version, lambda {|versions|
+    ids = [versions].flatten.compact.map {|v| v.is_a?(Version) ? v.id : v}
+    ids.any? ? where(:fixed_version_id => ids) : none
+  }
+
   scope :assigned_to, lambda {|arg|
     arg = Array(arg).uniq
     ids = arg.map {|p| p.is_a?(Principal) ? p.id : p}
@@ -70,6 +77,74 @@ class Pull < ActiveRecord::Base
   before_save :force_updated_on_change, :update_closed_on, :set_assigned_to_was
   after_save :create_journal
   after_create :send_notification
+
+  state_machine :status, initial: :opened do
+    event :close do
+      transition [:opened] => :closed
+    end
+
+    event :mark_as_merged do
+      transition [:opened, :locked] => :merged
+    end
+
+    event :reopen do
+      transition closed: :opened
+    end
+
+    event :lock do
+      transition [:opened] => :locked
+    end
+
+    event :unlock do
+      transition locked: :opened
+    end
+
+    state :opened
+    state :closed
+    state :merged
+    state :locked
+  end
+
+  state_machine :review_status, initial: :unreviewed do
+    event :mark_as_unreviewed do
+      transition [:requested, :accepted, :concerned] => :unreviewed
+    end
+
+    event :request_review do
+      transition [:unreviewed] => :requested
+    end
+
+    event :request_changes do
+      transition [:unreviewed, :requested, :accepted] => :concerned
+    end
+
+    event :accept_changes do
+      transition [:unreviewed, :requested, :concerned] => :accepted
+    end
+
+    state :unreviewed
+    state :requested
+    state :concerned
+    state :accepted
+  end
+
+  state_machine :merge_status, initial: :unchecked do
+    event :mark_as_unchecked do
+      transition [:unchecked, :can_be_merged, :cannot_be_merged] => :unchecked
+    end
+
+    event :mark_as_mergeable do
+      transition [:unchecked] => :can_be_merged
+    end
+
+    event :mark_as_unmergeable do
+      transition [:unchecked] => :cannot_be_merged
+    end
+
+    state :unchecked
+    state :can_be_merged
+    state :cannot_be_merged
+  end
 
   # Returns true if user or current user is allowed to edit or add notes to the issue
   def editable?(user=User.current)
@@ -115,6 +190,7 @@ class Pull < ActiveRecord::Base
 
   alias :base_reload :reload
   def reload(*args)
+    @assignable_versions = nil
     @last_updated_by = nil
     @last_notes = nil
     base_reload(*args)
@@ -130,6 +206,11 @@ class Pull < ActiveRecord::Base
     write_attribute(:category_id, cid)
   end
 
+  def fixed_version_id=(vid)
+    self.fixed_version = nil
+    write_attribute(:fixed_version_id, vid)
+  end
+
   def repository_id=(cid)
     self.repository = nil
     write_attribute(:repository_id, cid)
@@ -140,6 +221,11 @@ class Pull < ActiveRecord::Base
       self.project = (project_id.present? ? Project.find_by_id(project_id) : nil)
     end
     self.project_id
+  end
+
+  def merge_user_id=(cid)
+    self.merge_user = nil
+    write_attribute(:merge_user_id, cid)
   end
 
   # Sets the project.
@@ -168,7 +254,19 @@ class Pull < ActiveRecord::Base
         self.assigned_to_id = nil
       end
 
+      # Keep the fixed_version if it's still valid in the new_project
+      if fixed_version && fixed_version.project != project && !project.shared_versions.include?(fixed_version)
+        self.fixed_version = nil
+      end
+
       reassign_custom_field_values
+    end
+
+    # Set fixed_version to the project default version if it's valid
+    if new_record? && fixed_version.nil? && project && project.default_version_id?
+      if project.shared_versions.open.exists?(project.default_version_id)
+        self.fixed_version_id = project.default_version_id
+      end
     end
 
     self.project
@@ -208,6 +306,7 @@ class Pull < ActiveRecord::Base
                   'category_id',
                   'assigned_to_id',
                   'priority_id',
+                  'fixed_version_id',
                   'subject',
                   'description',
                   'custom_field_values',
@@ -307,6 +406,25 @@ class Pull < ActiveRecord::Base
       users << assignee
     end
     users.uniq.sort
+  end
+
+  # Versions that the issue can be assigned to
+  def assignable_versions
+    return @assignable_versions if @assignable_versions
+
+    versions = project.shared_versions.open.to_a
+    if fixed_version
+      if fixed_version_id_changed?
+        # nothing to do
+      elsif project_id_changed?
+        if project.shared_versions.include?(fixed_version)
+          versions << fixed_version
+        end
+      else
+        versions << fixed_version
+      end
+    end
+    @assignable_versions = versions.uniq.sort
   end
 
   # Returns the previous assignee (user or group) if changed

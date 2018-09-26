@@ -1,10 +1,10 @@
 <h3><%= l(:label_pulls) %></h3>
 
 <ul class="queries">
-  <li><%= pull_query l(:label_authored), @project, :utf8 => '✓', :set_filter => 1, :f => ['closed_on', 'author_id'], :op => {:closed_on => '!*', :author_id => '='}, :v => {:author_id => ['me']} %></li>
-  <li><%= pull_query l(:label_assigned), @project, :utf8 => '✓', :set_filter => 1, :f => ['closed_on', 'assigned_to_id'], :op => {:closed_on => '!*', :assigned_to_id => '='}, :v => {:assigned_to_id => ['me']} %></li>
-  <li><%= pull_query l(:label_changes_requested), @project, :set_filter => 1 %></li>
-  <li><%= pull_query l(:label_review_requested), @project, :set_filter => 1 %></li>
+  <li><%= pull_query l(:label_authored), @project, :utf8 => '✓', :set_filter => 1, :f => ['status', 'author_id'], :op => {:status => '=', :author_id => '='}, :v => {:status => ['opened'], :author_id => ['me']} %></li>
+  <li><%= pull_query l(:label_assigned), @project, :utf8 => '✓', :set_filter => 1, :f => ['status', 'assigned_to_id'], :op => {:status => '=', :assigned_to_id => '='}, :v => {:status => ['opened'], :assigned_to_id => ['me']} %></li>
+  <li><%= pull_query l(:label_changes_requested), @project, :set_filter => 1, :f => ['status', 'review_status'], :op => {:status => '=', :review_status => '='}, :v => {:status => ['opened'], :review_status => ['concerned']} %></li>
+  <li><%= pull_query l(:label_review_requested), @project, :set_filter => 1, :f => ['status', 'review_status'], :op => {:status => '=', :review_status => '='}, :v => {:status => ['opened'], :review_status => ['reviewed']} %></li>
   <li><%= link_to l(:label_pull_view_all), _project_pulls_path(@project, :set_filter => 1), :class => 'query' %></li>
 </ul>
 

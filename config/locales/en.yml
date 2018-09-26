@@ -20,6 +20,17 @@ en:
   label_no_review_requested: No review requested
   label_changes_approved: Changes approved
   label_add_reviewers: Add reviewers
+  label_status_opened: Opened
+  label_status_closed: Closed
+  label_status_merged: Merged
+  label_status_locked: Locked
+  label_review_status_unreviewed: Unreviewed
+  label_review_status_requested: Review requested
+  label_review_status_concerned: Changes requested
+  label_review_status_accepted: Changes accepted
+  label_merge_status_unchecked: Unchecked
+  label_merge_status_can_be_merged: Can be merged
+  label_merge_status_cannot_be_merged: Cannot be merged
   label_merged_time: "Merged %{value} ago"
   label_closed_time: "Closed %{value} ago"
   label_x_review_requesting_changes:
@@ -32,6 +43,9 @@ en:
     one:   "1 approving review"
     other: "%{count} approving reviews"
   field_between: Between
+  field_status: Status
+  field_review_status: Review status
+  field_merge_status: Merge status
   field_commit_base: Commit base
   field_commit_head: Commit head
   field_merged_on: Merged

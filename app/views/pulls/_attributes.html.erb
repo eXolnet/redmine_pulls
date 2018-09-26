@@ -21,6 +21,19 @@
                       :class => 'icon-only icon-add'
               ) if User.current.allowed_to?(:manage_categories, @pull.project) %></p>
       <% end %>
+
+      <% if @pull.safe_attribute?('fixed_version_id') && @pull.assignable_versions.any? %>
+        <p><%= f.select :fixed_version_id, version_options_for_select(@pull.assignable_versions, @pull.fixed_version), :include_blank => true %>
+          <%= link_to(l(:label_version_new),
+                      new_project_version_path(@pull.project),
+                      :remote => true,
+                      :method => 'get',
+                      :title => l(:label_version_new),
+                      :tabindex => 200,
+                      :class => 'icon-only icon-add'
+              ) if User.current.allowed_to?(:manage_versions, @pull.project) %>
+        </p>
+      <% end %>
     </div>
   </div>
 <% end %>
