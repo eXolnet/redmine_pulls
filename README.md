@@ -40,15 +40,9 @@ This plugin version is compatible only with Redmine 3.3 and later.
 
 Explain how to use your package.
 
-You can start a development server using:
-
-```bash
-bundle exec rails server webrick -e development
-```
-
 ## Testing
 
-To run the phpUnit tests, please use:
+Run tests using the following command:
 
 ```bash
 bundle exec rake redmine:plugins:test NAME=redmine_pulls RAILS_ENV=development
