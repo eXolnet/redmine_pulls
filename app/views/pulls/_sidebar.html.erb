@@ -1,11 +1,11 @@
 <h3><%= l(:label_pulls) %></h3>
 
-<ul>
-  <li><%= link_to l(:label_authored), _project_pulls_path(@project, :utf8 => '✓', :set_filter => 1, :f => ['author_id'], :op => {:author_id => '='}, :v => {:author_id => ['me']}) %></li>
-  <li><%= link_to l(:label_assigned), _project_pulls_path(@project, :utf8 => '✓', :set_filter => 1, :f => ['assigned_to_id'], :op => {:assigned_to_id => '='}, :v => {:assigned_to_id => ['me']}) %></li>
-  <li><%= link_to l(:label_changes_requested), _project_pulls_path(@project, :set_filter => 1) %></li>
-  <li><%= link_to l(:label_review_requested), _project_pulls_path(@project, :set_filter => 1) %></li>
-  <li><%= link_to l(:label_pull_view_all), _project_pulls_path(@project, :set_filter => 1) %></li>
+<ul class="queries">
+  <li><%= pull_query l(:label_authored), @project, :utf8 => '✓', :set_filter => 1, :f => ['closed_on', 'author_id'], :op => {:closed_on => '!*', :author_id => '='}, :v => {:author_id => ['me']} %></li>
+  <li><%= pull_query l(:label_assigned), @project, :utf8 => '✓', :set_filter => 1, :f => ['closed_on', 'assigned_to_id'], :op => {:closed_on => '!*', :assigned_to_id => '='}, :v => {:assigned_to_id => ['me']} %></li>
+  <li><%= pull_query l(:label_changes_requested), @project, :set_filter => 1 %></li>
+  <li><%= pull_query l(:label_review_requested), @project, :set_filter => 1 %></li>
+  <li><%= link_to l(:label_pull_view_all), _project_pulls_path(@project, :set_filter => 1), :class => 'query' %></li>
 </ul>
 
 <%= call_hook(:view_pulls_sidebar_pulls_bottom) %>
