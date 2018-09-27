@@ -1,5 +1,5 @@
 class PullReviewersController < ApplicationController
-  before_action :find_pull
+  before_action :find_project
 
   def new
     @users = users_for_new_reviewer
@@ -47,9 +47,13 @@ class PullReviewersController < ApplicationController
 
   private
 
-  def find_pull
-    @pull = Pull.find(params[:pull_id])
-    @project = @pull.project
+  def find_project
+    if params[:pull_id]
+      @pull = Pull.find(params[:pull_id])
+      @project = @pull.project
+    elsif params[:project_id]
+      @project = Project.visible.find_by_param(params[:project_id])
+    end
   rescue ActiveRecord::RecordNotFound
     render_404
   end
@@ -61,8 +65,13 @@ class PullReviewersController < ApplicationController
     else
       scope = User.all.limit(100)
     end
+
     users = scope.active.visible.sorted.like(params[:q]).to_a
-    users -= @pull.reviewers
+
+    if @pull.present?
+      users -= @pull.reviewers
+    end
+
     users
   end
 end
