@@ -21,7 +21,7 @@ en:
   label_no_review_requested: No review requested
   label_changes_approved: Changes approved
   label_add_reviewers: Add reviewers
-  label_status_opened: Opened
+  label_status_opened: Open
   label_status_closed: Closed
   label_status_merged: Merged
   label_status_locked: Locked
