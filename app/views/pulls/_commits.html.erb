@@ -22,6 +22,8 @@
       <% end %>
       </tbody>
     </table>
+
+    <p><%= l(:label_add_more_commits, :branch => @pull.commit_head).html_safe %></p>
   <% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
   <% end %>

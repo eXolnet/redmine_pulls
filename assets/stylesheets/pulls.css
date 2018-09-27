@@ -18,7 +18,7 @@ span.search_for_reviewers {
   line-height: 2.5em;
 }
 
-.pull.details .author code {
+.pull__branch {
   border-bottom: 1px solid #6d8cb9;
 }
 
@@ -38,7 +38,6 @@ span.search_for_reviewers {
 }
 
 .pulls__merge {
-  border-color: #00BC5B;
   margin-top: 15px;
 }
 

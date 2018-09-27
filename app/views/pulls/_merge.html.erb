@@ -1,13 +1,15 @@
 <%= labelled_form_for pull, :html => {:id => 'pull-merge-form'} do |f| %>
   <% if pull.closable? %>
     <div class="box pulls__merge">
-      <strong><%= pull_review_title(pull) %></strong>
-      <em class="info"><%= pull_review_description(pull) %>.</em>
+      <% if @pull.review_status != 'unreviewed' %>
+        <strong><%= pull_review_title(pull) %></strong>
+        <em class="info"><%= pull_review_description(pull) %>.</em>
 
-      <hr>
+        <hr>
+      <% end %>
 
-      <strong>This branch has no conflicts with the base branch</strong>
-      <em class="info">Merging can be performed automatically.</em>
+      <strong><%= l(("label_merge_" + @pull.merge_status + "_title").to_sym) %></strong>
+      <em class="info"><%= l(("label_merge_" + @pull.merge_status + "_help").to_sym) %></em>
 
       <!--
       <% if pull.mergable? %>
