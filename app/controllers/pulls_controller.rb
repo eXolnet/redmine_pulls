@@ -93,6 +93,13 @@ class PullsController < ApplicationController
     @diff = @repository.diff(nil, @pull.commit_head, @pull.commit_base)
     @diff_type = params[:type] || User.current.pref[:diff_type] || 'inline'
     @diff_type = 'inline' unless %w(inline sbs).include?(@diff_type)
+
+    # Save diff type as user preference
+    if User.current.logged? && @diff_type != User.current.pref[:diff_type]
+      User.current.pref[:diff_type] = @diff_type
+      User.current.preference.save
+    end
+
     @revision_ids = @repository.scm.revisions(nil, @pull.commit_base, @pull.commit_head).collect {|revision| revision.identifier}
     @revisions = @repository.changesets.where(revision: @revision_ids).all
 
