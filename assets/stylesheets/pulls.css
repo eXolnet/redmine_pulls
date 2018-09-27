@@ -18,6 +18,10 @@ span.search_for_reviewers {
   line-height: 2.5em;
 }
 
+.pull.details .author code {
+  border-bottom: 1px solid #6d8cb9;
+}
+
 .pulls__files .line-code {
   width: 48%;
 }

@@ -8,10 +8,14 @@
   </div>
 
   <p class="author">
-    <%= authoring @pull.created_on, @pull.author %>.
-    <% if @pull.created_on != @pull.updated_on %>
-      <%= l(:label_updated_time, time_tag(@pull.updated_on)).html_safe %>.
+    <% if @pull.merged_on %>
+      <%= l(:label_merged_by, :author => link_to_user(@pull.merge_user), :commit_count => @revisions.count, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head).html_safe %>.
+    <% else %>
+      <%= l(:label_merge_request_by, :author => link_to_user(@pull.author), :commit_count => @revisions.count, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head).html_safe %>.
     <% end %>
+
+    <%= l(:label_created_time, time_tag(@pull.created_on)).html_safe %>.
+
     <% if @pull.merged_on %>
       <%= l(:label_merged_time, time_tag(@pull.updated_on)).html_safe %>.
     <% elsif @pull.closed_on %>
@@ -21,8 +25,6 @@
 
   <div class="attributes">
     <%= issue_fields_rows do |rows|
-      rows.left l(:field_between), @pull.commit_between, :class => 'between'
-
       rows.left l(:field_priority), @pull.priority.name, :class => 'priority'
 
       rows.left l(:field_assigned_to), (@pull.assigned_to ? link_to_user(@pull.assigned_to) : "-"), :class => 'assigned-to'

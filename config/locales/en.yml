@@ -32,6 +32,9 @@ en:
   label_merge_status_unchecked: Unchecked
   label_merge_status_can_be_merged: Can be merged
   label_merge_status_cannot_be_merged: Cannot be merged
+  label_merge_request_by: "%{author} wants to merge %{commit_count} commit into <code>%{commit_base}</code> from <code>%{commit_head}</code>"
+  label_merged_by: "%{author} merged %{commit_count} commit into </code>%{commit_base}</code> from <code>%{commit_head}</code>"
+  label_created_time: "Created %{value} ago"
   label_merged_time: "Merged %{value} ago"
   label_closed_time: "Closed %{value} ago"
   label_x_review_requesting_changes:
