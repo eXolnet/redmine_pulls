@@ -25,6 +25,8 @@
 
   <div class="attributes">
     <%= issue_fields_rows do |rows|
+      rows.left l(:field_status), @pull.status_label, :class => 'status'
+
       rows.left l(:field_priority), @pull.priority.name, :class => 'priority'
 
       rows.left l(:field_assigned_to), (@pull.assigned_to ? link_to_user(@pull.assigned_to) : "-"), :class => 'assigned-to'

@@ -359,6 +359,18 @@ class Pull < ActiveRecord::Base
     assign_attributes attrs, :without_protection => true
   end
 
+  def status_label
+    l(("label_status_" + status).to_sym)
+  end
+
+  def review_status_label
+    l(("label_review_status_" + review_status).to_sym)
+  end
+
+  def merge_status_label
+    l(("label_merge_status_" + merge_status).to_sym)
+  end
+
   def init_journal(user, notes = "")
     @current_journal ||= Journal.new(:journalized => self, :user => user, :notes => notes)
   end
