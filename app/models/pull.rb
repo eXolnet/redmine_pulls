@@ -91,25 +91,25 @@ class Pull < ActiveRecord::Base
     end
 
     event :mark_as_merged do
-      transition [:opened, :locked] => :merged
+      transition [:opened] => :merged # , :locked
     end
 
     event :reopen do
       transition closed: :opened
     end
 
-    event :lock do
-      transition [:opened] => :locked
-    end
+    # event :lock do
+    #   transition [:opened] => :locked
+    # end
 
-    event :unlock do
-      transition locked: :opened
-    end
+    # event :unlock do
+    #   transition locked: :opened
+    # end
 
     state :opened
     state :closed
     state :merged
-    state :locked
+    # state :locked
   end
 
   state_machine :review_status, initial: :unreviewed do
