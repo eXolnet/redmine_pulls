@@ -59,6 +59,8 @@ class PullsController < ApplicationController
     end
 
     if @pull.save
+      calculate_pull_review_status(@pull)
+
       respond_to do |format|
         format.html {
           flash[:notice] = l(:notice_pull_successful_create, :id => view_context.link_to("##{@pull.id}", pull_path(@pull), :title => @pull.subject))
@@ -263,6 +265,8 @@ class PullsController < ApplicationController
       review.status = params[:review_status]
       review.save
     end
+
+    calculate_pull_review_status(@pull)
 
     true
   end

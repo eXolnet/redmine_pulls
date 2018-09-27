@@ -1,6 +1,8 @@
 class PullReviewersController < ApplicationController
   before_action :find_project
 
+  include PullsHelper
+
   def new
     @users = users_for_new_reviewer
   end
@@ -19,6 +21,8 @@ class PullReviewersController < ApplicationController
         PullReview.create(:pull => @pull, :reviewer => user, :status => PullReview::STATUS_REQUESTED)
     end
 
+    calculate_pull_review_status(@pull)
+
     respond_to do |format|
       format.html { redirect_to_referer_or {render :html => 'Reviewer added.', :status => 200, :layout => true}}
       format.js { @users = users_for_new_reviewer }
@@ -30,6 +34,8 @@ class PullReviewersController < ApplicationController
     user = User.find(params[:user_id])
 
     @pull.reviews.where(:reviewer_id => user.id).delete_all
+
+    calculate_pull_review_status(@pull)
 
     respond_to do |format|
       format.html { redirect_to_referer_or {render :html => 'Reviewer removed.', :status => 200, :layout => true} }

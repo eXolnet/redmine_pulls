@@ -117,15 +117,15 @@ class Pull < ActiveRecord::Base
       transition [:requested, :approved, :concerned] => :unreviewed
     end
 
-    event :request_review do
+    event :mark_as_review_requested do
       transition [:unreviewed] => :requested
     end
 
-    event :request_changes do
+    event :mark_as_changes_concerned do
       transition [:unreviewed, :requested, :approved] => :concerned
     end
 
-    event :accept_changes do
+    event :mark_as_changes_approved do
       transition [:unreviewed, :requested, :concerned] => :approved
     end
 

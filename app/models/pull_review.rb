@@ -3,7 +3,7 @@ class PullReview < ActiveRecord::Base
 
   STATUS_REQUESTED = 'requested'
   STATUS_APPROVED = 'approved'
-  STATUS_CHANGES_REQUESTED = 'changes_requested'
+  STATUS_CONCERNED = 'concerned'
 
   belongs_to :pull
   belongs_to :reviewer, :class_name => 'User'

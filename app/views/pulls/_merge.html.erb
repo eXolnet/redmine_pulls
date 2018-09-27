@@ -2,7 +2,7 @@
   <% if pull.closable? %>
     <div class="box pulls__merge">
       <% if @pull.review_status != 'unreviewed' %>
-        <strong><%= pull_review_title(pull) %></strong>
+        <strong><%= l(("label_review_" + @pull.review_status + "_title").to_sym) %></strong>
         <em class="info"><%= pull_review_description(pull) %>.</em>
 
         <hr>

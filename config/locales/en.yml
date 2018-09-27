@@ -16,10 +16,10 @@ en:
   label_search_for_reviewers: Search for reviewers
   label_authored: Authored
   label_assigned: Assigned
-  label_changes_requested: Changes requested
-  label_review_requested: Review requested
-  label_no_review_requested: No review requested
-  label_changes_approved: Changes approved
+  label_review_concerned_title: Changes requested
+  label_review_requested_title: Review requested
+  label_review_unreviewed_title: No review requested
+  label_review_approved_title: Changes approved
   label_add_reviewers: Add reviewers
   label_no_conversation_yet: No conversation about this pull request yet!
   label_status_opened: Open

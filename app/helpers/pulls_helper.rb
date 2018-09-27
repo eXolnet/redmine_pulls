@@ -40,7 +40,7 @@ module PullsHelper
   end
 
   def pull_review_title(pull)
-    changes_count = pull.reviews.where(:status => PullReview::STATUS_CHANGES_REQUESTED).count
+    changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
     pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
     approved_count = pull.reviews.where(:status => PullReview::STATUS_APPROVED).count
 
@@ -56,7 +56,7 @@ module PullsHelper
   end
 
   def pull_review_description(pull)
-    changes_count = pull.reviews.where(:status => PullReview::STATUS_CHANGES_REQUESTED).count
+    changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
     approved_count = pull.reviews.where(:status => PullReview::STATUS_APPROVED).count
     pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
 
@@ -88,6 +88,22 @@ module PullsHelper
     end
 
     link_to body, _project_pulls_path(project, query), :class => classes
+  end
+
+  def calculate_pull_review_status(pull)
+    changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
+    pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
+    approved_count = pull.reviews.where(:status => PullReview::STATUS_APPROVED).count
+
+    if changes_count > 0
+      pull.mark_as_changes_concerned
+    elsif pending_count > 0
+      pull.mark_as_review_requested
+    elsif approved_count > 0
+      pull.mark_as_changes_approved
+    else
+      pull.mark_as_unreviewed
+    end
   end
 
   def calculate_pull_merge_status(pull)
