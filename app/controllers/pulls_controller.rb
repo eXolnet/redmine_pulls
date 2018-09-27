@@ -16,6 +16,7 @@ class PullsController < ApplicationController
   helper :watchers
   helper :queries
   include QueriesHelper
+  include PullsHelper
   helper :repositories
   helper :pull_reviewers
 
@@ -107,6 +108,10 @@ class PullsController < ApplicationController
 
     @revision_ids = @repository.scm.revisions(nil, @pull.commit_base, @pull.commit_head).collect {|revision| revision.identifier}
     @revisions = @repository.changesets.where(revision: @revision_ids).all
+
+    if @pull.merge_status == 'unchecked'
+      calculate_pull_merge_status(@pull)
+    end
 
     respond_to do |format|
       format.html {

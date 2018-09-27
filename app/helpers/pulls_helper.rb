@@ -89,4 +89,12 @@ module PullsHelper
 
     link_to body, _project_pulls_path(project, query), :class => classes
   end
+
+  def calculate_pull_merge_status(pull)
+    if pull.repository.scm.mergable(pull.commit_base, pull.commit_head)
+      pull.mark_as_mergeable
+    else
+      pull.mark_as_unmergeable
+    end
+  end
 end
