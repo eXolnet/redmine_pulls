@@ -1,8 +1,6 @@
 class PullReviewersController < ApplicationController
   before_action :find_pull
 
-  helper RedminePulls::Helpers
-
   def new
     @users = users_for_new_reviewer
   end

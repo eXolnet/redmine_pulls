@@ -7,6 +7,17 @@ table.pulls td.last_notes {
   white-space: normal;
 }
 
+span#reviewers_inputs {
+  overflow: auto;
+  display: block;
+}
+
+span.search_for_reviewers {
+  display: block;
+  font-size: 80%;
+  line-height: 2.5em;
+}
+
 .pulls__files .line-code {
   width: 48%;
 }

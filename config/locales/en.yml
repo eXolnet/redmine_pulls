@@ -13,6 +13,7 @@ en:
   label_review_summary: Review summary
   label_leave_comment: Leave a comment
   label_reviewers: Reviewers
+  label_search_for_reviewers: Search for reviewers
   label_authored: Authored
   label_assigned: Assigned
   label_changes_requested: Changes requested
@@ -27,7 +28,7 @@ en:
   label_review_status_unreviewed: Unreviewed
   label_review_status_requested: Review requested
   label_review_status_concerned: Changes requested
-  label_review_status_accepted: Changes accepted
+  label_review_status_approved: Changes approved
   label_merge_status_unchecked: Unchecked
   label_merge_status_can_be_merged: Can be merged
   label_merge_status_cannot_be_merged: Cannot be merged

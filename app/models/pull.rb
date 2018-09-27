@@ -14,6 +14,8 @@ class Pull < ActiveRecord::Base
   has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all
   has_many :reviewers, :through => :reviews, :source => :reviewer, :validate => false
 
+  attr_protected :review_ids, :reviewer_ids
+
   acts_as_customizable
   acts_as_watchable
   acts_as_searchable :columns => ['subject', "#{table_name}.description"],
@@ -74,6 +76,11 @@ class Pull < ActiveRecord::Base
     end
   }
 
+  scope :reviewed_by, lambda { |user_id|
+    joins(:reviewers).
+      where("#{PullReview.table_name}.reviewer_id = ?", user_id)
+  }
+
   before_save :force_updated_on_change, :update_closed_on, :set_assigned_to_was
   after_save :create_journal
   after_create :send_notification
@@ -107,7 +114,7 @@ class Pull < ActiveRecord::Base
 
   state_machine :review_status, initial: :unreviewed do
     event :mark_as_unreviewed do
-      transition [:requested, :accepted, :concerned] => :unreviewed
+      transition [:requested, :approved, :concerned] => :unreviewed
     end
 
     event :request_review do
@@ -115,17 +122,17 @@ class Pull < ActiveRecord::Base
     end
 
     event :request_changes do
-      transition [:unreviewed, :requested, :accepted] => :concerned
+      transition [:unreviewed, :requested, :approved] => :concerned
     end
 
     event :accept_changes do
-      transition [:unreviewed, :requested, :concerned] => :accepted
+      transition [:unreviewed, :requested, :concerned] => :approved
     end
 
     state :unreviewed
     state :requested
     state :concerned
-    state :accepted
+    state :approved
   end
 
   state_machine :merge_status, initial: :unchecked do
@@ -311,18 +318,19 @@ class Pull < ActiveRecord::Base
                   'description',
                   'custom_field_values',
                   'notes',
-                  :if => lambda {|issue, user| issue.new_record? || issue.attributes_editable?(user) }
+                  :if => lambda {|pull, user| pull.new_record? || pull.attributes_editable?(user) }
 
   safe_attributes 'repository_id',
                   'commit_base',
                   'commit_head',
+                  'reviewer_ids',
                   :if => lambda {|pull, user| pull.new_record? }
 
   safe_attributes 'notes',
-                  :if => lambda {|issue, user| issue.notes_addable?(user)}
+                  :if => lambda {|pull, user| pull.notes_addable?(user)}
 
   safe_attributes 'private_notes',
-                  :if => lambda {|issue, user| !issue.new_record? && user.allowed_to?(:set_notes_private, issue.project)}
+                  :if => lambda {|pull, user| !pull.new_record? && user.allowed_to?(:set_notes_private, pull.project)}
 
   safe_attributes 'watcher_user_ids',
                   :if => lambda {|pull, user| pull.new_record? && user.allowed_to?(:add_pull_watchers, pull.project)}
@@ -582,6 +590,14 @@ class Pull < ActiveRecord::Base
 
     review
   end
+
+  # Overrides reviewer_ids= to make user_ids uniq
+  #def reviewer_ids=(user_ids)
+  #  if user_ids.is_a?(Array)
+  #    user_ids = user_ids.uniq
+  #  end
+  #  super user_ids
+  #end
 
   private
 

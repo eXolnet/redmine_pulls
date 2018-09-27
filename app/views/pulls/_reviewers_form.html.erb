@@ -1,0 +1,15 @@
+<% if @pull.safe_attribute? 'reviewer_ids' -%>
+  <%= hidden_field_tag 'pull[reviewer_ids][]', '' %>
+  <p id="reviewers_form"><label><%= l(:label_reviewers) %></label>
+    <span id="reviewers_inputs">
+    <%= pull_reviewers_checkboxes(@pull, users_for_new_pull_reviewers(@pull)) %>
+  </span>
+    <span class="search_for_reviewers">
+  <%= link_to l(:label_search_for_reviewers),
+              {:controller => 'pull_reviewers', :action => 'new', :project_id => @pull.project},
+              :class => 'icon icon-add-bullet',
+              :remote => true,
+              :method => 'get' %>
+  </span>
+  </p>
+<% end %>

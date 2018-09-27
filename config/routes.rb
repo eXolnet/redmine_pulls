@@ -10,6 +10,9 @@ resources :projects do
   resources :pulls, :only => [:index, :new, :create]
 end
 
+get '/pulls/reviewers/new', :to => 'pull_reviewers#new', :as => 'new_pull_reviewer'
+post '/pulls/reviewers', :to => 'pull_reviewers#create'
+
 resources :pulls, :except => [:new, :create] do
   get 'reviewers/autocomplete_for_user', :to => 'pull_reviewers#autocomplete_for_user'
   resources :reviewers, :controller => 'pull_reviewers', :only => [:new, :create]
