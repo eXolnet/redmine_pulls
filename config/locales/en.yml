@@ -21,6 +21,7 @@ en:
   label_no_review_requested: No review requested
   label_changes_approved: Changes approved
   label_add_reviewers: Add reviewers
+  label_no_conversation_yet: No conversation about this pull request yet!
   label_status_opened: Open
   label_status_closed: Closed
   label_status_merged: Merged
