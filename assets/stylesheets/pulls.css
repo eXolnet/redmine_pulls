@@ -97,3 +97,8 @@ a.pull__commit:hover {
 .new-pull-commit input[type=text] {
   width: 100%;
 }
+
+.new-pull-commit ul {
+  list-style: none;
+  padding: 0;
+}
