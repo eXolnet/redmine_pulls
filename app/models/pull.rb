@@ -166,9 +166,8 @@ class Pull < ActiveRecord::Base
     closable?(user)
   end
 
-  # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
   def mergable?(user=User.current)
-    closable?(user)
+    closable?(user) && merge_status == 'can_be_merged'
   end
 
   # Returns true if user or current user is allowed to edit the issue

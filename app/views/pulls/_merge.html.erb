@@ -11,7 +11,6 @@
       <strong><%= l(("label_merge_" + @pull.merge_status + "_title").to_sym) %></strong>
       <em class="info"><%= l(("label_merge_" + @pull.merge_status + "_help").to_sym) %></em>
 
-      <!--
       <% if pull.mergable? %>
         <hr>
 
@@ -33,7 +32,6 @@
     git push origin master</pre>
         </div>
       <% end %>
-      -->
     </div>
   <% end %>
 

@@ -12,6 +12,7 @@ module RedminePulls
       end
 
       module InstanceMethods
+        # # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
         def mergable(commit_base, commit_head)
           cmd_args = %w|merge-base|
           cmd_args << commit_base
