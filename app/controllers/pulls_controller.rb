@@ -241,7 +241,8 @@ class PullsController < ApplicationController
     @priorities = IssuePriority.active
 
     if params[:merge]
-      @pull.merged_on = Time.now
+      @pull.merged_on  = Time.now
+      @pull.merge_user = User.current
     elsif params[:close]
       @pull.closed_on = Time.now
     end
