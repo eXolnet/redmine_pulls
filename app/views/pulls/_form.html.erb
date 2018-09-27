@@ -2,13 +2,13 @@
   <% if @pull.safe_attribute?('commit_base') && @pull.safe_attribute?('commit_head') %>
     <p>
       <%= f.label_for_field :between, :required => true %>
-      <a href="<%= commit_new_pull_path(:project_id => @pull.project, :kind => 'base') %>" data-remote="true" data-method="get" class="pull__commit">base: <strong id="pull-commit-label-base">master</strong></a>
+      <a href="<%= commit_new_pull_path(:project_id => @pull.project, :kind => 'base') %>" data-remote="true" data-method="get" class="pull__commit">base: <strong id="pull-commit-label-base"><%= @pull.commit_base %></strong></a>
       ..
-      <a href="<%= commit_new_pull_path(:project_id => @pull.project, :kind => 'head') %>" data-remote="true" data-method="get" class="pull__commit">compare: <strong id="pull-commit-label-head">master</strong></a>
+      <a href="<%= commit_new_pull_path(:project_id => @pull.project, :kind => 'head') %>" data-remote="true" data-method="get" class="pull__commit">compare: <strong id="pull-commit-label-head"><%= @pull.commit_head %></strong></a>
       <em class="info">Compare changes across branches, commits, tags and more.</em>
 
-      <%= f.hidden_field :commit_base, :value => 'master', :id => 'pull-commit-input-base' %>
-      <%= f.hidden_field :commit_head, :value => 'master', :id => 'pull-commit-input-head' %>
+      <%= f.hidden_field :commit_base, :value => @pull.commit_base, :id => 'pull-commit-input-base' %>
+      <%= f.hidden_field :commit_head, :value => @pull.commit_head, :id => 'pull-commit-input-head' %>
     </p>
   <% end %>
 

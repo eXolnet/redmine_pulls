@@ -43,6 +43,11 @@ class PullsController < ApplicationController
   def new
     @pull = Pull.new
     @pull.project = @project
+    @pull.repository = @project.repository
+
+    default_branch = @pull.repository.scm.default_branch
+    @pull.commit_base = default_branch
+    @pull.commit_head = default_branch
 
     @priorities = IssuePriority.active
   end
