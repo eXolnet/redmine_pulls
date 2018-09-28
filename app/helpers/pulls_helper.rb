@@ -113,4 +113,11 @@ module PullsHelper
       pull.mark_as_unmergeable
     end
   end
+
+  def merge_pull(pull)
+    return unless pull.mergable?
+
+    pull.merged_on  = Time.now
+    pull.merge_user = User.current
+  end
 end
