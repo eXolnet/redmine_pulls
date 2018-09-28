@@ -106,8 +106,8 @@ module PullsHelper
   def refresh_pull_state(pull)
     return if pull.closed? || pull.revisions.count == 0
 
-    pull.commit_base_revision = pull.revisions.first.revision
-    pull.commit_head_revision = pull.revisions.last.revision
+    pull.commit_base_revision = pull.repository.scm.merge_base(pull.commit_base, pull.commit_head)
+    pull.commit_head_revision = pull.revisions_ids.first
 
     if pull.merge_status == 'unchecked'
       calculate_pull_merge_status(pull)
@@ -131,10 +131,12 @@ module PullsHelper
   end
 
   def calculate_pull_merge_status(pull)
-    if pull.repository.scm.mergable(pull.commit_base, pull.commit_head)
+    if ! pull.is_commit_base_a_branch? || ! pull.commit_base_revision
+      pull.mark_as_unmergeable
+    elsif pull.repository.scm.mergable(pull.commit_base, pull.commit_head)
       pull.mark_as_mergeable
     else
-      pull.mark_as_unmergeable
+      pull.mark_as_conflicts
     end
   end
 

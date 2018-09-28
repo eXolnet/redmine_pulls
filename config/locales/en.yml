@@ -36,6 +36,7 @@ en:
   label_merge_status_unchecked: Unchecked
   label_merge_status_can_be_merged: Can be merged
   label_merge_status_cannot_be_merged: Cannot be merged
+  label_merge_status_conflicts_detected: Conflicts detected
   label_merge_request_by: "%{author} wants to merge %{commit_count} commit into <code class='pull__branch'>%{commit_base}</code> from <code class='pull__branch'>%{commit_head}</code>"
   label_merged_by: "%{author} merged %{commit_count} commit into <code class='pull__branch'>%{commit_base}</code> from <code class='pull__branch'>%{commit_head}</code>"
   label_created_time: "Created %{value} ago"
@@ -54,8 +55,10 @@ en:
   label_merge_unchecked_help: Hang in there while we check the branch's status.
   label_merge_can_be_merged_title: This branch has no conflicts with the base branch
   label_merge_can_be_merged_help: Merging can be performed automatically.
-  label_merge_cannot_be_merged_title: This branch has conflicts that must be resolved
-  label_merge_cannot_be_merged_help: To merge the branch automatically, please resolve them.
+  label_merge_cannot_be_merged_title: This pull request cannot be merged
+  label_merge_cannot_be_merged_help: You can still use it to review the code.
+  label_merge_conflicts_detected_title: This branch has conflicts that must be resolved
+  label_merge_conflicts_detected_help: To merge the branch automatically, please resolve them.
   label_merge_merged_title: Pull request successfully merged and closed
   label_merge_merged_help: "You’re all set — the <code class='pull__branch'>%{branch}</code> branch can be safely deleted."
   label_merge_closed_title: Closed with unmerged commits

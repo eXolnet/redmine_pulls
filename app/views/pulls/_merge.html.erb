@@ -7,15 +7,15 @@
       <hr>
     <% end %>
 
-    <% if pull.mergable? %>
-      <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
-      <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
-    <% elsif pull.merged? %>
+    <% if pull.merged? %>
       <strong><%= l(("label_merge_merged_title").to_sym) %></strong>
       <em class="info"><%= l(:label_merge_merged_help, :branch => pull.commit_head).html_safe %></em>
-    <% else %>
+    <% elsif pull.closed? %>
       <strong><%= l(("label_merge_closed_title").to_sym) %></strong>
       <em class="info"><%= l(:label_merge_closed_help, :branch => pull.commit_head).html_safe %></em>
+    <% else %>
+      <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
+      <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
     <% end %>
 
     <% if pull.mergable? %>

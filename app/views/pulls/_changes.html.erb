@@ -1,5 +1,5 @@
 <div class="pulls__changes" id="changes">
-  <% if @pull.revisions.count > 0 %>
+  <% if @pull.revisions_count > 0 %>
     <%= form_tag({:action => 'show', :id => @pull}, :method => 'get') do %>
       <%= hidden_field_tag 'tab', 'changes' %>
       <p>

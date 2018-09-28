@@ -9,9 +9,9 @@
 
   <p class="author">
     <% if @pull.merged_on %>
-      <%= l(:label_merged_by, :author => link_to_user(@pull.merge_user), :commit_count => @pull.revisions.count, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head).html_safe %>.
+      <%= l(:label_merged_by, :author => link_to_user(@pull.merge_user), :commit_count => @pull.revisions_count, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head).html_safe %>.
     <% else %>
-      <%= l(:label_merge_request_by, :author => link_to_user(@pull.author), :commit_count => @pull.revisions.count, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head).html_safe %>.
+      <%= l(:label_merge_request_by, :author => link_to_user(@pull.author), :commit_count => @pull.revisions_count, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head).html_safe %>.
     <% end %>
 
     <%= l(:label_created_time, time_tag(@pull.created_on)).html_safe %>.

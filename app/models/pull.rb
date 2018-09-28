@@ -144,7 +144,11 @@ class Pull < ActiveRecord::Base
 
   state_machine :merge_status, initial: :unchecked do
     event :mark_as_unchecked do
-      transition [:unchecked, :can_be_merged, :cannot_be_merged] => :unchecked
+      transition [:unchecked, :conflicts_detected, :can_be_merged, :cannot_be_merged] => :unchecked
+    end
+
+    event :mark_as_conflicts do
+      transition [:unchecked] => :conflicts_detected
     end
 
     event :mark_as_mergeable do
@@ -156,6 +160,7 @@ class Pull < ActiveRecord::Base
     end
 
     state :unchecked
+    state :conflicts_detected
     state :can_be_merged
     state :cannot_be_merged
   end
@@ -614,6 +619,14 @@ class Pull < ActiveRecord::Base
     commit_base + ".." + commit_head
   end
 
+  def is_commit_base_a_branch?
+    repository.branches.include? commit_base
+  end
+
+  def is_commit_head_a_branch?
+    repository.branches.include? commit_head
+  end
+
   def diff
     @diff ||= repository.diff(nil, commit_head, commit_base)
   end
@@ -624,6 +637,10 @@ class Pull < ActiveRecord::Base
 
   def revisions
     @revisions ||= repository.changesets.where(revision: revisions_ids).all
+  end
+
+  def revisions_count
+    revisions.count
   end
 
   # Returns a string of css classes that apply to the issue
