@@ -308,8 +308,7 @@ class Pull < ActiveRecord::Base
     assign_attributes new_attributes
   end
 
-  safe_attributes 'project_id',
-                  'category_id',
+  safe_attributes 'category_id',
                   'assigned_to_id',
                   'priority_id',
                   'fixed_version_id',
@@ -319,7 +318,8 @@ class Pull < ActiveRecord::Base
                   'notes',
                   :if => lambda {|pull, user| pull.new_record? || pull.attributes_editable?(user) }
 
-  safe_attributes 'repository_id',
+  safe_attributes 'project_id',
+                  'repository_id',
                   'commit_base',
                   'commit_head',
                   'reviewer_ids',
@@ -386,7 +386,7 @@ class Pull < ActiveRecord::Base
 
   # Returns the names of attributes that are journalized when updating the issue
   def journalized_attribute_names
-    Pull.column_names - %w(id status review_status merge_status created_on updated_on merged_on closed_on)
+    Pull.column_names - %w(id status review_status merge_status merge_user_id created_on updated_on merged_on closed_on)
   end
 
   # Returns the id of the last journal or nil
@@ -439,6 +439,10 @@ class Pull < ActiveRecord::Base
     else
       closed_on_changed? && closed?
     end
+  end
+
+  def merged?
+    merged_on.present?
   end
 
   # Users the pull request can be assigned to
