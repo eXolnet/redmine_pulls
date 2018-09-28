@@ -12,6 +12,10 @@ module RedminePulls
       end
 
       module InstanceMethods
+        def merge_base(commit_base, commit_head)
+          nil
+        end
+
         def mergable(commit_base, commit_head)
           false
         end
