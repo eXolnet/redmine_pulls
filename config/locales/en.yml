@@ -16,6 +16,7 @@ en:
   label_search_for_reviewers: Search for reviewers
   label_authored: Authored
   label_assigned: Assigned
+  label_merged: Merged
   label_changes_requested: Changes requested
   label_review_requested: Review requested
   label_review_concerned_title: Changes requested
