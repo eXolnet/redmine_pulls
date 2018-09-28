@@ -58,6 +58,8 @@
   <% end -%>
 </div>
 
+<%= render :partial => 'pulls/merge', :locals => {:pull => @pull} %>
+
 <div class="pull__tabs">
   <%= render_tabs pull_tabs %>
 </div>

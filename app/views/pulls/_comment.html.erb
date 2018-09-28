@@ -1,0 +1,10 @@
+<%= labelled_form_for pull, :html => {:id => 'pull-comment-form'} do |f| %>
+  <div id="update">
+    <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'issue_notes' %>
+    <%= wikitoolbar_for 'issue_notes' %>
+  </div>
+
+  <%= submit_tag l(:button_comment) %>
+  <%= submit_tag l(:button_close_pull_request), :name => 'close' if pull.closable? %>
+  <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' if pull.closed? && ! pull.merged? %>
+<% end %>
