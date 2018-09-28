@@ -55,6 +55,10 @@ en:
   label_merge_can_be_merged_help: Merging can be performed automatically.
   label_merge_cannot_be_merged_title: This branch has conflicts that must be resolved
   label_merge_cannot_be_merged_help: To merge the branch automatically, please resolve them.
+  label_merge_merged_title: Pull request successfully merged and closed
+  label_merge_merged_help: "You’re all set — the <code class='pull__branch'>%{branch}</code> branch can be safely deleted."
+  label_merge_closed_title: Closed with unmerged commits
+  label_merge_closed_help: "This pull request is closed, but the <code class='pull__branch'>%{branch}</code> branch has unmerged commits."
   label_add_more_commits: "Add more commits by pushing to the <code class='pull__branch'>%{branch}</code> branch."
   field_between: Between
   field_status: Status
@@ -76,6 +80,7 @@ en:
   button_merge_pull_request: Merge pull request
   button_comment: Comment
   button_close_pull_request: Close pull request
+  button_reopen_pull_request: Reopen pull request
   notice_pull_successful_create: "Pull request successfully created."
   notice_pull_successful_delete: "Pull request successfully deleted."
   notice_pull_update_conflict: The pull request has been updated by an other user while you were editing it.

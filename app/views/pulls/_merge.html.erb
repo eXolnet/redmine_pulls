@@ -1,39 +1,45 @@
 <%= labelled_form_for pull, :html => {:id => 'pull-merge-form'} do |f| %>
-  <% if pull.closable? %>
-    <div class="box pulls__merge">
-      <% if @pull.review_status != 'unreviewed' %>
-        <strong><%= l(("label_review_" + @pull.review_status + "_title").to_sym) %></strong>
-        <em class="info"><%= pull_review_description(pull) %>.</em>
+  <div class="box pulls__merge">
+    <% if ! pull.closed? && pull.review_status != 'unreviewed' %>
+      <strong><%= l(("label_review_" + pull.review_status + "_title").to_sym) %></strong>
+      <em class="info"><%= pull_review_description(pull) %>.</em>
 
-        <hr>
-      <% end %>
+      <hr>
+    <% end %>
 
-      <strong><%= l(("label_merge_" + @pull.merge_status + "_title").to_sym) %></strong>
-      <em class="info"><%= l(("label_merge_" + @pull.merge_status + "_help").to_sym) %></em>
+    <% if pull.mergable? %>
+      <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
+      <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
+    <% elsif pull.merged? %>
+      <strong><%= l(("label_merge_merged_title").to_sym) %></strong>
+      <em class="info"><%= l(:label_merge_merged_help, :branch => pull.commit_head).html_safe %></em>
+    <% else %>
+      <strong><%= l(("label_merge_closed_title").to_sym) %></strong>
+      <em class="info"><%= l(:label_merge_closed_help, :branch => pull.commit_head).html_safe %></em>
+    <% end %>
 
-      <% if pull.mergable? %>
-        <hr>
+    <% if pull.mergable? %>
+      <hr>
 
-        <%= submit_tag l(:button_merge_pull_request), :name => 'merge', :disabled => true %>
-        <em class="info">or view <a href="#">command line instructions</a>.</em>
+      <%= submit_tag l(:button_merge_pull_request), :name => 'merge', :disabled => true %>
+      <em class="info">or view <a href="#">command line instructions</a>.</em>
 
-        <div id="pull-merge-instructions" style="display: none;">
-          <h4>Merging via command line</h4>
-          <p>If you do not want to use the merge button or an automatic merge cannot be performed, you can perform a manual merge on the command line.</p>
+      <div id="pull-merge-instructions" style="display: none;">
+        <h4>Merging via command line</h4>
+        <p>If you do not want to use the merge button or an automatic merge cannot be performed, you can perform a manual merge on the command line.</p>
 
-          <h5>Step 1: From your project repository, bring in the changes and test.</h5>
-          <pre>git fetch origin
-    git checkout -b <%= pull.commit_head %> origin/<%= pull.commit_head %>
-    git merge master</pre>
+        <h5>Step 1: From your project repository, bring in the changes and test.</h5>
+        <pre>git fetch origin
+  git checkout -b <%= pull.commit_head %> origin/<%= pull.commit_head %>
+  git merge master</pre>
 
-          <h5>Step 2: Merge the changes and update on GitHub.</h5>
-          <pre>git checkout <%= pull.commit_base %>
-    git merge --no-ff <%= pull.commit_head %>
-    git push origin master</pre>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+        <h5>Step 2: Merge the changes and update on GitHub.</h5>
+        <pre>git checkout <%= pull.commit_base %>
+  git merge --no-ff <%= pull.commit_head %>
+  git push origin master</pre>
+      </div>
+    <% end %>
+  </div>
 
   <div id="update">
     <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'issue_notes' %>
@@ -42,4 +48,5 @@
 
   <%= submit_tag l(:button_comment) %>
   <%= submit_tag l(:button_close_pull_request), :name => 'close' if pull.closable? %>
+  <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' if pull.closed? && ! pull.merged? %>
 <% end %>
