@@ -252,8 +252,6 @@ class PullsController < ApplicationController
       review.save
     end
 
-    calculate_pull_review_status(@pull)
-
     true
   end
 
