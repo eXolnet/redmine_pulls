@@ -1,7 +1,7 @@
-<div class="pulls__files" id="files">
+<div class="pulls__changes" id="changes">
   <% if @revisions.count > 0 %>
     <%= form_tag({:action => 'show', :id => @pull}, :method => 'get') do %>
-      <%= hidden_field_tag 'tab', 'files' %>
+      <%= hidden_field_tag 'tab', 'changes' %>
       <p>
         <%= l(:label_view_diff) %>:
         <label><%= radio_button_tag 'type', 'inline', @diff_type != 'sbs', :onchange => "this.form.submit()" %> <%= l(:label_diff_inline) %></label>

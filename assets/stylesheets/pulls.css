@@ -22,7 +22,7 @@ span.search_for_reviewers {
   border-bottom: 1px solid #6d8cb9;
 }
 
-.pulls__files .line-code {
+.pulls__changes .line-code {
   width: 48%;
 }
 

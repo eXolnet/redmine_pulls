@@ -1,10 +1,10 @@
 var pullToggleSidebarDisplay = function () {
   var main = document.getElementById('main'),
-    files  = document.getElementById('tab-content-files');
+    changes  = document.getElementById('tab-content-changes');
 
-  var isTabContentFiles = files.style.display !== 'none';
+  var isTabContentChanges = changes.style.display !== 'none';
 
-  main.classList.toggle('nosidebar', isTabContentFiles);
+  main.classList.toggle('nosidebar', isTabContentChanges);
 };
 
 $(document).ready(function() {

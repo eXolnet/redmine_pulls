@@ -73,7 +73,7 @@ module PullsHelper
     tabs = [
       {:name => 'conversation', :partial => 'pulls/conversation', :label => :label_conversation},
       {:name => 'commits', :partial => 'pulls/commits', :label => :label_commits},
-      {:name => 'files', :partial => 'pulls/files', :label => :label_files},
+      {:name => 'changes', :partial => 'pulls/changes', :label => :label_changes},
     ]
   end
 

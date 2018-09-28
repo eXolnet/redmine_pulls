@@ -8,7 +8,7 @@ en:
   label_pull_view_all: View all pull requests
   label_conversation: Conversation
   label_commits: Commits
-  label_files: Files changed
+  label_changes: Changes
   label_review_changes: Review changes
   label_review_summary: Review summary
   label_leave_comment: Leave a comment
