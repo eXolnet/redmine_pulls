@@ -90,30 +90,15 @@ class PullsController < ApplicationController
   end
 
   def show
+    refresh_pull_state(@pull)
+
     @journals = @pull.visible_journals_with_index
 
     if User.current.wants_comments_in_reverse_order?
       @journals.reverse!
     end
 
-    # Prepare diff
-    @repository = @pull.repository
-    @diff = @repository.diff(nil, @pull.commit_head, @pull.commit_base)
-    @diff_type = params[:type] || User.current.pref[:diff_type] || 'inline'
-    @diff_type = 'inline' unless %w(inline sbs).include?(@diff_type)
-
-    # Save diff type as user preference
-    if User.current.logged? && @diff_type != User.current.pref[:diff_type]
-      User.current.pref[:diff_type] = @diff_type
-      User.current.preference.save
-    end
-
-    @revision_ids = @repository.scm.revisions(nil, @pull.commit_base, @pull.commit_head).collect {|revision| revision.identifier}
-    @revisions = @repository.changesets.where(revision: @revision_ids).all
-
-    if @pull.merge_status == 'unchecked'
-      calculate_pull_merge_status(@pull)
-    end
+    @diff_type = get_pull_diff_type
 
     respond_to do |format|
       format.html {

@@ -1,5 +1,5 @@
 <div id="commits">
-  <% if @revisions.count > 0 %>
+  <% if @pull.revisions.count > 0 %>
     <table class="list changesets">
       <thead><tr>
         <th>#</th>
@@ -9,10 +9,10 @@
       </tr></thead>
       <tbody>
       <% line_num = 1 %>
-      <% @revisions.each do |changeset| %>
+      <% @pull.revisions.each do |changeset| %>
         <tr class="changeset">
           <%= content_tag(:td, :class => 'id') do %>
-            <%= link_to_revision(changeset, @repository) %>
+            <%= link_to_revision(changeset, @pull.repository) %>
           <% end %>
           <td class="committed_on"><%= format_time(changeset.committed_on) %></td>
           <td class="author"><%= changeset.user.blank? ? changeset.author.to_s.truncate(30) : link_to_user(changeset.user) %></td>

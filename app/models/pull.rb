@@ -206,6 +206,9 @@ class Pull < ActiveRecord::Base
     @assignable_versions = nil
     @last_updated_by = nil
     @last_notes = nil
+    @diff = nil
+    @revision_ids = nil
+    @revisions = nil
     base_reload(*args)
   end
 
@@ -295,6 +298,30 @@ class Pull < ActiveRecord::Base
   def merged_on=(arg)
     write_attribute(:merged_on, arg)
     write_attribute(:closed_on, arg)
+  end
+
+  def commit_base_revision=(arg)
+    write_attribute(:commit_base_revision, arg)
+
+    if commit_base_revision_changed?
+      @diff = nil
+      @revision_ids = nil
+      @revisions = nil
+
+      mark_as_unchecked
+    end
+  end
+
+  def commit_head_revision=(arg)
+    write_attribute(:commit_head_revision, arg)
+
+    if commit_head_revision_changed?
+      @diff = nil
+      @revision_ids = nil
+      @revisions = nil
+
+      mark_as_unchecked
+    end
   end
 
   # Overrides assign_attributes so that project get assigned first
@@ -585,6 +612,18 @@ class Pull < ActiveRecord::Base
 
   def commit_between
     commit_base + ".." + commit_head
+  end
+
+  def diff
+    @diff ||= repository.diff(nil, commit_head, commit_base)
+  end
+
+  def revisions_ids
+    @revisions_ids ||= repository.scm.revisions(nil, commit_base, commit_head).collect {|revision| revision.identifier}
+  end
+
+  def revisions
+    @revisions ||= repository.changesets.where(revision: revisions_ids).all
   end
 
   # Returns a string of css classes that apply to the issue

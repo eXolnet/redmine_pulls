@@ -90,6 +90,30 @@ module PullsHelper
     link_to body, _project_pulls_path(project, query), :class => classes
   end
 
+  def get_pull_diff_type
+    diff_type = params[:type] || User.current.pref[:diff_type] || 'inline'
+    diff_type = 'inline' unless %w(inline sbs).include?(diff_type)
+
+    # Save diff type as user preference
+    if User.current.logged? && diff_type != User.current.pref[:diff_type]
+      User.current.pref[:diff_type] = diff_type
+      User.current.preference.save
+    end
+
+    diff_type
+  end
+
+  def refresh_pull_state(pull)
+    return if pull.closed? || pull.revisions.count == 0
+
+    pull.commit_base_revision = pull.revisions.first.revision
+    pull.commit_head_revision = pull.revisions.last.revision
+
+    if pull.merge_status == 'unchecked'
+      calculate_pull_merge_status(pull)
+    end
+  end
+
   def calculate_pull_review_status(pull)
     changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
     pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count

@@ -1,5 +1,5 @@
 <div class="pulls__changes" id="changes">
-  <% if @revisions.count > 0 %>
+  <% if @pull.revisions.count > 0 %>
     <%= form_tag({:action => 'show', :id => @pull}, :method => 'get') do %>
       <%= hidden_field_tag 'tab', 'changes' %>
       <p>
@@ -9,7 +9,7 @@
       </p>
     <% end %>
 
-    <%= render :partial => 'common/diff', :locals => {:diff => @diff, :diff_type => @diff_type, :diff_style => @repository.class.scm_name} %>
+    <%= render :partial => 'common/diff', :locals => {:diff => @pull.diff, :diff_type => @diff_type, :diff_style => @pull.repository.class.scm_name} %>
     <%= render :partial => 'pulls/review', :locals => {:pull => @pull} if @pull.reviewable? %>
   <% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
