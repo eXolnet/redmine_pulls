@@ -117,7 +117,6 @@ module PullsHelper
   def merge_pull(pull)
     return unless pull.mergable?
 
-    pull.merged_on  = Time.now
-    pull.merge_user = User.current
+    pull.mark_as_merged
   end
 end

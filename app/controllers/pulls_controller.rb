@@ -255,9 +255,9 @@ class PullsController < ApplicationController
     if params[:merge]
       merge_pull(@pull)
     elsif params[:close]
-      @pull.closed_on = Time.now
+      @pull.close
     elsif params[:reopen]
-      @pull.closed_on = nil
+      @pull.reopen
     end
 
     if params[:review_status]
