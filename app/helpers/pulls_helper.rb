@@ -2,41 +2,21 @@ module PullsHelper
   # Returns an array of users that are proposed as watchers
   # on the new issue form
   def users_for_new_pull_reviewers(pull)
-    users = pull.reviewers.select{|u| u.status == User::STATUS_ACTIVE}
-    if pull.project.users.count <= 20
-      users = (users + pull.project.users.sort).uniq
-    end
-    users
-  end
-
-  def pull_reviewers_checkboxes(object, users, checked=nil)
-    users.map do |user|
-      c = checked.nil? ? object.watched_by?(user) : checked
-      tag = check_box_tag 'pull[reviewer_ids][]', user.id, c, :id => nil
-      content_tag 'label', "#{tag} #{h(user)}".html_safe,
-                  :id => "pull_reviewer_ids_#{user.id}",
-                  :class => "floating"
-    end.join.html_safe
+    users_for_new_pull(pull)
   end
 
   # Returns an array of users that are proposed as watchers
   # on the new issue form
   def users_for_new_pull_watchers(pull)
-    users = pull.watcher_users.select{|u| u.status == User::STATUS_ACTIVE}
-    if pull.project.users.count <= 20
-      users = (users + pull.project.users.sort).uniq
-    end
-    users
+    users_for_new_pull(pull)
+  end
+
+  def pull_reviewers_checkboxes(object, users, checked=nil)
+    pull_users_checkboxes('reviewer_ids', object, users, checked)
   end
 
   def pull_watchers_checkboxes(object, users, checked=nil)
-    users.map do |user|
-      c = checked.nil? ? object.watched_by?(user) : checked
-      tag = check_box_tag 'pull[watcher_user_ids][]', user.id, c, :id => nil
-      content_tag 'label', "#{tag} #{h(user)}".html_safe,
-                  :id => "pull_watcher_user_ids_#{user.id}",
-                  :class => "floating"
-    end.join.html_safe
+    pull_users_checkboxes('watcher_user_ids', object, users, checked)
   end
 
   def pull_review_title(pull)
@@ -148,5 +128,27 @@ module PullsHelper
     return unless pull.mergable?
 
     pull.mark_as_merged
+  end
+
+  private
+
+  def pull_users_checkboxes(name, object, users, checked=nil)
+    users.map do |user|
+      c = checked.nil? ? object.watched_by?(user) : checked
+      tag = check_box_tag "pull[#{name}][]", user.id, c, :id => nil
+      content_tag 'label', "#{tag} #{h(user)}".html_safe,
+                  :id => "pull_#{name}_#{user.id}",
+                  :class => "floating"
+    end.join.html_safe
+  end
+
+  def users_for_new_pull(pull)
+    users = pull.reviewers.select{|u| u.status == User::STATUS_ACTIVE}
+
+    if pull.project.users.count <= 20
+      users = (users + pull.project.users.sort).uniq
+    end
+
+    users
   end
 end

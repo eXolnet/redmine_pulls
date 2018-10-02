@@ -290,9 +290,9 @@ class PullQuery < Query
 
   def pull_state_labels(field)
     Pull.state_machines[field].states.collect do |s|
-      label = l(("label_"+ field +"_" + s.name.to_s).to_sym)
+      label = l(("label_"+ (field.to_s) +"_" + s.name.to_s).to_sym)
 
-      [label, s.name ]
+      [ label, s.name ]
     end
   end
 end
