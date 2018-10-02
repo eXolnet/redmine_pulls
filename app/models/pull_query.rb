@@ -60,17 +60,20 @@ class PullQuery < Query
                          :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
 
     add_available_filter "category_id",
-      :type => :list_optional,
-      :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
+                        :type => :list_optional,
+                        :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
 
     add_available_filter"status",
-                        :type => :list, :values => lambda { Pull.state_machines[:status].states.collect{|s| [ l(("label_status_" + s.name.to_s).to_sym), s.name ] } }
+                        :type => :list,
+                        :values => lambda { pull_state_labels(:status) }
 
     add_available_filter"review_status",
-                        :type => :list, :values => lambda { Pull.state_machines[:review_status].states.collect{|s| [ l(("label_review_status_" + s.name.to_s).to_sym), s.name ] } }
+                        :type => :list,
+                        :values => lambda { pull_state_labels(:review_status) }
 
     add_available_filter"merge_status",
-                        :type => :list, :values => lambda { Pull.state_machines[:merge_status].states.collect{|s| [ l(("label_merge_status_" + s.name.to_s).to_sym), s.name ] } }
+                        :type => :list,
+                        :values => lambda { pull_state_labels(:merge_status) }
 
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
@@ -227,20 +230,20 @@ class PullQuery < Query
     end
   end
 
-  def sql_for_fixed_version_status_field(field, operator, value)
-    where = sql_for_field(field, operator, value, Version.table_name, "status")
+  def sql_for_fixed_version_field(db_field, field, operator, value)
+    where = sql_for_field(field, operator, value, Version.table_name, db_field)
     version_ids = versions(:conditions => [where]).map(&:id)
 
     nl = operator == "!" ? "#{Pull.table_name}.fixed_version_id IS NULL OR" : ''
     "(#{nl} #{sql_for_field("fixed_version_id", "=", version_ids, Pull.table_name, "fixed_version_id")})"
   end
 
-  def sql_for_fixed_version_due_date_field(field, operator, value)
-    where = sql_for_field(field, operator, value, Version.table_name, "effective_date")
-    version_ids = versions(:conditions => [where]).map(&:id)
+  def sql_for_fixed_version_status_field(field, operator, value)
+    sql_for_fixed_version_field("status", field, operator, value)
+  end
 
-    nl = operator == "!*" ? "#{Pull.table_name}.fixed_version_id IS NULL OR" : ''
-    "(#{nl} #{sql_for_field("fixed_version_id", "=", version_ids, Pull.table_name, "fixed_version_id")})"
+  def sql_for_fixed_version_due_date_field(field, operator, value)
+    sql_for_fixed_version_field("effective_date", field, operator, value)
   end
 
   def sql_for_updated_on_field(field, operator, value)
@@ -281,5 +284,15 @@ class PullQuery < Query
     end
 
     joins.any? ? joins.join(' ') : nil
+  end
+
+  private
+
+  def pull_state_labels(field)
+    Pull.state_machines[field].states.collect do |s|
+      label = l(("label_"+ field +"_" + s.name.to_s).to_sym)
+
+      [label, s.name ]
+    end
   end
 end
