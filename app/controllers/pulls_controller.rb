@@ -42,50 +42,33 @@ class PullsController < ApplicationController
   end
 
   def new
-    @pull = Pull.new
-    @pull.project = @project
-    @pull.repository = @project.repository
-
-    default_branch = @pull.repository.scm.default_branch
-    @pull.commit_base = default_branch
-    @pull.commit_head = default_branch
-
-    @priorities = IssuePriority.active
+    respond_to do |format|
+      format.html { render :action => 'new', :layout => !request.xhr? }
+    end
   end
 
   def create
-    unless User.current.allowed_to?(:add_pulls, @pull.project, :global => true)
-      raise ::Unauthorized
+    raise Unauthorized unless User.current.allowed_to?(:add_pulls, @pull.project, :global => true)
+
+    unless @pull.save
+      return respond_to do |format|
+        format.html { render :action => 'new' }
+      end
     end
 
-    if @pull.save
-      calculate_pull_review_status(@pull)
+    # TODO - Move this to the Pull model
+    calculate_pull_review_status(@pull)
 
-      respond_to do |format|
-        format.html {
-          flash[:notice] = l(:notice_pull_successful_create, :id => view_context.link_to("##{@pull.id}", pull_path(@pull), :title => @pull.subject))
+    respond_to do |format|
+      format.html {
+        flash[:notice] = l(:notice_pull_successful_create, :id => view_context.link_to("##{@pull.id}", pull_path(@pull), :title => @pull.subject))
 
-          if params[:continue]
-            url_params = {}
-            url_params[:back_url] = params[:back_url].presence
-
-            redirect_to _new_project_pull_path(@project, url_params)
-          else
-            redirect_back_or_default pull_path(@pull)
-          end
-        }
-      end
-      return
-    else
-      respond_to do |format|
-        format.html {
-          if @pull.project.nil?
-            render_error :status => 422
-          else
-            render :action => 'new'
-          end
-        }
-      end
+        if params[:continue]
+          redirect_to _new_project_pull_path(@project, { :back_url => params[:back_url].presence })
+        else
+          redirect_back_or_default pull_path(@pull)
+        end
+      }
     end
   end
 
@@ -102,7 +85,6 @@ class PullsController < ApplicationController
 
     respond_to do |format|
       format.html {
-        @priorities = IssuePriority.active
         render :template => 'pulls/show'
       }
     end
@@ -165,18 +147,10 @@ class PullsController < ApplicationController
 
   def preview
     @pull = Pull.find_by_id(params[:id]) unless params[:id].blank?
+    @description = params[:pull] && params[:pull][:description]
 
-    if @pull
-      @description = params[:pull] && params[:pull][:description]
-
-      if @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
-        @description = nil
-      end
-
-      #@notes = params[:journal] ? params[:journal][:notes] : nil
-      #@notes ||= params[:pull] ? params[:pull][:notes] : nil
-    else
-      @description = (params[:pull] ? params[:pull][:description] : nil)
+    if @pull && @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
+      @description = nil
     end
 
     render :layout => false
@@ -215,27 +189,50 @@ class PullsController < ApplicationController
     end
   end
 
-  # Used by #edit and #update to set some common instance variables
-  # from the params
-  def update_pull_from_params
-    @pull.init_journal(User.current)
+  def build_new_pull_from_params
+    @pull = Pull.new
+    @pull.project = @project
+    @pull.author ||= User.current
+    @pull.repository ||= @project.repository
 
+    default_branch = @pull.repository.scm.default_branch
+    @pull.commit_base = default_branch
+    @pull.commit_head = default_branch
+
+    attrs = (params[:pull] || {}).deep_dup
+    @pull.safe_attributes = attrs
+  end
+
+  def build_pull_params_for_update
     pull_attributes = params[:pull]
+
     if pull_attributes && params[:conflict_resolution]
       case params[:conflict_resolution]
-        when 'overwrite'
-          pull_attributes = pull_attributes.dup
-          pull_attributes.delete(:lock_version)
-        when 'add_notes'
-          pull_attributes = pull_attributes.slice(:notes, :private_notes)
-        when 'cancel'
-          redirect_to pull_path(@pull)
-          return false
+      when 'overwrite'
+        pull_attributes = pull_attributes.dup
+        pull_attributes.delete(:lock_version)
+      when 'add_notes'
+        pull_attributes = pull_attributes.slice(:notes, :private_notes)
+      when 'cancel'
+        return nil
       end
     end
 
+    pull_attributes
+  end
+
+  # Used by #edit and #update to set some common instance variables
+  # from the params
+  def update_pull_from_params
+    pull_attributes = build_pull_params_for_update
+
+    unless pull_attributes
+      redirect_to pull_path(@pull)
+      return false
+    end
+
+    @pull.init_journal(User.current)
     @pull.safe_attributes = pull_attributes
-    @priorities = IssuePriority.active
 
     if params[:merge]
       merge_pull(@pull)
@@ -247,24 +244,11 @@ class PullsController < ApplicationController
 
     if params[:review_status]
       review = @pull.review
-
       review.status = params[:review_status]
       review.save
     end
 
     true
-  end
-
-  def build_new_pull_from_params
-    @pull = Pull.new
-    @pull.project = @project
-    @pull.author ||= User.current
-    @pull.repository ||= @project.repository
-
-    attrs = (params[:pull] || {}).deep_dup
-    @pull.safe_attributes = attrs
-
-    @priorities = IssuePriority.active
   end
 
   # Saves @pull from the parameters

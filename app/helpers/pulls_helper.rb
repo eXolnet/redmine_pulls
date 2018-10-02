@@ -77,6 +77,10 @@ module PullsHelper
     ]
   end
 
+  def available_pull_priorities
+    IssuePriority.active
+  end
+
   def pull_query(body, project, query = {})
     query[:utf8] = '✓'
     query[:set_filter] = 1

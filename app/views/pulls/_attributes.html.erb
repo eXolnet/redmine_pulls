@@ -3,7 +3,7 @@
   <div class="splitcontent">
     <div class="splitcontentleft">
       <% if @pull.safe_attribute? 'priority_id' %>
-        <p><%= f.select :priority_id, (@priorities.collect {|p| [p.name, p.id]}), {:required => true} %></p>
+        <p><%= f.select :priority_id, (available_pull_priorities.collect {|p| [p.name, p.id]}), {:required => true} %></p>
       <% end %>
 
       <% if @pull.safe_attribute? 'assigned_to_id' %>
