@@ -499,17 +499,11 @@ class Pull < ActiveRecord::Base
     return @assignable_versions if @assignable_versions
 
     versions = project.shared_versions.open.to_a
-    if fixed_version
-      if fixed_version_id_changed?
-        # nothing to do
-      elsif project_id_changed?
-        if project.shared_versions.include?(fixed_version)
-          versions << fixed_version
-        end
-      else
-        versions << fixed_version
-      end
+
+    if fixed_version && ! fixed_version_id_changed?
+      versions << fixed_version
     end
+
     @assignable_versions = versions.uniq.sort
   end
 
