@@ -646,7 +646,7 @@ class Pull < ActiveRecord::Base
   # Returns a string of css classes that apply to the issue
   def css_classes(user=User.current)
     s = "pull #{priority.try(:css_classes)}"
-    #s << ' closed' if closed?
+    s << ' closed' if closed?
     if user.logged?
       s << ' created-by-me' if author_id == user.id
       s << ' assigned-to-me' if assigned_to_id == user.id
