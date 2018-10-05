@@ -629,7 +629,10 @@ class Pull < ActiveRecord::Base
   end
 
   def revisions_ids
-    @revisions_ids ||= repository.scm.revisions(nil, commit_base, commit_head).collect {|revision| revision.identifier}
+    commit_from = commit_base_revision || commit_head
+    commit_to   = commit_head_revision || commit_base
+
+    @revisions_ids ||= repository.scm.revisions(nil, commit_from, commit_to).collect {|revision| revision.identifier}
   end
 
   def revisions
