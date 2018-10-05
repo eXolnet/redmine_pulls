@@ -88,10 +88,13 @@ module PullsHelper
   end
 
   def refresh_pull_state(pull)
-    return if pull.closed? || pull.revisions.count == 0
+    return if pull.closed?
 
-    pull.commit_base_revision = pull.repository.scm.merge_base(pull.commit_base, pull.commit_head)
-    pull.commit_head_revision = pull.revisions_ids.first
+    commit_base_revision = pull.repository.scm.merge_base(pull.commit_base, pull.commit_head)
+    commit_head_revision = pull.repository.scm.revisions(nil, pull.commit_base, pull.commit_head).collect {|revision| revision.identifier}.first
+
+    pull.commit_base_revision = commit_base_revision if commit_base_revision
+    pull.commit_head_revision = commit_head_revision if commit_head_revision
 
     if pull.merge_status == 'unchecked'
       calculate_pull_merge_status(pull)
