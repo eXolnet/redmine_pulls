@@ -12,6 +12,10 @@ span#reviewers_inputs {
   display: block;
 }
 
+#reviewers img.gravatar {
+  margin: 0 4px 2px 0;
+}
+
 span.search_for_reviewers {
   display: block;
   font-size: 80%;
