@@ -20,7 +20,7 @@ module RedminePulls
           merge_base = nil
           git_cmd(cmd_args) { |io| io.binmode; merge_base = io.read }
 
-          merge_base
+          merge_base&.strip
         end
 
         # # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
@@ -31,7 +31,7 @@ module RedminePulls
           return false unless merge_base
 
           cmd_args = %w|merge-tree|
-          cmd_args << merge_base.strip
+          cmd_args << merge_base
           cmd_args << commit_base
           cmd_args << commit_head
 
