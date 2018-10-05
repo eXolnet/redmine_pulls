@@ -1,15 +1,17 @@
 require 'redmine'
 
+PULLS_VERSION_NUMBER = '0.1.0'
+PULLS_VERSION_TYPE = "Light version"
+
 Redmine::Plugin.register :redmine_pulls do
-  name 'Pull Requests'
+  name "Pull Requests (#{PULLS_VERSION_TYPE})"
   author 'eXolnet'
   description 'Allows users to create pull requests for repositories linked to projects.'
-  version '0.1.0'
+  version PULLS_VERSION_NUMBER
   url 'https://github.com/eXolnet/redmine-pulls'
   author_url 'https://www.exolnet.com'
 
   requires_redmine :version_or_higher => '2.3'
-  #requires_redmine_plugin :redmine_git_hosting, :version_or_higher => '1.2.0'
 
   menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues
   menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues, :param => :project_id
