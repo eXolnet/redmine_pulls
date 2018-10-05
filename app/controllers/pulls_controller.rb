@@ -204,12 +204,11 @@ class PullsController < ApplicationController
   end
 
   def build_pull_params_for_update
-    pull_attributes = params[:pull]
+    pull_attributes = (params[:pull] || {}).deep_dup
 
     if pull_attributes && params[:conflict_resolution]
       case params[:conflict_resolution]
       when 'overwrite'
-        pull_attributes = pull_attributes.dup
         pull_attributes.delete(:lock_version)
       when 'add_notes'
         pull_attributes = pull_attributes.slice(:notes, :private_notes)
@@ -226,7 +225,7 @@ class PullsController < ApplicationController
   def update_pull_from_params
     pull_attributes = build_pull_params_for_update
 
-    unless pull_attributes
+    if pull_attributes.nil?
       redirect_to pull_path(@pull)
       return false
     end
