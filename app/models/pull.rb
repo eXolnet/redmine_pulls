@@ -622,7 +622,10 @@ class Pull < ActiveRecord::Base
   end
 
   def diff
-    @diff ||= repository.diff(nil, commit_head, commit_base)
+    commit_from = commit_base_revision || commit_head
+    commit_to   = commit_head_revision || commit_base
+
+    @diff ||= repository.diff(nil, commit_from, commit_to)
   end
 
   def revisions_ids
