@@ -11,7 +11,7 @@ class Pull < ActiveRecord::Base
   belongs_to :merge_user, :class_name => 'User'
 
   has_many :journals, :as => :journalized, :dependent => :destroy, :inverse_of => :journalized
-  has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all
+  has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all, :autosave => true
   has_many :reviewers, :through => :reviews, :source => :reviewer, :validate => false
 
   attr_protected :review_ids, :reviewer_ids
@@ -656,16 +656,8 @@ class Pull < ActiveRecord::Base
   end
 
   def review(user=User.current)
-    review = self.reviews.where(:reviewer_id => user.id).first
-
-    unless review
-      review = PullReview.new(:reviewer => user, :status => PullReview::STATUS_REQUESTED)
-
-      # Rails does not reset the has_many :through association
-      reviewers.reset
-      self.reviews << PullReview.new(:reviewer => user, :status => PullReview::STATUS_REQUESTED)
-    end
-
+    review = reviews.where(:reviewer_id => user.id).first_or_create
+    reviews << review
     review
   end
 
