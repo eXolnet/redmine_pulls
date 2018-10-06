@@ -244,9 +244,6 @@ class PullsController < ApplicationController
     if params[:review_status]
       review = @pull.review
       review.status = params[:review_status]
-
-      # TODO - The method update_pull_from_params should not save anything
-      # review.save
     end
 
     true
