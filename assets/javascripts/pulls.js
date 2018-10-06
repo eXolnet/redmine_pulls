@@ -21,6 +21,8 @@ $(document).ready(function() {
 
     return false;
   });
+
+  $('#pull-comment-form').show();
 });
 
 window.pullSelectBranch = function(kind, branch) {

@@ -1,8 +1,6 @@
-<%= labelled_form_for pull, :html => {:id => 'pull-comment-form'} do |f| %>
-  <div id="update">
-    <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'issue_notes' %>
-    <%= wikitoolbar_for 'issue_notes' %>
-  </div>
+<%= labelled_form_for pull, :html => {:id => 'pull-comment-form', :style => 'display:none'} do |f| %>
+  <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'pull_notes' %>
+  <%= wikitoolbar_for 'pull_notes' %>
 
   <%= submit_tag l(:button_comment) %>
   <%= submit_tag l(:button_close_pull_request), :name => 'close' if pull.closable? %>
