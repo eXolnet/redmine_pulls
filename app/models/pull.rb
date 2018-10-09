@@ -14,6 +14,8 @@ class Pull < ActiveRecord::Base
   has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all, :autosave => true
   has_many :reviewers, :through => :reviews, :source => :reviewer, :validate => false
 
+  has_and_belongs_to_many :issues, :join_table => 'pull_issues'
+
   attr_protected :review_ids, :reviewer_ids
 
   acts_as_customizable
@@ -687,6 +689,23 @@ class Pull < ActiveRecord::Base
 
   def delete_head_branch
     repository.delete_branch(commit_head)
+  end
+
+  # Finds an issue that can be referenced by the commit message
+  def find_referenced_issue_by_id(id)
+    return nil if id.blank?
+    issue = Issue.find_by_id(id.to_i)
+    if Setting.commit_cross_project_ref?
+      # all issues can be referenced/fixed
+    elsif issue
+      # issue that belong to the repository project, a subproject or a parent project only
+      unless issue.project &&
+        (project == issue.project || project.is_ancestor_of?(issue.project) ||
+          project.is_descendant_of?(issue.project))
+        issue = nil
+      end
+    end
+    issue
   end
 
   private

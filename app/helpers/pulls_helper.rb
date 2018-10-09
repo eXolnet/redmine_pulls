@@ -156,4 +156,34 @@ module PullsHelper
 
     users
   end
+
+  def render_pull_relations(pull)
+    manage_relations = User.current.allowed_to?(:manage_pull_relations, pull.project)
+
+    s = ''.html_safe
+    pull.issues.visible.each do |issue|
+      css = "issue hascontextmenu #{issue.css_classes}"
+      link = manage_relations ? link_to(l(:label_relation_delete),
+                                        {:controller => 'pulls', :action => 'remove_related_issue', :pull_id => @pull, :issue_id => issue},
+                                        :remote => true,
+                                        :method => :delete,
+                                        :data => {:confirm => l(:text_are_you_sure)},
+                                        :title => l(:label_relation_delete),
+                                        :class => 'icon-only icon-link-break'
+      ) : nil
+
+      s << content_tag('tr',
+                       content_tag('td', check_box_tag("ids[]", issue.id, false, :id => nil), :class => 'checkbox') +
+                         content_tag('td', link_to_issue(issue, :project => Setting.cross_project_issue_relations?).html_safe, :class => 'subject', :style => 'width: 50%') +
+                         content_tag('td', issue.status, :class => 'status') +
+                         content_tag('td', issue.start_date, :class => 'start_date') +
+                         content_tag('td', issue.due_date, :class => 'due_date') +
+                         content_tag('td', issue.disabled_core_fields.include?('done_ratio') ? '' : progress_bar(issue.done_ratio), :class=> 'done_ratio') +
+                         content_tag('td', link, :class => 'buttons'),
+                       :id => "relation-#{issue.id}",
+                       :class => css)
+    end
+
+    content_tag('table', s, :class => 'list issues odd-even')
+  end
 end

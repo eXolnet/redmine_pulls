@@ -56,6 +56,12 @@
       </div>
     <% end %>
   <% end -%>
+
+  <hr />
+
+  <div id="relations">
+    <%= render :partial => 'relations' %>
+  </div>
 </div>
 
 <%= render :partial => 'pulls/merge', :locals => {:pull => @pull} %>
@@ -80,6 +86,8 @@
     </div>
   <% end %>
 <% end %>
+
+<%= context_menu %>
 
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag "scm" %>

@@ -3,7 +3,7 @@
 
 match '/pulls/preview/new/:project_id', :to => 'pulls#preview', :as => 'preview_new_pull', :via => [:get, :post, :put, :patch]
 match '/pulls/preview/edit/:id', :to => 'pulls#preview', :as => 'preview_edit_pull', :via => [:get, :post, :put, :patch]
-match '/pulls/:id/quoted', :to => 'pulls#quoted', :id => /\d+/, :via => :post, :as => 'quoted_pull'
+post '/pulls/:id/quoted', :to => 'pulls#quoted', :id => /\d+/, :as => 'quoted_pull'
 get '/pulls/commit/new/:project_id', :to => 'pulls#commit', :as => 'commit_new_pull'
 
 resources :projects do
@@ -14,6 +14,9 @@ get '/pulls/reviewers/new', :to => 'pull_reviewers#new', :as => 'new_pull_review
 post '/pulls/reviewers', :to => 'pull_reviewers#create'
 
 resources :pulls, :except => [:new, :create] do
+  post   'issues', :to => 'pulls#add_related_issue'
+  delete 'issues/:issue_id', :to => 'pulls#remove_related_issue'
+
   get 'reviewers/autocomplete_for_user', :to => 'pull_reviewers#autocomplete_for_user'
   resources :reviewers, :controller => 'pull_reviewers', :only => [:new, :create]
   delete 'reviewers', :to => 'pull_reviewers#destroy'
