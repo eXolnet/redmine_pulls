@@ -13,6 +13,10 @@ module RedminePulls
         end
 
         module InstanceMethods
+          def delete_branch(identifier)
+            false
+          end
+
           def merge_base(commit_base, commit_head)
             nil
           end

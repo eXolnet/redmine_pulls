@@ -99,6 +99,8 @@ module PullsHelper
     if pull.merge_status == 'unchecked'
       calculate_pull_merge_status(pull)
     end
+  rescue Redmine::Scm::Adapters::AbstractAdapter::ScmCommandAborted
+    # do nothing
   end
 
   def calculate_pull_review_status(pull)

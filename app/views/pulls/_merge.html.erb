@@ -32,6 +32,10 @@
 git merge --no-ff <%= pull.commit_head %>
 git push origin master</pre>
       </div>
+    <% elsif pull.head_branch_deletable? %>
+      <hr>
+
+      <%= submit_tag l(:button_delete_branch), :name => 'delete_branch' %>
     <% end %>
   </div>
 <% end %>

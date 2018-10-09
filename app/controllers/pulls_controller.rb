@@ -255,6 +255,10 @@ class PullsController < ApplicationController
       call_hook(:controller_pulls_edit_before_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
       if @pull.save
         call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
+
+        if params[:delete_branch] && @pull.head_branch_deletable?
+          @pull.delete_head_branch
+        end
       else
         raise ActiveRecord::Rollback
       end

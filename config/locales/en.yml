@@ -82,6 +82,7 @@ en:
   button_select: Select
   button_submit_review: Submit review
   button_merge_pull_request: Merge pull request
+  button_delete_branch: Delete branch
   button_comment: Comment
   button_close_pull_request: Close pull request
   button_reopen_pull_request: Reopen pull request

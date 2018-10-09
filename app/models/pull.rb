@@ -182,6 +182,10 @@ class Pull < ActiveRecord::Base
     closable?(user) && merge_status == 'can_be_merged'
   end
 
+  def head_branch_deletable?(user=User.current)
+    closed? && is_commit_head_a_branch?
+  end
+
   # Returns true if user or current user is allowed to edit the issue
   def attributes_editable?(user=User.current)
     user_permission?(user, :edit_pulls)
@@ -668,6 +672,10 @@ class Pull < ActiveRecord::Base
   #  end
   #  super user_ids
   #end
+
+  def delete_head_branch
+    repository.delete_branch(commit_head)
+  end
 
   private
 
