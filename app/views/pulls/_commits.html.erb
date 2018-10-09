@@ -1,5 +1,5 @@
 <div id="commits">
-  <% if @pull.revisions_count > 0 %>
+  <% if @pull.has_revisions? %>
     <table class="list changesets">
       <thead><tr>
         <th>#</th>

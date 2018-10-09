@@ -651,6 +651,14 @@ class Pull < ActiveRecord::Base
     revisions.count
   end
 
+  def has_revisions?
+    revisions_count > 0
+  end
+
+  def has_no_revisions?
+    !has_revisions?
+  end
+
   # Returns a string of css classes that apply to the issue
   def css_classes(user=User.current)
     s = "pull #{priority.try(:css_classes)}"
