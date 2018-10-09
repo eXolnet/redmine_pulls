@@ -278,6 +278,8 @@ class PullsController < ApplicationController
         if params[:delete_branch] && @pull.head_branch_deletable?
           @pull.delete_head_branch
         end
+
+        true
       else
         raise ActiveRecord::Rollback
       end
