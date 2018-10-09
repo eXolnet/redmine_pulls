@@ -120,7 +120,7 @@ module PullsHelper
   end
 
   def calculate_pull_merge_status(pull)
-    if ! pull.is_commit_base_a_branch? || ! pull.commit_base_revision
+    if ! pull.base_branch_exists? || ! pull.commit_base_revision
       pull.mark_as_unmergeable
     elsif pull.repository.scm.mergable(pull.commit_base, pull.commit_head)
       pull.mark_as_mergeable
