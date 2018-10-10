@@ -106,11 +106,11 @@ class Pull < ActiveRecord::Base
       pull.merge_user = nil
     end
 
-    after_transition any => :closed do |pull, transition|
+    before_transition any => :closed do |pull, transition|
       pull.closed_on  = Time.now
     end
 
-    after_transition any => :merged do |pull, transition|
+    before_transition any => :merged do |pull, transition|
       pull.merged_on  = Time.now
       pull.closed_on  = Time.now
       pull.merge_user = User.current
