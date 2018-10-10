@@ -21,7 +21,7 @@ module RedminePulls
             nil
           end
 
-          def mergable(commit_base, commit_head)
+          def mergable?(commit_base, commit_head)
             false
           end
         end

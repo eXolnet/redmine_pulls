@@ -20,8 +20,8 @@ module RedminePulls
           scm.merge_base(commit_base, commit_head)
         end
 
-        def mergable(commit_base, commit_head)
-          scm.mergable(commit_base, commit_head)
+        def mergable?(commit_base, commit_head)
+          scm.mergable?(commit_base, commit_head)
         end
       end
     end

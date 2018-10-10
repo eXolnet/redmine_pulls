@@ -36,7 +36,7 @@ module RedminePulls
           end
 
           # # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
-          def mergable(commit_base, commit_head)
+          def mergable?(commit_base, commit_head)
             merge_base = merge_base(commit_base, commit_head)
 
             # We need a common ancestor to perform a merge
