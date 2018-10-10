@@ -61,6 +61,7 @@ en:
   label_merge_conflicts_detected_help: To merge the branch automatically, please resolve them.
   label_merge_merged_title: Pull request successfully merged and closed
   label_merge_merged_help: "You’re all set — the <code class='pull__branch'>%{branch}</code> branch can be safely deleted."
+  label_merge_merged_and_deleted_help: "You’re all set — the <code class='pull__branch'>%{branch}</code> branch was deleted."
   label_merge_closed_title: Closed with unmerged commits
   label_merge_closed_help: "This pull request is closed, but the <code class='pull__branch'>%{branch}</code> branch has unmerged commits."
   label_add_more_commits: "Add more commits by pushing to the <code class='pull__branch'>%{branch}</code> branch."

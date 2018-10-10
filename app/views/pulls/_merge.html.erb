@@ -9,7 +9,13 @@
 
     <% if pull.merged? %>
       <strong><%= l(("label_merge_merged_title").to_sym) %></strong>
-      <em class="info"><%= l(:label_merge_merged_help, :branch => pull.commit_head).html_safe %></em>
+      <em class="info">
+        <% if pull.head_branch_deletable? %>
+          <%= l(:label_merge_merged_help, :branch => pull.commit_head).html_safe %>
+        <% else %>
+          <%= l(:label_merge_merged_and_deleted_help, :branch => pull.commit_head).html_safe %>
+        <% end %>
+      </em>
     <% elsif pull.closed? %>
       <strong><%= l(("label_merge_closed_title").to_sym) %></strong>
       <em class="info"><%= l(:label_merge_closed_help, :branch => pull.commit_head).html_safe %></em>
