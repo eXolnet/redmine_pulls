@@ -24,6 +24,10 @@ module RedminePulls
           def mergable(commit_base, commit_head)
             false
           end
+
+          def is_ancestor?(commit_ancestor, commit_descendant)
+            false
+          end
         end
       end
     end

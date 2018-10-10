@@ -23,6 +23,10 @@ module RedminePulls
         def mergable(commit_base, commit_head)
           scm.mergable(commit_base, commit_head)
         end
+
+        def is_ancestor?(commit_ancestor, commit_descendant)
+          scm.is_ancestor?(commit_ancestor, commit_descendant)
+        end
       end
     end
   end
