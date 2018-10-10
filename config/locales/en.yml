@@ -65,6 +65,8 @@ en:
   label_merge_closed_title: Closed with unmerged commits
   label_merge_closed_help: "This pull request is closed, but the <code class='pull__branch'>%{branch}</code> branch has unmerged commits."
   label_add_more_commits: "Add more commits by pushing to the <code class='pull__branch'>%{branch}</code> branch."
+  label_merge_instructions_title: Merging via command line
+  label_merge_instructions_description: If you do not want to use the merge button or an automatic merge cannot be performed, you can perform a manual merge on the command line.
   field_between: Between
   field_status: Status
   field_review_status: Review status

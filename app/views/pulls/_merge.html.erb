@@ -31,8 +31,8 @@
       <em class="info">or view <a href="#">command line instructions</a>.</em>
 
       <div id="pull-merge-instructions" style="display: none;">
-        <h4>Merging via command line</h4>
-        <p>If you do not want to use the merge button or an automatic merge cannot be performed, you can perform a manual merge on the command line.</p>
+        <h4><%= l(:label_merge_instructions_title) %></h4>
+        <p><%= l(:label_merge_instructions_description) %></p>
 
         <pre>git checkout <%= pull.commit_base %>
 git merge --no-ff <%= pull.commit_head %>
