@@ -87,22 +87,6 @@ module PullsHelper
     diff_type
   end
 
-  def refresh_pull_state(pull)
-    return if pull.closed?
-
-    commit_base_revision = pull.repository.scm.merge_base(pull.commit_base, pull.commit_head)
-    commit_head_revision = pull.repository.scm.revisions(nil, pull.commit_base, pull.commit_head).collect {|revision| revision.identifier}.first
-
-    pull.commit_base_revision = commit_base_revision unless commit_base_revision.blank?
-    pull.commit_head_revision = commit_head_revision unless commit_head_revision.blank?
-
-    if pull.merge_status == 'unchecked'
-      calculate_pull_merge_status(pull)
-    end
-  rescue Redmine::Scm::Adapters::AbstractAdapter::ScmCommandAborted
-    # do nothing
-  end
-
   def calculate_pull_review_status(pull)
     changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
     pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
@@ -116,16 +100,6 @@ module PullsHelper
       pull.mark_as_changes_approved
     else
       pull.mark_as_unreviewed
-    end
-  end
-
-  def calculate_pull_merge_status(pull)
-    if ! pull.base_branch_exists? || ! pull.commit_base_revision
-      pull.mark_as_unmergeable
-    elsif pull.repository.mergable?(pull.commit_base, pull.commit_head)
-      pull.mark_as_mergeable
-    else
-      pull.mark_as_conflicts
     end
   end
 

@@ -52,6 +52,18 @@ module RedminePulls
 
             ! (merge_result =~ /<<<<<<<.*=======.*>>>>>>>/m)
           end
+
+          def is_ancestor?(commit_ancestor, commit_descendant)
+            cmd_args = %w|merge-base --is-ancestor|
+            cmd_args << commit_ancestor
+            cmd_args << commit_descendant
+
+            git_cmd(cmd_args)
+
+            true
+          rescue Redmine::Scm::Adapters::AbstractAdapter::ScmCommandAborted
+            false
+          end
         end
       end
     end

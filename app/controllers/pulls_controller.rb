@@ -73,7 +73,7 @@ class PullsController < ApplicationController
   end
 
   def show
-    refresh_pull_state(@pull)
+    RedminePulls::Services::RefreshService.new(@pull).execute
 
     @journals = @pull.visible_journals_with_index
 
