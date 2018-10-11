@@ -1,4 +1,7 @@
 class PullQuery < Query
+  MERGE_OPTIONS = %w(conflicts_detected can_be_merged cannot_be_merged)
+  REVIEW_OPTIONS = %w{no_review review_requested approved_review changes_requested reviewed_by_you awaiting_review_from_you}
+
   self.queried_class = Pull
   self.view_permission = :view_pulls
 
@@ -67,13 +70,13 @@ class PullQuery < Query
                         :type => :list,
                         :values => lambda { pull_state_labels(:status) }
 
-    add_available_filter"review_status",
-                        :type => :list,
-                        :values => lambda { pull_state_labels(:review_status) }
-
     add_available_filter"merge_status",
                         :type => :list,
-                        :values => lambda { pull_state_labels(:merge_status) }
+                        :values => MERGE_OPTIONS.map{|s| [l("label_merge_status_#{s}"), s] }
+
+    add_available_filter"review",
+                        :type => :list,
+                        :values => REVIEW_OPTIONS.map{|s| [l("label_review_#{s}"), s] }
 
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
@@ -163,6 +166,39 @@ class PullQuery < Query
     pulls
   rescue ::ActiveRecord::StatementInvalid => e
     raise StatementInvalid.new(e.message)
+  end
+
+  def sql_for_review_field(field, operator, value)
+    neg = (operator == '!' ? 'NOT' : '')
+
+    subqueries = value.collect do |v|
+      subquery = "SELECT 1 FROM #{PullReview.table_name}" +
+        " WHERE #{PullReview.table_name}.pull_id = #{Pull.table_name}.id"
+
+      if v == 'no_review'
+        return sql_for_field field, operator, ['unreviewed'], Pull.table_name, 'review_status'
+      elsif v == 'review_requested'
+        subquery  << " AND #{PullReview.table_name}.status = 'requested'"
+      elsif v == 'approved_review'
+        return sql_for_field field, operator, ['approved'], Pull.table_name, 'review_status'
+      elsif v == 'changes_requested'
+        return sql_for_field field, operator, ['concerned'], Pull.table_name, 'review_status'
+      elsif v == 'reviewed_by_you'
+        subquery  << " AND #{PullReview.table_name}.status <> 'requested'"
+        subquery  << Pull.send(:sanitize_sql_for_conditions, [" AND #{PullReview.table_name}.reviewer_id = ?", User.current.id])
+      elsif v == 'awaiting_review_from_you'
+        subquery  << " AND #{PullReview.table_name}.status = 'requested'"
+        subquery  << Pull.send(:sanitize_sql_for_conditions, [" AND #{PullReview.table_name}.reviewer_id = ?", User.current.id])
+      end
+
+      "#{neg} EXISTS (#{subquery})"
+    end
+
+    puts "----"
+    puts subqueries
+    puts "----"
+
+    "(#{subqueries.join(' OR ')})"
   end
 
   def sql_for_updated_by_field(field, operator, value)

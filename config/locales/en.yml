@@ -37,6 +37,12 @@ en:
   label_merge_status_can_be_merged: Can be merged
   label_merge_status_cannot_be_merged: Cannot be merged
   label_merge_status_conflicts_detected: Conflicts detected
+  label_review_no_review: No review
+  label_review_review_requested: Review requested
+  label_review_approved_review: Approved review
+  label_review_changes_requested: Changes requested
+  label_review_reviewed_by_you: Reviewed by you
+  label_review_awaiting_review_from_you: Awaiting review from you
   label_merge_request_by: "%{author} wants to merge %{commit_count} commit into <code class='pull__branch'>%{commit_base}</code> from <code class='pull__branch'>%{commit_head}</code>"
   label_merged_by: "%{author} merged %{commit_count} commit into <code class='pull__branch'>%{commit_base}</code> from <code class='pull__branch'>%{commit_head}</code>"
   label_created_time: "Created %{value} ago"
@@ -70,6 +76,7 @@ en:
   field_between: Between
   field_status: Status
   field_review_status: Review status
+  field_review: Review
   field_merge_status: Merge status
   field_commit_base: Commit base
   field_commit_head: Commit head
