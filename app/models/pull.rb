@@ -97,7 +97,7 @@ class Pull < ActiveRecord::Base
     end
 
     event :reopen do
-      transition closed: :opened
+      transition [:closed] => :opened
     end
 
     before_transition from: [:closed, :merged] do |pull, transition|
@@ -128,9 +128,9 @@ class Pull < ActiveRecord::Base
       end
     end
 
-    after_transition :closed => :opened do |pull, transition|
+    after_transition from: :closed, to: :opened do |pull, transition|
       if Setting.notified_events.include?('pull_reopen')
-        Mailer.pull_closed(pull).deliver
+        Mailer.pull_reopen(pull).deliver
       end
     end
 
