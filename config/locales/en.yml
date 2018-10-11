@@ -81,6 +81,7 @@ en:
   field_commit_base: Commit base
   field_commit_head: Commit head
   field_merged_on: Merged
+  field_related_issue: Related issue
   label_comment: Comment
   label_comment_help: Submit general feedback without explicit approval.
   label_approve: Approve

@@ -108,6 +108,8 @@ class PullQuery < Query
 
     add_associations_custom_fields_filters :project, :author, :assigned_to, :fixed_version
 
+    add_available_filter "related_issue", :type => :relation, :label => options[:name], :values => lambda {all_projects_values}
+
     add_available_filter "pull_id", :type => :integer, :label => :label_pull_request
   end
 
@@ -303,6 +305,26 @@ class PullQuery < Query
     else
       sql_for_field("id", operator, value, Pull.table_name, "id")
     end
+  end
+
+  def sql_for_related_issue_field(field, operator, value)
+    sql = case operator
+      when "*", "!*"
+        op = (operator == "*" ? 'IN' : 'NOT IN')
+        "#{Pull.table_name}.id #{op} (SELECT DISTINCT pull_issues.pull_id FROM pull_issues)"
+      when "=", "!"
+        op = (operator == "=" ? 'IN' : 'NOT IN')
+        "#{Pull.table_name}.id #{op} (SELECT DISTINCT pull_issues.pull_id FROM pull_issues WHERE pull_issues.issue_id = #{value.first.to_i})"
+      when "=p", "=!p", "!p"
+        op = (operator == "!p" ? 'NOT IN' : 'IN')
+        comp = (operator == "=!p" ? '<>' : '=')
+        "#{Pull.table_name}.id #{op} (SELECT DISTINCT pull_issues.pull_id FROM pull_issues, #{Issue.table_name} relissues WHERE pull_issues.issue_id = relissues.id AND relissues.project_id #{comp} #{value.first.to_i})"
+      when "*o", "!o"
+        op = (operator == "!o" ? 'NOT IN' : 'IN')
+        "#{Pull.table_name}.id #{op} (SELECT DISTINCT pull_issues.pull_id FROM pull_issues, #{Issue.table_name} relissues WHERE pull_issues.issue_id = relissues.id AND relissues.status_id IN (SELECT id FROM #{IssueStatus.table_name} WHERE is_closed=#{self.class.connection.quoted_false}))"
+      end
+
+    "(#{sql})"
   end
 
   def joins_for_order_statement(order_options)
