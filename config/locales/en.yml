@@ -5,7 +5,7 @@ en:
   label_pull_id: '#'
   label_new_pull: New pull request
   label_pull_watchers: Watchers
-  label_pull_view_all: View all pull requests
+  label_opened: Opened
   label_conversation: Conversation
   label_commits: Commits
   label_changes: Changes

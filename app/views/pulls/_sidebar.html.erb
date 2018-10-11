@@ -1,12 +1,12 @@
 <h3><%= l(:label_pulls) %></h3>
 
 <ul class="queries">
+  <li><%= pull_query l(:label_opened), @project, :utf8 => '✓', :set_filter => 1, :f => ['status'], :op => {:status => '='}, :v => {:status => ['opened']} %></li>
   <li><%= pull_query l(:label_authored), @project, :utf8 => '✓', :set_filter => 1, :f => ['status', 'author_id'], :op => {:status => '=', :author_id => '='}, :v => {:status => ['opened'], :author_id => ['me']} %></li>
   <li><%= pull_query l(:label_assigned), @project, :utf8 => '✓', :set_filter => 1, :f => ['status', 'assigned_to_id'], :op => {:status => '=', :assigned_to_id => '='}, :v => {:status => ['opened'], :assigned_to_id => ['me']} %></li>
   <li><%= pull_query l(:label_merged), @project, :utf8 => '✓', :set_filter => 1, :f => ['status'], :op => {:status => '='}, :v => {:status => ['merged']} %></li>
   <li><%= pull_query l(:label_changes_requested), @project, :set_filter => 1, :f => ['status', 'review'], :op => {:status => '=', :review => '='}, :v => {:status => ['opened'], :review => ['changes_requested']} %></li>
   <li><%= pull_query l(:label_review_requested), @project, :set_filter => 1, :f => ['status', 'review'], :op => {:status => '=', :review => '='}, :v => {:status => ['opened'], :review => ['review_requested']} %></li>
-  <li><%= link_to l(:label_pull_view_all), _project_pulls_path(@project, :set_filter => 1), :class => 'query' %></li>
 </ul>
 
 <%= call_hook(:view_pulls_sidebar_pulls_bottom) %>
