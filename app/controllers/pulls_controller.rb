@@ -254,10 +254,16 @@ class PullsController < ApplicationController
 
     if params[:merge]
       merge_pull(@pull)
+
+      flash[:notice] = l(:notice_pull_successful_merge)
     elsif params[:close]
       @pull.close
+
+      flash[:notice] = l(:notice_pull_successful_close)
     elsif params[:reopen]
       @pull.reopen
+
+      flash[:notice] = l(:notice_pull_successful_reopen)
     end
 
     if params[:review_status]
