@@ -1,4 +1,5 @@
 class PullQuery < Query
+  STATUS_OPTIONS = %w(opened closed merged)
   MERGE_OPTIONS = %w(conflicts_detected can_be_merged cannot_be_merged)
   REVIEW_OPTIONS = %w{no_review review_requested approved_review changes_requested reviewed_by_you awaiting_review_from_you}
 
@@ -29,55 +30,19 @@ class PullQuery < Query
   end
 
   def initialize_available_filters
-    add_available_filter"project_id",
-      :type => :list, :values => lambda { project_values } if project.nil?
-
-    add_available_filter "priority_id",
-      :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s] }
-
-    add_available_filter"author_id",
-      :type => :list, :values => lambda { author_values }
-
-    add_available_filter("assigned_to_id",
-      :type => :list_optional, :values => lambda { assigned_to_values }
-    )
-
-    add_available_filter("member_of_group",
-                         :type => :list_optional, :values => lambda { Group.givable.visible.collect {|g| [g.name, g.id.to_s] } }
-    )
-
-    add_available_filter("assigned_to_role",
-                         :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
-    )
-
-    add_available_filter "fixed_version_id",
-                         :type => :list_optional, :values => lambda { fixed_version_values }
-
-    add_available_filter "fixed_version.due_date",
-                         :type => :date,
-                         :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
-
-    add_available_filter "fixed_version.status",
-                         :type => :list,
-                         :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)),
-                         :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
-
-    add_available_filter "category_id",
-                        :type => :list_optional,
-                        :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
-
-    add_available_filter"status",
-                        :type => :list,
-                        :values => lambda { pull_state_labels(:status) }
-
-    add_available_filter"merge_status",
-                        :type => :list,
-                        :values => MERGE_OPTIONS.map{|s| [l("label_merge_status_#{s}"), s] }
-
-    add_available_filter"review",
-                        :type => :list,
-                        :values => REVIEW_OPTIONS.map{|s| [l("label_review_#{s}"), s] }
-
+    add_available_filter"project_id", :type => :list, :values => lambda { project_values } if project.nil?
+    add_available_filter "priority_id", :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s] }
+    add_available_filter"author_id", :type => :list, :values => lambda { author_values }
+    add_available_filter"assigned_to_id", :type => :list_optional, :values => lambda { assigned_to_values }
+    add_available_filter"member_of_group", :type => :list_optional, :values => lambda { Group.givable.visible.collect {|g| [g.name, g.id.to_s] } }
+    add_available_filter"assigned_to_role", :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
+    add_available_filter "fixed_version_id", :type => :list_optional, :values => lambda { fixed_version_values }
+    add_available_filter "fixed_version.due_date", :type => :date, :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
+    add_available_filter "fixed_version.status", :type => :list, :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)), :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
+    add_available_filter "category_id", :type => :list_optional, :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
+    add_available_filter"status", :type => :list, :values => STATUS_OPTIONS.map{|s| [l("label_status_#{s}"), s] }
+    add_available_filter"merge_status", :type => :list, :values => MERGE_OPTIONS.map{|s| [l("label_merge_status_#{s}"), s] }
+    add_available_filter"review", :type => :list, :values => REVIEW_OPTIONS.map{|s| [l("label_review_#{s}"), s] }
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
     add_available_filter "commit_base", :type => :text
@@ -86,31 +51,14 @@ class PullQuery < Query
     add_available_filter "updated_on", :type => :date_past
     add_available_filter "merged_on", :type => :date_past
     add_available_filter "closed_on", :type => :date_past
-
-    if User.current.logged?
-      add_available_filter "watcher_id",
-                           :type => :list, :values => [["<< #{l(:label_me)} >>", "me"]]
-    end
-
-    add_available_filter("updated_by",
-                         :type => :list, :values => lambda { author_values }
-    )
-
-    add_available_filter("last_updated_by",
-                         :type => :list, :values => lambda { author_values }
-    )
-
-    if project && !project.leaf?
-      add_available_filter "subproject_id",
-                           :type => :list_subprojects,
-                           :values => lambda { subproject_values }
-    end
+    add_available_filter "watcher_id", :type => :list, :values => [["<< #{l(:label_me)} >>", "me"]] if User.current.logged?
+    add_available_filter"updated_by", :type => :list, :values => lambda { author_values }
+    add_available_filter"last_updated_by", :type => :list, :values => lambda { author_values }
+    add_available_filter "subproject_id", :type => :list_subprojects, :values => lambda { subproject_values } if project && !project.leaf?
+    add_available_filter "related_issue", :type => :relation, :label => options[:name], :values => lambda {all_projects_values}
+    add_available_filter "pull_id", :type => :integer, :label => :label_pull_request
 
     add_associations_custom_fields_filters :project, :author, :assigned_to, :fixed_version
-
-    add_available_filter "related_issue", :type => :relation, :label => options[:name], :values => lambda {all_projects_values}
-
-    add_available_filter "pull_id", :type => :integer, :label => :label_pull_request
   end
 
   # Returns true if the query is visible to +user+ or the current user.
@@ -130,22 +78,11 @@ class PullQuery < Query
     Pull.joins(:project).where(statement)
   end
 
-  # Returns the pull request count
-  def pull_count
-    base_scope.count
-  rescue ::ActiveRecord::StatementInvalid => e
-    raise StatementInvalid.new(e.message)
-  end
-
-  # Returns the pull requests
-  # Valid options are :order, :offset, :limit, :include, :conditions
-  def pulls(options={})
+  def pull_scope(options={})
     order_option = [group_by_sort_order, (options[:order] || sort_clause)].flatten.reject(&:blank?)
 
-    scope = Pull.
-      joins(:project).
+    scope = base_scope.
       preload(:priority).
-      where(statement).
       includes(([:project] + (options[:include] || [])).uniq).
       where(options[:conditions]).
       order(order_option).
@@ -158,7 +95,20 @@ class PullQuery < Query
       scope = scope.preload(:custom_values)
     end
 
-    pulls = scope.to_a
+    scope
+  end
+
+  # Returns the pull request count
+  def pull_count
+    base_scope.count
+  rescue ::ActiveRecord::StatementInvalid => e
+    raise StatementInvalid.new(e.message)
+  end
+
+  # Returns the pull requests
+  # Valid options are :order, :offset, :limit, :include, :conditions
+  def pulls(options={})
+    pulls = pull_scope(options).to_a
 
     if has_column?(:last_updated_by)
       Pull.load_visible_last_updated_by(pulls)
@@ -354,15 +304,5 @@ class PullQuery < Query
     end
 
     joins.any? ? joins.join(' ') : nil
-  end
-
-  private
-
-  def pull_state_labels(field)
-    Pull.state_machines[field].states.collect do |s|
-      label = l(("label_"+ (field.to_s) +"_" + s.name.to_s).to_sym)
-
-      [ label, s.name ]
-    end
   end
 end
