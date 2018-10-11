@@ -135,6 +135,14 @@ module PullsHelper
     manage_relations = User.current.allowed_to?(:manage_pull_relations, pull.project)
 
     relations = pull.issues.visible.collect do |issue|
+      delete_link = link_to(l(:label_relation_delete),
+                            {:controller => 'pulls', :action => 'remove_related_issue', :pull_id => @pull, :issue_id => issue},
+                            :remote => true,
+                            :method => :delete,
+                            :data => {:confirm => l(:text_are_you_sure)},
+                            :title => l(:label_relation_delete),
+                            :class => 'icon-only icon-link-break')
+
       relation = ''.html_safe
 
       relation << content_tag('td', check_box_tag("ids[]", issue.id, false, :id => nil), :class => 'checkbox')
@@ -142,24 +150,8 @@ module PullsHelper
       relation << content_tag('td', issue.status, :class => 'status')
       relation << content_tag('td', issue.start_date, :class => 'start_date')
       relation << content_tag('td', issue.due_date, :class => 'due_date')
-
-      unless issue.disabled_core_fields.include?('done_ratio')
-        relation << content_tag('td', progress_bar(issue.done_ratio), :class=> 'done_ratio')
-      end
-
-      if manage_relations
-        link = link_to(
-          l(:label_relation_delete),
-          {:controller => 'pulls', :action => 'remove_related_issue', :pull_id => @pull, :issue_id => issue},
-          :remote => true,
-          :method => :delete,
-          :data => {:confirm => l(:text_are_you_sure)},
-          :title => l(:label_relation_delete),
-          :class => 'icon-only icon-link-break'
-        )
-
-        relation << content_tag('td', link, :class => 'buttons')
-      end
+      relation << content_tag('td', progress_bar(issue.done_ratio), :class=> 'done_ratio') unless issue.disabled_core_fields.include?('done_ratio')
+      relation << content_tag('td', delete_link, :class => 'buttons') if manage_relations
 
       content_tag('tr', relation, :id => "relation-#{issue.id}", :class => "issue hascontextmenu #{issue.css_classes}")
     end
