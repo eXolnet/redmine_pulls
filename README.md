@@ -5,8 +5,6 @@
 [![Build Status](https://img.shields.io/travis/eXolnet/redmine-pulls/master.svg?style=flat-square)](https://travis-ci.org/eXolnet/redmine-pulls)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1bb2d6f3a1f380dddd21/maintainability)](https://codeclimate.com/github/eXolnet/redmine-pulls/maintainability)
 
-**Warning! This project is a work in progress.**
-
 Allows users to create pull requests for repositories linked to projects.
 
 ## Compatibility
