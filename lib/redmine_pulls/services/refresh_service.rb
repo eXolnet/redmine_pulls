@@ -24,7 +24,7 @@ module RedminePulls
         return if @pull.closed? || @pull.branch_missing?
 
         # First, detect the last commit in the head branch
-        commit_head_revision = @pull.repository.scm.revisions(nil, @pull.commit_base, @pull.commit_head).collect {|revision| revision.identifier}.first
+        commit_head_revision = @pull.repository.scm.revisions(nil, nil, @pull.commit_head, :reverse => true, :limit => 1).collect {|revision| revision.identifier}.first
         @pull.commit_head_revision = commit_head_revision unless commit_head_revision.blank?
 
         return if @pull.repository.is_ancestor? @pull.commit_head_revision, @pull.commit_base
