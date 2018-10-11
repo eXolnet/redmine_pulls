@@ -34,17 +34,31 @@ class PullReview < ActiveRecord::Base
     return unless status_changed?
 
     if status == 'requested'
-      if Setting.notified_events.include?('pull_review_requested')
-        Mailer.pull_review_requested(self).deliver
-      end
+      send_notification_requested
     elsif status == 'concerned'
-      if Setting.notified_events.include?('pull_changes_requested')
-        Mailer.pull_changes_requested(self).deliver
-      end
+      send_notification_concerned
     elsif status == 'approved'
-      if Setting.notified_events.include?('pull_approved')
-        Mailer.pull_approved(self).deliver
-      end
+      send_notification_approved
+    end
+  end
+
+  private
+
+  def send_notification_requested
+    if Setting.notified_events.include?('pull_review_requested')
+      Mailer.pull_review_requested(self).deliver
+    end
+  end
+
+  def send_notification_concerned
+    if Setting.notified_events.include?('pull_changes_requested')
+      Mailer.pull_changes_requested(self).deliver
+    end
+  end
+
+  def send_notification_approved
+    if Setting.notified_events.include?('pull_approved')
+      Mailer.pull_approved(self).deliver
     end
   end
 end
