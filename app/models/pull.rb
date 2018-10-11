@@ -85,7 +85,7 @@ class Pull < ActiveRecord::Base
 
   before_save :force_updated_on_change, :update_closed_on, :set_assigned_to_was
   after_save :create_journal
-  after_create :send_notification
+  after_save :send_notification
 
   state_machine :status, initial: :opened do
     event :close do
@@ -114,6 +114,24 @@ class Pull < ActiveRecord::Base
       pull.merged_on  = Time.now
       pull.closed_on  = Time.now
       pull.merge_user = User.current
+    end
+
+    after_transition any => :merged do |pull, transition|
+      if Setting.notified_events.include?('pull_merged')
+        Mailer.pull_merged(pull).deliver
+      end
+    end
+
+    after_transition any => :closed do |pull, transition|
+      if Setting.notified_events.include?('pull_closed')
+        Mailer.pull_closed(pull).deliver
+      end
+    end
+
+    after_transition any => :closed do |pull, transition|
+      if Setting.notified_events.include?('pull_reopen')
+        Mailer.pull_closed(pull).deliver
+      end
     end
 
     state :opened
@@ -552,14 +570,6 @@ class Pull < ActiveRecord::Base
     #end
   end
 
-  def notify?
-    false # @notify != false
-  end
-
-  def notify=(arg)
-    @notify = arg
-  end
-
   def last_updated_by
     if @last_updated_by
       @last_updated_by.presence
@@ -674,8 +684,8 @@ class Pull < ActiveRecord::Base
   end
 
   def review(user=User.current)
-    review = reviews.where(:reviewer_id => user.id).first_or_create
-    reviews << review
+    review = reviews.where(:reviewer_id => user.id).first_or_initialize
+    association(:reviews).add_to_target(review)
     review
   end
 
@@ -706,6 +716,10 @@ class Pull < ActiveRecord::Base
       end
     end
     issue
+  end
+
+  def mail_subject
+    "[#{project.name}] #{subject} (##{id})"
   end
 
   private
@@ -748,8 +762,14 @@ class Pull < ActiveRecord::Base
   end
 
   def send_notification
-    if notify? && Setting.notified_events.include?('pull_added')
-      Mailer.deliver_pull_add(self)
+    if id_changed?
+      if Setting.notified_events.include?('pull_request_added')
+        Mailer.pull_request_added(self).deliver
+      end
+    elsif merge_status_changed? && merge_status == 'cannot_be_merged'
+      if Setting.notified_events.include?('pull_unmergable')
+        Mailer.pull_unmergable(self).deliver
+      end
     end
   end
 
