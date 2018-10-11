@@ -104,9 +104,11 @@ en:
   text_pull_conflict_resolution_add_notes: Add my notes and discard my other changes
   text_pull_conflict_resolution_cancel: Discard all my changes and redisplay %{link}
   text_pulls_destroy_confirmation: 'Are you sure you want to delete the selected pull request(s)?'
+  mail_pull_added: "%{author} created pull request %{id}."
   mail_pull_review_requested: "%{initiator} asked you to review pull request %{id}."
   mail_pull_approved: "%{reviewer} approved pull request %{id}."
   mail_pull_changes_requested: "%{reviewer} requested changes on pull request %{id}."
   mail_pull_merged: "%{initiator} merged pull request %{id}."
   mail_pull_closed: "%{initiator} closed pull request %{id}."
   mail_pull_reopen: "%{initiator} reopen pull request %{id}."
+  mail_pull_unmergable: "It was detected that pull request %{id}cannot be merged. Thus, it was automatically closed."

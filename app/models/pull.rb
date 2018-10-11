@@ -543,6 +543,7 @@ class Pull < ActiveRecord::Base
   # Returns the users that should be notified
   def notified_users
     notified = []
+
     # Author and assignee are always notified unless they have been
     # locked or don't want to be notified
     notified << author if author
@@ -552,22 +553,15 @@ class Pull < ActiveRecord::Base
     if assigned_to_was
       notified += (assigned_to_was.is_a?(Group) ? assigned_to_was.users : [assigned_to_was])
     end
-    notified = notified.select {|u| u.active? && u.notify_about?(self)}
 
-    notified += project.notified_users
+    notified = notified.select {|u| u.active?}
+
     notified.uniq!
     notified
   end
 
-  # Returns the email addresses that should be notified
-  def recipients
-    notified_users.collect(&:mail)
-  end
-
-  def each_notification(users, &block)
-    #if users.any?
-    #  yield(users)
-    #end
+  def notified_following_users
+    (watcher_users + reviewers).uniq
   end
 
   def last_updated_by
@@ -763,8 +757,8 @@ class Pull < ActiveRecord::Base
 
   def send_notification
     if id_changed?
-      if Setting.notified_events.include?('pull_request_added')
-        Mailer.pull_request_added(self).deliver
+      if Setting.notified_events.include?('pull_added')
+        Mailer.pull_added(self).deliver
       end
     elsif merge_status_changed? && merge_status == 'cannot_be_merged'
       if Setting.notified_events.include?('pull_unmergable')

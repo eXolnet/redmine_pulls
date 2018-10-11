@@ -13,54 +13,36 @@ module RedminePulls
 
       module InstanceMethods
         def pull_added(pull)
-          #
+          pull_headers(pull)
+
+          # Reviewers should not be notified since they will recived a separate
+          # email asking them to review the pull request
+          mail :to => @pull.notified_users - @pull.reviewers,
+               :cc => @pull.notified_following_users - @pull.reviewers,
+               :subject => @pull.mail_subject
         end
 
         def pull_merged(pull)
-          @author = User.current
-          @pull = pull
-          @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
+          pull_headers(pull)
 
-          redmine_headers 'Project' => @pull.project.identifier,
-                          'Pull-Id' => @pull.id,
-                          'Pull-Author' => @pull.author.login
-          redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
-          message_id @pull
-
-          mail :to => @pull.author,
-               :cc => (@pull.watchers + @pull.reviewers).uniq,
+          mail :to => @pull.notified_users,
+               :cc => @pull.notified_following_users,
                :subject => @pull.mail_subject
         end
 
         def pull_closed(pull)
-          @author = User.current
-          @pull = pull
-          @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
+          pull_headers(pull)
 
-          redmine_headers 'Project' => @pull.project.identifier,
-                          'Pull-Id' => @pull.id,
-                          'Pull-Author' => @pull.author.login
-          redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
-          message_id @pull
-
-          mail :to => @pull.author,
-               :cc => (@pull.watchers + @pull.reviewers).uniq,
+          mail :to => @pull.notified_users,
+               :cc => @pull.notified_following_users,
                :subject => @pull.mail_subject
         end
 
         def pull_reopen(pull)
-          @author = User.current
-          @pull = pull
-          @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
+          pull_headers(pull)
 
-          redmine_headers 'Project' => @pull.project.identifier,
-                          'Pull-Id' => @pull.id,
-                          'Pull-Author' => @pull.author.login
-          redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
-          message_id @pull
-
-          mail :to => @pull.author,
-               :cc => (@pull.watchers + @pull.reviewers).uniq,
+          mail :to => @pull.notified_users,
+               :cc => @pull.notified_following_users,
                :subject => @pull.mail_subject
         end
 
@@ -69,7 +51,11 @@ module RedminePulls
         end
 
         def pull_unmergable(pull)
-          #
+          pull_headers(pull)
+
+          mail :to => @pull.notified_users,
+               :cc => @pull.notified_following_users,
+               :subject => @pull.mail_subject
         end
 
         def pull_new_mentions(pull)
@@ -77,59 +63,49 @@ module RedminePulls
         end
 
         def pull_approved(review)
-          @author = User.current
-          @review = review
-          @pull = review.pull
-          @reviewer = review.reviewer
-          @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
+          pull_review_headers(review)
 
-          redmine_headers 'Project' => @pull.project.identifier,
-                          'Pull-Id' => @pull.id,
-                          'Pull-Author' => @pull.author.login,
-                          'Pull-Reviewer' => @reviewer.login
-          redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
-          message_id @pull
-
-          mail :to => @pull.author,
-               :cc => (@pull.watchers + @pull.reviewers - [@pull.author]).uniq,
+          mail :to => @pull.notified_users,
+               :cc => @pull.notified_following_users,
                :subject => @pull.mail_subject
         end
 
         def pull_changes_requested(review)
-          @author = User.current
-          @review = review
-          @pull = review.pull
-          @reviewer = review.reviewer
-          @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
+          pull_review_headers(review)
 
-          redmine_headers 'Project' => @pull.project.identifier,
-                          'Pull-Id' => @pull.id,
-                          'Pull-Author' => @pull.author.login,
-                          'Pull-Reviewer' => @reviewer.login
-          redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
-          message_id @pull
-
-          mail :to => @pull.author,
-               :cc => (@pull.watchers + @pull.reviewers - [@pull.author]).uniq,
+          mail :to => @pull.notified_users,
+               :cc => @pull.notified_following_users,
                :subject => @pull.mail_subject
         end
 
         def pull_review_requested(review)
+          pull_review_headers(review)
+
+          mail :to => review.reviewer,
+               :subject => @pull.mail_subject
+        end
+
+        private
+
+        def pull_headers(pull)
           @author = User.current
-          @review = review
-          @pull = review.pull
-          @reviewer = review.reviewer
+          @pull = pull
           @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
 
           redmine_headers 'Project' => @pull.project.identifier,
                           'Pull-Id' => @pull.id,
-                          'Pull-Author' => @pull.author.login,
-                          'Pull-Reviewer' => @reviewer.login
+                          'Pull-Author' => @pull.author.login
           redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
           message_id @pull
+        end
 
-          mail :to => review.reviewer,
-               :subject => @pull.mail_subject
+        def pull_review_headers(review)
+          pull_headers(review.pull)
+
+          @review = review
+          @reviewer = review.reviewer
+
+          redmine_headers 'Pull-Reviewer' => @reviewer.login
         end
       end
     end
