@@ -128,7 +128,7 @@ class Pull < ActiveRecord::Base
       end
     end
 
-    after_transition any => :closed do |pull, transition|
+    after_transition :closed => :opened do |pull, transition|
       if Setting.notified_events.include?('pull_reopen')
         Mailer.pull_closed(pull).deliver
       end
