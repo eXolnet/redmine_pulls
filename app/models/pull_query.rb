@@ -107,6 +107,8 @@ class PullQuery < Query
     end
 
     add_associations_custom_fields_filters :project, :author, :assigned_to, :fixed_version
+
+    add_available_filter "pull_id", :type => :integer, :label => :label_pull_request
   end
 
   # Returns true if the query is visible to +user+ or the current user.
@@ -286,6 +288,20 @@ class PullQuery < Query
       "#{Pull.table_name}.updated_on > #{Pull.table_name}.created_on"
     else
       sql_for_field("updated_on", operator, value, Pull.table_name, "updated_on")
+    end
+  end
+
+  def sql_for_pull_id_field(field, operator, value)
+    if operator == "="
+      # accepts a comma separated list of ids
+      ids = value.first.to_s.scan(/\d+/).map(&:to_i)
+      if ids.present?
+        "#{Pull.table_name}.id IN (#{ids.join(",")})"
+      else
+        "1=0"
+      end
+    else
+      sql_for_field("id", operator, value, Pull.table_name, "id")
     end
   end
 
