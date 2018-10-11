@@ -194,10 +194,6 @@ class PullQuery < Query
       "#{neg} EXISTS (#{subquery})"
     end
 
-    puts "----"
-    puts subqueries
-    puts "----"
-
     "(#{subqueries.join(' OR ')})"
   end
 

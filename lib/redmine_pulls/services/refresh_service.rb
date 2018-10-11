@@ -17,7 +17,6 @@ module RedminePulls
       def close_when_head_is_missing
         return if @pull.head_branch_exists?
 
-        puts "close"
         @pull.close
       end
 
