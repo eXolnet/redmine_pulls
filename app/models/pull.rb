@@ -485,6 +485,7 @@ class Pull < ActiveRecord::Base
         !journal.private_notes? || journal.user == user
       end
     end
+
     Journal.preload_journals_details_custom_fields(result)
     result.select! {|journal| journal.notes? || journal.visible_details.any?}
     result
