@@ -115,3 +115,14 @@ en:
   mail_pull_closed: "%{initiator} closed pull request %{id}."
   mail_pull_reopen: "%{initiator} reopen pull request %{id}."
   mail_pull_unmergable: "It was detected that pull request %{id}cannot be merged. Thus, it was automatically closed."
+  permission_view_pulls: View pulls
+  permission_add_pulls: Add pulls
+  permission_edit_pulls: Edit pulls
+  permission_delete_pulls: Delete pulls
+  permission_add_pull_notes: Add notes
+  permission_edit_pull_notes: Edit notes
+  permission_edit_own_pull_notes: Edit own notes
+  permission_view_pull_watchers: View watchers
+  permission_add_pull_watchers: Add watchers
+  permission_delete_pull_watchers: Delete watchers
+  permission_manage_pull_relations: Manage related issues
