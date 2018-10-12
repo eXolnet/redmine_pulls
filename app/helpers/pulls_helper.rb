@@ -67,9 +67,10 @@ module PullsHelper
 
     classes = 'query'
 
-    if query.to_param == request.query_string
-      classes << ' selected'
-    end
+    # Wrong way of doing it
+    # if query.to_param == request.query_string
+    #  classes << ' selected'
+    # end
 
     link_to body, _project_pulls_path(project, query), :class => classes
   end
