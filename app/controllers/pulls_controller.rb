@@ -243,6 +243,8 @@ class PullsController < ApplicationController
   # Used by #edit and #update to set some common instance variables
   # from the params
   def update_pull_from_params
+    raise ::Unauthorized unless @pull.editable?
+
     pull_attributes = build_pull_params_for_update
 
     if pull_attributes.nil?

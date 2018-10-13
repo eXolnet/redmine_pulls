@@ -2,7 +2,9 @@ module PullsHelper
   # Returns an array of users that are proposed as watchers
   # on the new issue form
   def users_for_new_pull_reviewers(pull)
-    users_for_new_pull(pull)
+    users = users_for_new_pull(pull)
+
+    users.select{|user| pull.reviewable?(user) }
   end
 
   # Returns an array of users that are proposed as watchers
