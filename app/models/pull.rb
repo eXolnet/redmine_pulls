@@ -185,6 +185,11 @@ class Pull < ActiveRecord::Base
     state :cannot_be_merged
   end
 
+  # Returns true if usr or current user is allowed to view the issue
+  def visible?(user=User.current)
+    user.allowed_to?(:view_pulls, self.project)
+  end
+
   # Returns true if user or current user is allowed to edit or add notes to the issue
   def editable?(user=User.current)
     attributes_editable?(user) || notes_addable?(user)
@@ -219,6 +224,10 @@ class Pull < ActiveRecord::Base
   # Returns true if user or current user is allowed to delete the issue
   def deletable?(user=User.current)
     user_permission?(user, :delete_pulls)
+  end
+
+  def commitable?(user=User.current)
+    editable?(user) && user_permission?(user, :commit_access)
   end
 
   def initialize(attributes=nil, *args)

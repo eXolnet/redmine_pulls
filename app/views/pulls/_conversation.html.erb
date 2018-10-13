@@ -1,4 +1,4 @@
 <div id="conversation">
   <%= render :partial => 'pulls/history', :locals => {:pull => @pull, :journals => @journals} %>
-  <%= render :partial => 'pulls/comment', :locals => {:pull => @pull} %>
+  <%= render :partial => 'pulls/comment', :locals => {:pull => @pull} if @pull.notes_addable? %>
 </div>

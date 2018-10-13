@@ -197,6 +197,7 @@ class PullsController < ApplicationController
     pull_id = params[:pull_id] || params[:id]
 
     @pull = Pull.find(pull_id)
+    raise Unauthorized unless @pull.visible?
     @project = @pull.project
   rescue ActiveRecord::RecordNotFound
     render_404
@@ -281,7 +282,7 @@ class PullsController < ApplicationController
       if @pull.save
         call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
 
-        if params[:delete_branch] && @pull.head_branch_deletable?
+        if params[:delete_branch] && @pull.head_branch_deletable? && @pull.commitable?
           @pull.delete_head_branch
         end
 

@@ -1,5 +1,7 @@
 <div class="contextual">
-  <%= link_to l(:label_new_pull), _new_project_pull_path(@project), :class => 'icon icon-add' if @project.present? %>
+  <% if @project.present? && User.current.allowed_to?(:add_pulls, @project) %>
+    <%= link_to l(:label_new_pull), _new_project_pull_path(@project), :class => 'icon icon-add' %>
+  <% end %>
 </div>
 
 <h2><%= l(:label_pulls) %></h2>
