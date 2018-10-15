@@ -4,7 +4,7 @@
     <%= wikitoolbar_for 'pull_notes' %>
 
     <%= submit_tag l(:button_comment) %>
-    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-comment-form' %>
+    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-comment-form', 'preview-comment' %>
 
     <% if pull.safe_attribute? 'status' %>
       <div class="pull__status-actions">
@@ -16,6 +16,6 @@
       </div>
     <% end %>
 
-    <div id="preview" class="wiki"></div>
+    <div id="preview-comment" class="wiki"></div>
   <% end %>
 <% end %>

@@ -28,5 +28,8 @@
 
   <p class="audit-buttons">
     <%= submit_tag l(:button_submit_review), :name => 'review' %>
+    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-review-form', 'preview-review' %>
   </p>
+
+  <div id="preview-review" class="wiki"></div>
 <% end %>
