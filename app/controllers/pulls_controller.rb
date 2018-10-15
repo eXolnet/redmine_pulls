@@ -255,17 +255,16 @@ class PullsController < ApplicationController
   def save_pull
     Pull.transaction do
       call_hook(:controller_pulls_edit_before_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
-      if @pull.save
-        call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
 
-        if params[:delete_branch] && @pull.head_branch_deletable? && @pull.commitable?
-          @pull.delete_head_branch
-        end
+      raise ActiveRecord::Rollback unless @pull.save
 
-        true
-      else
-        raise ActiveRecord::Rollback
+      call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
+
+      if params[:delete_branch] && @pull.head_branch_deletable? && @pull.commitable?
+        @pull.delete_head_branch
       end
+
+      true
     end
   end
 end
