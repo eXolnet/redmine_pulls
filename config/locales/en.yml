@@ -119,10 +119,7 @@ en:
   permission_add_pulls: Add pulls
   permission_edit_pulls: Edit pulls
   permission_delete_pulls: Delete pulls
-  permission_add_pull_notes: Add notes
-  permission_edit_pull_notes: Edit notes
-  permission_edit_own_pull_notes: Edit own notes
-  permission_view_pull_watchers: View watchers
-  permission_add_pull_watchers: Add watchers
-  permission_delete_pull_watchers: Delete watchers
+  permission_review_pull: Review pulls
+  permission_add_pull_reviewers: Add reviewers
+  permission_delete_pull_reviewers: Delete reviewers
   permission_manage_pull_relations: Manage related issues

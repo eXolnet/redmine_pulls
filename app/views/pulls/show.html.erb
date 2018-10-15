@@ -79,8 +79,8 @@
     <%= render :partial => 'pull_reviewers/reviewers', :locals => {:pull => @pull} %>
   </div>
 
-  <% if User.current.allowed_to?(:add_pull_watchers, @project) ||
-    (@pull.watchers.present? && User.current.allowed_to?(:view_pull_watchers, @project)) %>
+  <% if User.current.allowed_to?(:add_issue_watchers, @project) ||
+    (@pull.watchers.present? && User.current.allowed_to?(:view_issue_watchers, @project)) %>
     <div id="watchers">
       <%= render :partial => 'watchers/watchers', :locals => {:watched => @pull} %>
     </div>

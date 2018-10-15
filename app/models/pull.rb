@@ -185,9 +185,14 @@ class Pull < ActiveRecord::Base
     state :cannot_be_merged
   end
 
+  # Returns true if usr or current user is allowed to view the issue
+  def visible?(user=User.current)
+    user.allowed_to?(:view_pulls, self.project)
+  end
+
   # Returns true if user or current user is allowed to edit or add notes to the issue
   def editable?(user=User.current)
-    attributes_editable?(user) || notes_addable?(user)
+    attributes_editable?(user)
   end
 
   def closable?(user=User.current)
@@ -195,7 +200,7 @@ class Pull < ActiveRecord::Base
   end
 
   def reviewable?(user=User.current)
-    closable?(user)
+    ! closed? && user.allowed_to?(:review_pull, self.project) && user != self.author
   end
 
   def mergable?(user=User.current)
@@ -213,12 +218,16 @@ class Pull < ActiveRecord::Base
 
   # Returns true if user or current user is allowed to add notes to the issue
   def notes_addable?(user=User.current)
-    user_permission?(user, :add_pull_notes)
+    user_permission?(user, :add_issue_notes)
   end
 
   # Returns true if user or current user is allowed to delete the issue
   def deletable?(user=User.current)
     user_permission?(user, :delete_pulls)
+  end
+
+  def commitable?(user=User.current)
+    editable?(user) && user_permission?(user, :commit_access)
   end
 
   def initialize(attributes=nil, *args)
@@ -385,14 +394,19 @@ class Pull < ActiveRecord::Base
                   'repository_id',
                   'commit_base',
                   'commit_head',
-                  'reviewer_ids',
                   :if => lambda {|pull, user| pull.new_record? }
+
+  safe_attributes 'status',
+                  :if => lambda {|pull, user| !pull.new_record? && pull.attributes_editable?(user) && pull.status != 'merged' }
 
   safe_attributes 'notes',
                   :if => lambda {|pull, user| pull.notes_addable?(user)}
 
   safe_attributes 'private_notes',
                   :if => lambda {|pull, user| !pull.new_record? && user.allowed_to?(:set_notes_private, pull.project)}
+
+  safe_attributes 'reviewer_ids',
+                  :if => lambda {|pull, user| pull.new_record? && user.allowed_to?(:add_pull_reviewers, pull.project)}
 
   safe_attributes 'watcher_user_ids',
                   :if => lambda {|pull, user| pull.new_record? && user.allowed_to?(:add_pull_watchers, pull.project)}
@@ -435,6 +449,9 @@ class Pull < ActiveRecord::Base
 
   def init_journal(user, notes = "")
     @current_journal ||= Journal.new(:journalized => self, :user => user, :notes => notes)
+
+    # We don't want any notifications to be sent since Journal only support issues notifications
+    @current_journal.notify = false
   end
 
   # Returns the current journal or nil if it's not initialized

@@ -15,6 +15,10 @@
       <fieldset><legend><%= l(:field_notes) %></legend>
         <%= f.text_area :notes, :cols => 60, :rows => 10, :class => 'wiki-edit', :no_label => true %>
         <%= wikitoolbar_for 'pull_notes' %>
+
+        <% if @pull.safe_attribute? 'private_notes' %>
+          <%= f.check_box :private_notes, :no_label => true %> <label for="pull_private_notes"><%= l(:field_private_notes) %></label>
+        <% end %>
       </fieldset>
     <% end %>
   </div>

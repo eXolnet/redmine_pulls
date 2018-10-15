@@ -142,16 +142,24 @@ class PullsController < ApplicationController
   end
 
   def commit
+    raise Unauthorized unless User.current.allowed_to?(:add_pulls, @project)
+
     @kind = params[:kind] || 'base'
   end
 
   def preview
     @pull = Pull.find_by_id(params[:id]) unless params[:id].blank?
+
+    raise Unauthorized unless @pull.editable? || @pull.notes_addable?
+
     @description = params[:pull] && params[:pull][:description]
 
     if @pull && @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
       @description = nil
     end
+
+    @notes   = params[:journal] ? params[:journal][:notes] : nil
+    @notes ||= params[:pull] ? params[:pull][:notes] : nil
 
     render :layout => false
   rescue ActiveRecord::RecordNotFound
@@ -159,6 +167,8 @@ class PullsController < ApplicationController
   end
 
   def quoted
+    raise Unauthorized unless @pull.notes_addable?
+
     user = @pull.author
     text = @pull.description
 
@@ -171,6 +181,8 @@ class PullsController < ApplicationController
   end
 
   def add_related_issue
+    raise Unauthorized unless User.current.allowed_to?(:manage_pull_relations, @pull.project)
+
     issue_id = params[:issue_id].to_s.sub(/^#/,'')
     @issue = @pull.find_referenced_issue_by_id(issue_id)
 
@@ -184,6 +196,8 @@ class PullsController < ApplicationController
   end
 
   def remove_related_issue
+    raise Unauthorized unless User.current.allowed_to?(:manage_pull_relations, @pull.project)
+
     @issue = Issue.visible.find_by_id(params[:issue_id])
 
     if @issue
@@ -197,6 +211,7 @@ class PullsController < ApplicationController
     pull_id = params[:pull_id] || params[:id]
 
     @pull = Pull.find(pull_id)
+    raise Unauthorized unless @pull.visible?
     @project = @pull.project
   rescue ActiveRecord::RecordNotFound
     render_404
@@ -242,6 +257,8 @@ class PullsController < ApplicationController
   # Used by #edit and #update to set some common instance variables
   # from the params
   def update_pull_from_params
+    raise ::Unauthorized unless @pull.editable?
+
     pull_attributes = build_pull_params_for_update
 
     if pull_attributes.nil?
@@ -281,7 +298,7 @@ class PullsController < ApplicationController
       if @pull.save
         call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
 
-        if params[:delete_branch] && @pull.head_branch_deletable?
+        if params[:delete_branch] && @pull.head_branch_deletable? && @pull.commitable?
           @pull.delete_head_branch
         end
 

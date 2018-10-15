@@ -1,8 +1,21 @@
-<%= labelled_form_for pull, :html => {:id => 'pull-comment-form', :style => 'display:none'} do |f| %>
-  <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'pull_notes' %>
-  <%= wikitoolbar_for 'pull_notes' %>
+<%  if pull.notes_addable? %>
+  <%= labelled_form_for pull, :html => {:id => 'pull-comment-form', :style => 'display:none'} do |f| %>
+    <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'pull_notes' %>
+    <%= wikitoolbar_for 'pull_notes' %>
 
-  <%= submit_tag l(:button_comment) %>
-  <%= submit_tag l(:button_close_pull_request), :name => 'close' if pull.closable? %>
-  <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' if pull.closed? && ! pull.merged? %>
+    <%= submit_tag l(:button_comment) %>
+    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-comment-form', 'preview-comment' %>
+
+    <% if pull.safe_attribute? 'status' %>
+      <div class="pull__status-actions">
+        <% if pull.closed? %>
+          <%= submit_tag l(:button_close_pull_request), :name => 'close' %>
+        <% elsif ! pull.merged? %>
+          <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div id="preview-comment" class="wiki"></div>
+  <% end %>
 <% end %>

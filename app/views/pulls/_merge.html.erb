@@ -24,24 +24,26 @@
       <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
     <% end %>
 
-    <% if pull.mergable? %>
-      <hr>
+    <% if pull.commitable? %>
+      <% if pull.mergable? %>
+        <hr>
 
-      <%= submit_tag l(:button_merge_pull_request), :name => 'merge', :disabled => true %>
-      <em class="info">or view <a href="#">command line instructions</a>.</em>
+        <%= submit_tag l(:button_merge_pull_request), :name => 'merge', :disabled => true %>
+        <em class="info">or view <a href="#">command line instructions</a>.</em>
 
-      <div id="pull-merge-instructions" style="display: none;">
-        <h4><%= l(:label_merge_instructions_title) %></h4>
-        <p><%= l(:label_merge_instructions_description) %></p>
+        <div id="pull-merge-instructions" style="display: none;">
+          <h4><%= l(:label_merge_instructions_title) %></h4>
+          <p><%= l(:label_merge_instructions_description) %></p>
 
-        <pre>git checkout <%= pull.commit_base %>
-git merge --no-ff <%= pull.commit_head %>
-git push origin master</pre>
-      </div>
-    <% elsif pull.head_branch_deletable? %>
-      <hr>
+          <pre>git checkout <%= pull.commit_base %>
+  git merge --no-ff <%= pull.commit_head %>
+  git push origin master</pre>
+        </div>
+      <% elsif pull.head_branch_deletable? %>
+        <hr>
 
-      <%= submit_tag l(:button_delete_branch), :name => 'delete_branch' %>
+        <%= submit_tag l(:button_delete_branch), :name => 'delete_branch' %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

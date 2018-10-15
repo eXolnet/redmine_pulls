@@ -18,17 +18,18 @@ Redmine::Plugin.register :redmine_pulls do
   menu :project_menu, :new_pull, { :controller => 'pulls', :action => 'new' }, :caption => :label_new_pull, :after => :new_issue_sub, :param => :project_id, :parent => :new_object
 
   project_module :pulls do
-    permission :view_pulls,            { :pulls => [:index, :show] }
+    permission :view_pulls,            { :pulls => [:index, :show] }, :read => true
     permission :add_pulls,             { :pulls => [:new, :create, :commit] }
     permission :edit_pulls,            { :pulls => [:edit, :update] }
-    permission :delete_pulls,          { :pulls => [:destroy] }
-    permission :add_pull_notes,        { :pulls => [] }
-    permission :edit_pull_notes,       { :pulls => [] }
-    permission :edit_own_pull_notes,   { :pulls => [] }
-    permission :view_pull_watchers,    { :pulls => [] }
-    permission :add_pull_watchers,     { :pulls => [] }
-    permission :delete_pull_watchers,  { :pulls => [] }
-    permission :manage_pull_relations, { :pulls => [] }
+    permission :delete_pulls,          { :pulls => [:destroy] }, :require => :member
+
+    # Reviews
+    permission :review_pull,           {}
+    permission :add_pull_reviewers,    {}
+    permission :delete_pull_reviewers, {}
+
+    # Related issues
+    permission :manage_pull_relations, {}
   end
 end
 
