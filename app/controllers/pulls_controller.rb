@@ -229,20 +229,6 @@ class PullsController < ApplicationController
     @pull.init_journal(User.current)
     @pull.safe_attributes = pull_attributes
 
-    if params[:merge]
-      merge_pull(@pull)
-
-      flash[:notice] = l(:notice_pull_successful_merge)
-    elsif params[:close]
-      @pull.close
-
-      flash[:notice] = l(:notice_pull_successful_close)
-    elsif params[:reopen]
-      @pull.reopen
-
-      flash[:notice] = l(:notice_pull_successful_reopen)
-    end
-
     if params[:review_status]
       review = @pull.review
       review.status = params[:review_status]
@@ -260,11 +246,29 @@ class PullsController < ApplicationController
 
       call_hook(:controller_pulls_edit_after_save, { :params => params, :pull => @pull, :journal => @pull.current_journal})
 
-      if params[:delete_branch] && @pull.head_branch_deletable? && @pull.commitable?
-        @pull.delete_head_branch
-      end
+      execute_pull_actions
 
       true
+    end
+  end
+
+  def execute_pull_actions
+    if params[:merge]
+      merge_pull(@pull)
+
+      flash[:notice] = l(:notice_pull_successful_merge)
+    elsif params[:close]
+      @pull.close
+
+      flash[:notice] = l(:notice_pull_successful_close)
+    elsif params[:reopen]
+      @pull.reopen
+
+      flash[:notice] = l(:notice_pull_successful_reopen)
+    elsif params[:delete_branch] && @pull.head_branch_deletable? && @pull.commitable?
+      @pull.delete_head_branch
+
+      flash[:notice] = l(:notice_pull_branch_successful_delete)
     end
   end
 end

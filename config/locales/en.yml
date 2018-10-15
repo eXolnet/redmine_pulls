@@ -102,6 +102,7 @@ en:
   notice_pull_successful_close: "Pull request successfully closed."
   notice_pull_successful_reopen: "Pull request successfully reopened."
   notice_pull_successful_delete: "Pull request successfully deleted."
+  notice_pull_branch_successful_delete: "Pull request branch successfully deleted."
   notice_pull_update_conflict: The pull request has been updated by an other user while you were editing it.
   text_pull_conflict_resolution_overwrite: Apply my changes anyway (previous notes will be kept but some changes may be overwritten)
   text_pull_conflict_resolution_add_notes: Add my notes and discard my other changes
