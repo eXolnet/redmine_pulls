@@ -1,3 +1,9 @@
+<% if @notes %>
+  <fieldset class="preview"><legend><%= l(:field_notes) %></legend>
+    <%= textilizable @notes, :object => @pull %>
+  </fieldset>
+<% end %>
+
 <% if @description %>
   <fieldset class="preview"><legend><%= l(:field_description) %></legend>
     <%= textilizable @description, :object => @pull %>

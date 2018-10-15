@@ -158,6 +158,9 @@ class PullsController < ApplicationController
       @description = nil
     end
 
+    @notes   = params[:journal] ? params[:journal][:notes] : nil
+    @notes ||= params[:pull] ? params[:pull][:notes] : nil
+
     render :layout => false
   rescue ActiveRecord::RecordNotFound
     render_404

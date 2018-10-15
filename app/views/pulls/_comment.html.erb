@@ -4,13 +4,18 @@
     <%= wikitoolbar_for 'pull_notes' %>
 
     <%= submit_tag l(:button_comment) %>
+    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-comment-form' %>
 
     <% if pull.safe_attribute? 'status' %>
-      <% if pull.closed? %>
-        <%= submit_tag l(:button_close_pull_request), :name => 'close' %>
-      <% elsif ! pull.merged? %>
-        <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' %>
-      <% end %>
+      <div class="pull__status-actions">
+        <% if pull.closed? %>
+          <%= submit_tag l(:button_close_pull_request), :name => 'close' %>
+        <% elsif ! pull.merged? %>
+          <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' %>
+        <% end %>
+      </div>
     <% end %>
+
+    <div id="preview" class="wiki"></div>
   <% end %>
 <% end %>

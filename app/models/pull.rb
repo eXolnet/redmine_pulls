@@ -396,6 +396,9 @@ class Pull < ActiveRecord::Base
                   'commit_head',
                   :if => lambda {|pull, user| pull.new_record? }
 
+  safe_attributes 'status',
+                  :if => lambda {|pull, user| !pull.new_record? && pull.attributes_editable?(user) && pull.status != 'merged' }
+
   safe_attributes 'notes',
                   :if => lambda {|pull, user| pull.notes_addable?(user)}
 

@@ -105,3 +105,7 @@ a.pull__commit:hover {
   list-style: none;
   padding: 0;
 }
+
+.pull__status-actions {
+  float: right;
+}
