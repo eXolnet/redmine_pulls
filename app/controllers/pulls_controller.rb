@@ -48,7 +48,7 @@ class PullsController < ApplicationController
   end
 
   def create
-    raise Unauthorized unless User.current.allowed_to?(:add_pulls, @pull.project, :global => true)
+    raise Unauthorized unless User.current.allowed_to?(:add_pulls, @pull.project)
 
     unless @pull.save
       return respond_to do |format|
