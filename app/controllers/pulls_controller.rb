@@ -2,7 +2,7 @@ class PullsController < ApplicationController
   default_search_scope :pulls
   menu_item :pulls
 
-  before_action :find_pull, :only => [:show, :edit, :update, :destroy, :quoted, :add_related_issue, :remove_related_issue]
+  before_action :find_pull, :only => [:show, :edit, :update, :destroy, :quoted]
   before_action :find_optional_project, :only => [:index, :new, :create, :commit]
   before_action :ensure_project_has_repository
   before_action :build_new_pull_from_params, :only => [:new, :create, :commit]
@@ -180,48 +180,7 @@ class PullsController < ApplicationController
     render :template => 'journals/new'
   end
 
-  def add_related_issue
-    raise Unauthorized unless User.current.allowed_to?(:manage_pull_relations, @pull.project)
-
-    issue_id = params[:issue_id].to_s.sub(/^#/,'')
-    @issue = @pull.find_referenced_issue_by_id(issue_id)
-
-    if @issue && (!@issue.visible? || @pull.issues.include?(@issue))
-      @issue = nil
-    end
-
-    if @issue
-      @pull.issues << @issue
-    end
-  end
-
-  def remove_related_issue
-    raise Unauthorized unless User.current.allowed_to?(:manage_pull_relations, @pull.project)
-
-    @issue = Issue.visible.find_by_id(params[:issue_id])
-
-    if @issue
-      @pull.issues.delete(@issue)
-    end
-  end
-
   private
-
-  def find_pull
-    pull_id = params[:pull_id] || params[:id]
-
-    @pull = Pull.find(pull_id)
-    raise Unauthorized unless @pull.visible?
-    @project = @pull.project
-  rescue ActiveRecord::RecordNotFound
-    render_404
-  end
-
-  def ensure_project_has_repository
-    if @project && ! @project.repository
-      render :template => 'pulls/no_repository'
-    end
-  end
 
   def build_new_pull_from_params
     @pull = Pull.new

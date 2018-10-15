@@ -1,4 +1,20 @@
 module PullsHelper
+  def find_pull
+    pull_id = params[:pull_id] || params[:id]
+
+    @pull = Pull.find(pull_id)
+    raise Unauthorized unless @pull.visible?
+    @project = @pull.project
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
+  def ensure_project_has_repository
+    if @project && ! @project.repository
+      render :template => 'pulls/no_repository'
+    end
+  end
+
   # Returns an array of users that are proposed as watchers
   # on the new issue form
   def users_for_new_pull_reviewers(pull)
@@ -139,7 +155,7 @@ module PullsHelper
 
     relations = pull.issues.visible.collect do |issue|
       delete_link = link_to(l(:label_relation_delete),
-                            {:controller => 'pulls', :action => 'remove_related_issue', :pull_id => @pull, :issue_id => issue},
+                            {:controller => 'pull_issues', :action => 'destroy', :pull_id => @pull, :issue_id => issue},
                             :remote => true,
                             :method => :delete,
                             :data => {:confirm => l(:text_are_you_sure)},

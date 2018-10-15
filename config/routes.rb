@@ -14,8 +14,8 @@ get '/pulls/reviewers/new', :to => 'pull_reviewers#new', :as => 'new_pull_review
 post '/pulls/reviewers', :to => 'pull_reviewers#create'
 
 resources :pulls, :except => [:new, :create] do
-  post   'issues', :to => 'pulls#add_related_issue'
-  delete 'issues/:issue_id', :to => 'pulls#remove_related_issue'
+  post   'issues', :to => 'pull_issues#create'
+  delete 'issues/:issue_id', :to => 'pull_issues#destroy'
 
   get 'reviewers/autocomplete_for_user', :to => 'pull_reviewers#autocomplete_for_user'
   resources :reviewers, :controller => 'pull_reviewers', :only => [:new, :create]

@@ -13,7 +13,7 @@
 <% end %>
 
 <% if manage_allowed %>
-  <%= form_tag({:controller => 'pulls', :action => 'add_related_issue', :pull_id => @pull},
+  <%= form_tag({:controller => 'pull_issues', :action => 'create', :pull_id => @pull},
                :remote => true,
                :method => :post,
                :id => 'new-relation-form',
