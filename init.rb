@@ -23,19 +23,10 @@ Redmine::Plugin.register :redmine_pulls do
     permission :edit_pulls,            { :pulls => [:edit, :update] }
     permission :delete_pulls,          { :pulls => [:destroy] }, :require => :member
 
-    # Notes
-    permission :add_pull_notes,        {}
-    permission :edit_pull_notes,       {}
-    permission :edit_own_pull_notes,   {}
-
-    # Watchers
-    permission :view_pull_watchers,    {}, :read => true
-    permission :add_pull_watchers,     {:watchers => [:new, :create, :append, :autocomplete_for_user]}
-    permission :delete_pull_watchers,  {:watchers => :destroy}
-
     # Reviews
     permission :review_pull,           {}
     permission :add_pull_reviewers,    {}
+    permission :delete_pull_reviewers, {}
 
     # Related issues
     permission :manage_pull_relations, {}

@@ -218,7 +218,7 @@ class Pull < ActiveRecord::Base
 
   # Returns true if user or current user is allowed to add notes to the issue
   def notes_addable?(user=User.current)
-    user_permission?(user, :add_pull_notes)
+    user_permission?(user, :add_issue_notes)
   end
 
   # Returns true if user or current user is allowed to delete the issue

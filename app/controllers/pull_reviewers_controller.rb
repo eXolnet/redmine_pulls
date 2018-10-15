@@ -4,10 +4,14 @@ class PullReviewersController < ApplicationController
   include PullsHelper
 
   def new
+    raise Unauthorized unless User.current.allowed_to?(:add_pull_reviewers, @project)
+
     @users = users_for_new_reviewer
   end
 
   def create
+    raise Unauthorized unless User.current.allowed_to?(:add_pull_reviewers, @project)
+
     user_ids = []
     if params[:pull]
       user_ids << (params[:pull][:user_ids] || params[:pull][:user_id])
@@ -31,6 +35,8 @@ class PullReviewersController < ApplicationController
   end
 
   def destroy
+    raise Unauthorized unless User.current.allowed_to?(:delete_pull_reviewers, @project)
+
     user = User.find(params[:user_id])
 
     @pull.reviews.where(:reviewer_id => user.id).delete_all
@@ -47,6 +53,8 @@ class PullReviewersController < ApplicationController
   end
 
   def autocomplete_for_user
+    raise Unauthorized unless User.current.allowed_to?(:add_pull_reviewers, @project)
+
     @users = users_for_new_reviewer
     render :layout => false
   end

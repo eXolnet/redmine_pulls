@@ -142,11 +142,16 @@ class PullsController < ApplicationController
   end
 
   def commit
+    raise Unauthorized unless User.current.allowed_to?(:add_pulls, @project)
+
     @kind = params[:kind] || 'base'
   end
 
   def preview
     @pull = Pull.find_by_id(params[:id]) unless params[:id].blank?
+
+    raise Unauthorized unless @pull.editable? || @pull.notes_addable?
+
     @description = params[:pull] && params[:pull][:description]
 
     if @pull && @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
@@ -159,6 +164,8 @@ class PullsController < ApplicationController
   end
 
   def quoted
+    raise Unauthorized unless @pull.notes_addable?
+
     user = @pull.author
     text = @pull.description
 
@@ -171,6 +178,8 @@ class PullsController < ApplicationController
   end
 
   def add_related_issue
+    raise Unauthorized unless User.current.allowed_to?(:manage_pull_relations, @pull.project)
+
     issue_id = params[:issue_id].to_s.sub(/^#/,'')
     @issue = @pull.find_referenced_issue_by_id(issue_id)
 
@@ -184,6 +193,8 @@ class PullsController < ApplicationController
   end
 
   def remove_related_issue
+    raise Unauthorized unless User.current.allowed_to?(:manage_pull_relations, @pull.project)
+
     @issue = Issue.visible.find_by_id(params[:issue_id])
 
     if @issue

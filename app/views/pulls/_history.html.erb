@@ -28,7 +28,7 @@
     <%= call_hook(:view_pulls_history_journal_bottom, { :journal => journal }) %>
   <% end %>
 
-  <% heads_for_wiki_formatter if User.current.allowed_to?(:edit_pull_notes, pull.project) || User.current.allowed_to?(:edit_own_pull_notes, pull.project) %>
+  <% heads_for_wiki_formatter if User.current.allowed_to?(:edit_issue_notes, pull.project) || User.current.allowed_to?(:edit_own_issue_notes, pull.project) %>
 <% else %>
   <p class="nodata"><%= l(:label_no_conversation_yet) %></p>
 <% end %>
