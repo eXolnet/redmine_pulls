@@ -9,9 +9,9 @@
     <% if pull.safe_attribute? 'status' %>
       <div class="pull__status-actions">
         <% if pull.closed? %>
-          <%= submit_tag l(:button_close_pull_request), :name => 'close' %>
-        <% elsif ! pull.merged? %>
           <%= submit_tag l(:button_reopen_pull_request), :name => 'reopen' %>
+        <% elsif ! pull.merged? %>
+          <%= submit_tag l(:button_close_pull_request), :name => 'close' %>
         <% end %>
       </div>
     <% end %>
