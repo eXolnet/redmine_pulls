@@ -148,18 +148,19 @@ class PullsController < ApplicationController
   end
 
   def preview
-    @pull = Pull.find_by_id(params[:id]) unless params[:id].blank?
-
-    raise Unauthorized unless @pull.editable? || @pull.notes_addable?
-
+    @pull        = Pull.find_by_id(params[:id]) unless params[:id].blank?
     @description = params[:pull] && params[:pull][:description]
 
-    if @pull && @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
-      @description = nil
-    end
+    if @pull
+      raise Unauthorized unless @pull.editable? || @pull.notes_addable?
 
-    @notes   = params[:journal] ? params[:journal][:notes] : nil
-    @notes ||= params[:pull] ? params[:pull][:notes] : nil
+      if @description && @description.gsub(/(\r?\n|\n\r?)/, "\n") == @pull.description.to_s.gsub(/(\r?\n|\n\r?)/, "\n")
+        @description = nil
+      end
+
+      @notes   = params[:journal] ? params[:journal][:notes] : nil
+      @notes ||= params[:pull] ? params[:pull][:notes] : nil
+    end
 
     render :layout => false
   rescue ActiveRecord::RecordNotFound
