@@ -24,6 +24,12 @@ span.search_for_reviewers {
 
 .pull__branch {
   border-bottom: 1px solid #6d8cb9;
+  display: inline-block;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .pulls__changes .line-code {
