@@ -85,7 +85,8 @@ class Pull < ActiveRecord::Base
 
   before_save :force_updated_on_change, :update_closed_on, :set_assigned_to_was
   after_save :create_journal
-  after_save :send_notification
+  after_create :send_added_notification
+  after_update :send_updated_notification
 
   state_machine :status, initial: :opened do
     event :close do
@@ -767,12 +768,16 @@ class Pull < ActiveRecord::Base
     end
   end
 
-  def send_notification
-    if id_changed?
-      Mailer.pull_added(self).deliver if Setting.notified_events.include?('pull_added')
-    elsif merge_status_changed? && merge_status == 'cannot_be_merged'
-      Mailer.pull_unmergable(self).deliver if Setting.notified_events.include?('pull_unmergable')
-    end
+  def send_added_notification
+    return unless Setting.notified_events.include?('pull_added')
+
+    Mailer.pull_added(self).deliver
+  end
+
+  def send_updated_notification
+    return unless merge_status_changed? && merge_status == 'cannot_be_merged' && Setting.notified_events.include?('pull_unmergable')
+
+    Mailer.pull_unmergable(self).deliver
   end
 
   # Stores the previous assignee so we can still have access
