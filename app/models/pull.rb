@@ -208,7 +208,7 @@ class Pull < ActiveRecord::Base
   end
 
   def head_branch_deletable?(user=User.current)
-    closed? && head_branch_exists?
+    closed? && head_branch_exists? && commit_head != repository.default_branch
   end
 
   # Returns true if user or current user is allowed to edit the issue
