@@ -521,6 +521,12 @@ class Pull < ActiveRecord::Base
     @assignable_versions = versions.uniq.sort
   end
 
+  def assigned_to_users
+    return [] unless assigned_to
+
+    assigned_to.is_a?(Group) ? assigned_to.users : [assigned_to]
+  end
+
   # Returns the previous assignee (user or group) if changed
   def assigned_to_was
     # assigned_to_id_was is reset before after_save callbacks
@@ -528,6 +534,12 @@ class Pull < ActiveRecord::Base
     if user_id && user_id != assigned_to_id
       @assigned_to_was ||= Principal.find_by_id(user_id)
     end
+  end
+
+  def assigned_to_was_users
+    return [] unless assigned_to_was
+
+    assigned_to_was.is_a?(Group) ? assigned_to_was.users : [assigned_to_was]
   end
 
   # Returns the users that should be notified
@@ -538,8 +550,8 @@ class Pull < ActiveRecord::Base
     # locked or don't want to be notified
     notified << author if author
 
-    notified += (assigned_to.is_a?(Group) ? assigned_to.users : [assigned_to]) if assigned_to
-    notified += (assigned_to_was.is_a?(Group) ? assigned_to_was.users : [assigned_to_was]) if assigned_to_was
+    notified += assigned_to_users
+    notified += assigned_to_was_users
 
     notified = notified.select {|u| u.active?}
 
