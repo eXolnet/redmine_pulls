@@ -769,13 +769,9 @@ class Pull < ActiveRecord::Base
 
   def send_notification
     if id_changed?
-      if Setting.notified_events.include?('pull_added')
-        Mailer.pull_added(self).deliver
-      end
+      Mailer.pull_added(self).deliver if Setting.notified_events.include?('pull_added')
     elsif merge_status_changed? && merge_status == 'cannot_be_merged'
-      if Setting.notified_events.include?('pull_unmergable')
-        Mailer.pull_unmergable(self).deliver
-      end
+      Mailer.pull_unmergable(self).deliver if Setting.notified_events.include?('pull_unmergable')
     end
   end
 
