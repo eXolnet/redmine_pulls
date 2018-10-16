@@ -53,10 +53,10 @@ module RedminePulls
             ! (merge_result =~ /<<<<<<<.*=======.*>>>>>>>/m)
           end
 
-          def is_ancestor?(commit_ancestor, commit_descendant)
+          def is_ancestor?(expected_ancestor, expected_descendant)
             cmd_args = %w|merge-base --is-ancestor|
-            cmd_args << commit_ancestor
-            cmd_args << commit_descendant
+            cmd_args << expected_ancestor
+            cmd_args << expected_descendant
 
             git_cmd(cmd_args)
 
