@@ -715,14 +715,8 @@ class Pull < ActiveRecord::Base
   def find_referenced_issue_by_id(id)
     return nil if id.blank?
 
-    issue = Issue.find_by_id(id.to_i)
-
-    if issue && ! Setting.commit_cross_project_ref?
-      # issue that belong to the repository project, a subproject or a parent project only
-      issue = nil unless issue.project && (project == issue.project || project.is_ancestor_of?(issue.project) || project.is_descendant_of?(issue.project))
-    end
-
-    issue
+    # TODO - Add a Setting `Setting.pull_cross_project_ref?` and verifiy if the issue can be linked
+    Issue.find_by_id(id.to_i)
   end
 
   def mail_subject
