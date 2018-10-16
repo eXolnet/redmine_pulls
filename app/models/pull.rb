@@ -565,12 +565,9 @@ class Pull < ActiveRecord::Base
     # Author and assignee are always notified unless they have been
     # locked or don't want to be notified
     notified << author if author
-    if assigned_to
-      notified += (assigned_to.is_a?(Group) ? assigned_to.users : [assigned_to])
-    end
-    if assigned_to_was
-      notified += (assigned_to_was.is_a?(Group) ? assigned_to_was.users : [assigned_to_was])
-    end
+
+    notified += (assigned_to.is_a?(Group) ? assigned_to.users : [assigned_to]) if assigned_to
+    notified += (assigned_to_was.is_a?(Group) ? assigned_to_was.users : [assigned_to_was]) if assigned_to_was
 
     notified = notified.select {|u| u.active?}
 
