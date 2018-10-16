@@ -284,38 +284,9 @@ class Pull < ActiveRecord::Base
   end
 
   # Sets the project.
-  # This will:
-  # * set the category to the category with the same name in the new
-  #   project if it exists, or clear it if it doesn't.
-  def project=(project, keep_tracker=false)
-    project_was = self.project
+  # This method should only be called on pull request creation
+  def project=(project)
     association(:project).writer(project)
-
-    if project != project_was
-      @safe_attribute_names = nil
-    end
-
-    if project_was && project && project_was != project
-      @assignable_versions = nil
-
-      # Reassign to the category with same name if any
-      if category
-        self.category = project.issue_categories.find_by_name(category.name)
-      end
-
-      # Clear the assignee if not available in the new project for new issues (eg. copy)
-      # For existing issue, the previous assignee is still valid, so we keep it
-      if new_record? && assigned_to && !assignable_users.include?(assigned_to)
-        self.assigned_to_id = nil
-      end
-
-      # Keep the fixed_version if it's still valid in the new_project
-      if fixed_version && fixed_version.project != project && !project.shared_versions.include?(fixed_version)
-        self.fixed_version = nil
-      end
-
-      reassign_custom_field_values
-    end
 
     # Set fixed_version to the project default version if it's valid
     if new_record? && fixed_version.nil? && project && project.default_version_id?
