@@ -24,7 +24,11 @@ module RedminePulls
         return if @pull.closed? || @pull.branch_missing?
 
         # First, detect the last commit in the head branch
-        @pull.commit_head_revision = @pull.repository.revision(@pull.commit_head)
+        commit_base_revision = @pull.repository.revision(@pull.commit_head)
+
+        return if commit_base_revision.blank?
+
+        @pull.commit_head_revision = commit_base_revision
 
         # Next, detect the first ancestor of both branches
         commit_base_revision = @pull.repository.merge_base(@pull.commit_base, @pull.commit_head)
