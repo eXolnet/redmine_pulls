@@ -684,12 +684,12 @@ class Pull < ActiveRecord::Base
   def css_classes(user=User.current)
     s = "pull #{priority.try(:css_classes)}"
     s << ' closed' if closed?
-    if user.logged?
-      s << ' created-by-me' if author_id == user.id
-      s << ' assigned-to-me' if assigned_to_id == user.id
-      s << ' assigned-to-my-group' if user.groups.any? {|g| g.id == assigned_to_id}
-    end
-    s
+
+    return s unless user.logged?
+
+    s << ' created-by-me' if author_id == user.id
+    s << ' assigned-to-me' if assigned_to_id == user.id
+    s << ' assigned-to-my-group' if user.groups.any? {|g| g.id == assigned_to_id}
   end
 
   def review(user=User.current)
