@@ -50,7 +50,10 @@ module RedminePulls
             merge_result = nil
             git_cmd(cmd_args) { |io| io.binmode; merge_result = io.read }
 
-            ! (merge_result =~ /<<<<<<<.*=======.*>>>>>>>/m)
+            # Split the regex in to two avoid conflict detection when working with this file
+            regex = Regexp.new("<<<" + "<<<<.*=======.*>>>>>>>", Regexp::MULTILINE)
+
+            ! regex.match(merge_result)
           end
 
           def revision(identifier)
