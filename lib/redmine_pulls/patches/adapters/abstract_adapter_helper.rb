@@ -25,6 +25,10 @@ module RedminePulls
             false
           end
 
+          def revision(identifier)
+            nil
+          end
+
           def is_ancestor?(commit_ancestor, commit_descendant)
             false
           end

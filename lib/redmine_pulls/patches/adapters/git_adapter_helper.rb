@@ -53,16 +53,21 @@ module RedminePulls
             ! (merge_result =~ /<<<<<<<.*=======.*>>>>>>>/m)
           end
 
+          def revision(identifier)
+            cmd_args = %w|rev-parse --verify|
+            cmd_args << identifier
+
+            revision = nil
+            git_cmd(cmd_args) { |io| io.binmode; revision = io.read }
+
+            revision&.strip
+          end
+
           def is_ancestor?(expected_ancestor, expected_descendant)
-            cmd_args = %w|merge-base --is-ancestor|
-            cmd_args << expected_ancestor
-            cmd_args << expected_descendant
+            ancestor_revision = revision(expected_ancestor)
+            merge_base = merge_base(expected_ancestor, expected_descendant)
 
-            git_cmd(cmd_args)
-
-            true
-          rescue Redmine::Scm::Adapters::AbstractAdapter::ScmCommandAborted
-            false
+            ancestor_revision == merge_base
           end
         end
       end

@@ -24,13 +24,14 @@ module RedminePulls
         return if @pull.closed? || @pull.branch_missing?
 
         # First, detect the last commit in the head branch
-        @pull.commit_head_revision = last_head_revision
-
-        return if is_merged
+        @pull.commit_head_revision = @pull.repository.revision(@pull.commit_head)
 
         # Next, detect the first ancestor of both branches
-        commit_base_revision = branch_point_revision
-        @pull.commit_base_revision = commit_base_revision unless commit_base_revision.blank?
+        commit_base_revision = @pull.repository.merge_base(@pull.commit_base, @pull.commit_head)
+
+        return if commit_base_revision.blank? || commit_base_revision == @pull.commit_head_revision
+
+        @pull.commit_base_revision = commit_base_revision
       end
 
       def detect_manually_merged
@@ -59,14 +60,6 @@ module RedminePulls
 
       def is_merged
         @pull.repository.is_ancestor? @pull.commit_head_revision, @pull.commit_base
-      end
-
-      def last_head_revision
-        @pull.repository.scm.revisions(nil, nil, @pull.commit_head, :reverse => true, :limit => 1).first&.identifier
-      end
-
-      def branch_point_revision
-        @pull.repository.scm.merge_base(@pull.commit_base, @pull.commit_head)
       end
     end
   end
