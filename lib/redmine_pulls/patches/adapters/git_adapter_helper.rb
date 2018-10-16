@@ -56,6 +56,15 @@ module RedminePulls
             ! regex.match(merge_result)
           end
 
+          def merge(commit_base, commit_head)
+            # https://stackoverflow.com/questions/7984986/git-merging-branches-in-a-bare-repository
+            # $ git read-tree -i -m branch1 branch2
+            # $ COMMIT=$(git commit-tree $(git write-tree) -p branch1 -p branch2 < commit message)
+            # $ git update-ref mergedbranch $COMMIT
+
+            merge_result = nil
+          end
+
           def revision(identifier)
             cmd_args = %w|rev-parse --verify|
             cmd_args << identifier
