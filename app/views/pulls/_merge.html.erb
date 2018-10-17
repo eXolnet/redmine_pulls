@@ -43,6 +43,10 @@
         <hr>
 
         <%= submit_tag l(:button_delete_branch), :name => 'delete_branch' %>
+      <% elsif pull.head_branch_restorable? %>
+        <hr>
+
+        <%= submit_tag l(:button_restore_branch), :name => 'restore_branch' %>
       <% end %>
     <% end %>
   </div>
