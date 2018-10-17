@@ -17,13 +17,13 @@ This plugin version is compatible only with Redmine 3.3 and later.
 
 2. From the directory `#{REDMINE_ROOT}`, install the plugin's dependencies:
 
-    ```
+    ```bash
     bundle install
     ```
 
 3. Make a backup of your database, then run the following command to update it:
 
-    ```
+    ```bash
     bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_pulls
     ```
     
@@ -35,7 +35,7 @@ This plugin version is compatible only with Redmine 3.3 and later.
 
 1. Make a backup of your database, then run the following command to update it:
    
-    ```
+    ```bash
     bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_pulls VERSION=0
     ```
        
