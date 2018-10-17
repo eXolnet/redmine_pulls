@@ -13,6 +13,18 @@ module RedminePulls
         end
 
         module InstanceMethods
+          def create_branch(identifier, commit)
+            cmd_args = %w|update-ref|
+            cmd_args << 'refs/heads/' + identifier
+            cmd_args << commit
+
+            git_cmd(cmd_args)
+
+            true
+          rescue Redmine::Scm::Adapters::AbstractAdapter::ScmCommandAborted
+            false
+          end
+
           def delete_branch(identifier)
             cmd_args = %w|update-ref -d|
             cmd_args << 'refs/heads/' + identifier

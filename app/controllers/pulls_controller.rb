@@ -269,6 +269,10 @@ class PullsController < ApplicationController
       @pull.delete_head_branch
 
       flash[:notice] = l(:notice_pull_branch_successful_delete)
+    elsif params[:restore_branch] && @pull.head_branch_restorable? && @pull.commitable?
+      @pull.restore_head_branch
+
+      flash[:notice] = l(:notice_pull_branch_successful_restore)
     end
   end
 end

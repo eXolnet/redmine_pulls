@@ -13,6 +13,10 @@ module RedminePulls
         end
 
         module InstanceMethods
+          def create_branch(identifier, commit)
+            false
+          end
+
           def delete_branch(identifier)
             false
           end

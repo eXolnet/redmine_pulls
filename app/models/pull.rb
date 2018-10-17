@@ -209,7 +209,11 @@ class Pull < ActiveRecord::Base
   end
 
   def head_branch_deletable?(user=User.current)
-    closed? && head_branch_exists? && commit_head != repository.default_branch
+    merged? && head_branch_exists? && commit_head != repository.default_branch
+  end
+
+  def head_branch_restorable?
+    merged? && commit_head_revision && ! head_branch_exists?
   end
 
   # Returns true if user or current user is allowed to edit the issue
@@ -689,6 +693,10 @@ class Pull < ActiveRecord::Base
 
   def delete_head_branch
     repository.delete_branch(commit_head)
+  end
+
+  def restore_head_branch
+    repository.create_branch(commit_head, commit_head_revision)
   end
 
   # Finds an issue that can be referenced by the commit message
