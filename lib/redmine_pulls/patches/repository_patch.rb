@@ -24,6 +24,10 @@ module RedminePulls
           scm.mergable?(commit_base, commit_head)
         end
 
+        def merge(pull_number, commit_base, commit_head)
+          scm.merge(pull_number, commit_base, commit_head)
+        end
+
         def revision(identifier)
           scm.revision(identifier)
         end

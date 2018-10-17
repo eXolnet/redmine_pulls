@@ -29,13 +29,10 @@ module RedminePulls
             cmd_args << commit_base
             cmd_args << commit_head
 
-            merge_base = nil
-            git_cmd(cmd_args) { |io| io.binmode; merge_base = io.read }
-
-            merge_base&.strip
+            git_cmd_with_output(cmd_args)
           end
 
-          # # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
+          # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
           def mergable?(commit_base, commit_head)
             merge_base = merge_base(commit_base, commit_head)
 
@@ -47,8 +44,7 @@ module RedminePulls
             cmd_args << commit_base
             cmd_args << commit_head
 
-            merge_result = nil
-            git_cmd(cmd_args) { |io| io.binmode; merge_result = io.read }
+            merge_result = git_cmd_with_output(cmd_args)
 
             # Split the regex in to two avoid conflict detection when working with this file
             regex = Regexp.new("<<<" + "<<<<.*=======.*>>>>>>>", Regexp::MULTILINE)
@@ -56,23 +52,40 @@ module RedminePulls
             ! regex.match(merge_result)
           end
 
-          def merge(commit_base, commit_head)
+          def merge(pull_number, commit_base, commit_head)
             # https://stackoverflow.com/questions/7984986/git-merging-branches-in-a-bare-repository
-            # $ git read-tree -i -m branch1 branch2
-            # $ COMMIT=$(git commit-tree $(git write-tree) -p branch1 -p branch2 < commit message)
-            # $ git update-ref mergedbranch $COMMIT
 
-            merge_result = nil
+            # $ git read-tree -i -m branch1 branch2
+            cmd_args = %w|read-tree -i -m|
+            cmd_args << commit_base
+            cmd_args << commit_head
+            git_cmd_with_output(cmd_args)
+
+            # $ git write-tree
+            write_tree = git_cmd_with_output(%w|write-tree|)
+
+            # $ COMMIT=$(git commit-tree $(git write-tree) -p branch1 -p branch2 < commit message)
+            cmd_args = %w|-c| << "user.name=#{User.current.firstname} #{User.current.lastname}"
+            cmd_args << '-c' << 'user.email='
+            cmd_args << 'commit-tree'
+            cmd_args << write_tree
+            cmd_args << '-p' << commit_base
+            cmd_args << '-p' << commit_head
+            cmd_args << '-m' << "Merge pull request \"##{pull_number}\":/pulls/#{pull_number} from #{commit_head}"
+            commit_hash = git_cmd_with_output(cmd_args)
+
+            # $ git update-ref mergedbranch $COMMIT
+            cmd_args = %w|update-ref|
+            cmd_args << "refs/heads/#{commit_base}"
+            cmd_args << commit_hash
+            git_cmd_with_output(cmd_args)
           end
 
           def revision(identifier)
             cmd_args = %w|rev-parse --verify|
             cmd_args << identifier
 
-            revision = nil
-            git_cmd(cmd_args) { |io| io.binmode; revision = io.read }
-
-            revision&.strip
+            git_cmd_with_output(cmd_args)
           end
 
           def is_ancestor?(expected_ancestor, expected_descendant)
@@ -80,6 +93,14 @@ module RedminePulls
             merge_base = merge_base(expected_ancestor, expected_descendant)
 
             ancestor_revision == merge_base
+          end
+
+          def git_cmd_with_output(command)
+            result = nil
+
+            git_cmd(command) { |io| io.binmode; result = io.read }
+
+            result&.strip
           end
         end
       end

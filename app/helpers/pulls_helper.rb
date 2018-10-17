@@ -125,6 +125,8 @@ module PullsHelper
   def merge_pull(pull)
     return unless pull.mergable?
 
+    pull.repository.merge(pull.id, pull.commit_base, pull.commit_head)
+
     pull.mark_as_merged
   end
 
