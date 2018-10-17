@@ -35,9 +35,9 @@
           <h4><%= l(:label_merge_instructions_title) %></h4>
           <p><%= l(:label_merge_instructions_description) %></p>
 
-          <pre>git checkout <%= pull.commit_base %>
-  git merge --no-ff <%= pull.commit_head %>
-  git push origin master</pre>
+          <pre>git checkout <%= pull.commit_base %></pre>
+          <pre>git merge --no-ff <%= pull.commit_head %></pre>
+          <pre>git push origin <%= pull.commit_base %></pre>
         </div>
       <% elsif pull.head_branch_deletable? %>
         <hr>
