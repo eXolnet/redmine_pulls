@@ -67,7 +67,7 @@ class PullQuery < Query
   end
 
   def default_columns_names
-    @default_columns_names = [:id, :priority, :subject, :author, :updated_on]
+    @default_columns_names = [:id, :priority, :subject, :author, :assigned_to, :updated_on]
   end
 
   def default_sort_criteria
