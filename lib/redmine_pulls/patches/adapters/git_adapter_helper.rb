@@ -29,10 +29,9 @@ module RedminePulls
             cmd_args << commit_base
             cmd_args << commit_head
 
-            git_cmd_with_output(cmd_args)
+            git_cmd_output(cmd_args)
           end
 
-          # https://stackoverflow.com/questions/49577408/how-to-detect-conflicts-between-branches-in-the-bare-git-repository
           def mergable?(commit_base, commit_head)
             merge_base = merge_base(commit_base, commit_head)
 
@@ -44,25 +43,25 @@ module RedminePulls
             cmd_args << commit_base
             cmd_args << commit_head
 
-            merge_result = git_cmd_with_output(cmd_args)
+            merge_result = git_cmd_output(cmd_args)
 
-            # Split the regex in to two avoid conflict detection when working with this file
+            # Split the regex to avoid conflict detection when working with this file
             regex = Regexp.new("<<<" + "<<<<.*=======.*>>>>>>>", Regexp::MULTILINE)
 
             ! regex.match(merge_result)
           end
 
           def merge(pull_number, commit_base, commit_head)
-            # https://stackoverflow.com/questions/7984986/git-merging-branches-in-a-bare-repository
-
             # $ git read-tree -i -m branch1 branch2
             cmd_args = %w|read-tree -i -m|
             cmd_args << commit_base
             cmd_args << commit_head
-            git_cmd_with_output(cmd_args)
+            git_cmd_output(cmd_args)
 
             # $ git write-tree
-            write_tree = git_cmd_with_output(%w|write-tree|)
+            write_tree = git_cmd_output(%w|write-tree|)
+
+            raise 'Invalid or missing hash' unless write_tree
 
             # $ COMMIT=$(git commit-tree $(git write-tree) -p branch1 -p branch2 < commit message)
             cmd_args = %w|-c| << "user.name=#{User.current.firstname} #{User.current.lastname}"
@@ -72,20 +71,24 @@ module RedminePulls
             cmd_args << '-p' << commit_base
             cmd_args << '-p' << commit_head
             cmd_args << '-m' << "Merge pull request \"##{pull_number}\":/pulls/#{pull_number} from #{commit_head}"
-            commit_hash = git_cmd_with_output(cmd_args)
+            commit_hash = git_cmd_output(cmd_args)
+
+            raise 'Invalid or missing hash' unless commit_hash
 
             # $ git update-ref mergedbranch $COMMIT
             cmd_args = %w|update-ref|
             cmd_args << "refs/heads/#{commit_base}"
             cmd_args << commit_hash
-            git_cmd_with_output(cmd_args)
+            git_cmd_output(cmd_args)
+
+            commit_hash
           end
 
           def revision(identifier)
             cmd_args = %w|rev-parse --verify|
             cmd_args << identifier
 
-            git_cmd_with_output(cmd_args)
+            git_cmd_output(cmd_args)
           end
 
           def is_ancestor?(expected_ancestor, expected_descendant)
@@ -95,10 +98,12 @@ module RedminePulls
             ancestor_revision == merge_base
           end
 
-          def git_cmd_with_output(command)
+          private
+
+          def git_cmd_output(command, options = {})
             result = nil
 
-            git_cmd(command) { |io| io.binmode; result = io.read }
+            git_cmd(command, options) { |io| io.binmode; result = io.read }
 
             result&.strip
           end
