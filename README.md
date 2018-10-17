@@ -15,7 +15,7 @@ This plugin version is compatible only with Redmine 3.3 and later.
 
 1. Download the .ZIP archive, extract files and copy the plugin directory to `#{REDMINE_ROOT}/plugins/redmine_pulls`.
 
-2. Install the plugin's dependencies:
+2. From the directory `#{REDMINE_ROOT}`, install the plugin's dependencies:
 
     ```
     bundle install
