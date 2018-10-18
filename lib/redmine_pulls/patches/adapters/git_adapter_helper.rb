@@ -42,6 +42,8 @@ module RedminePulls
             cmd_args << commit_head
 
             git_cmd_output(cmd_args)
+          rescue Redmine::Scm::Adapters::AbstractAdapter::ScmCommandAborted
+            nil
           end
 
           def mergable?(commit_base, commit_head)
