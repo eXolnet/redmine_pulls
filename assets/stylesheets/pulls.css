@@ -115,3 +115,7 @@ a.pull__commit:hover {
 .pull__status-actions {
   float: right;
 }
+
+.pull__diff-options span + span {
+  margin-left: 30px;
+}
