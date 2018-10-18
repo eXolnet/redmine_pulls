@@ -51,7 +51,7 @@ module RedminePulls
             ! regex.match(merge_result)
           end
 
-          def merge(pull_number, commit_base, commit_head)
+          def merge(commit_base, commit_head, options = {})
             # $ git read-tree -i -m branch1 branch2
             cmd_args = %w|read-tree -i -m|
             cmd_args << commit_base
@@ -64,13 +64,14 @@ module RedminePulls
             raise 'Invalid or missing hash' unless write_tree
 
             # $ COMMIT=$(git commit-tree $(git write-tree) -p branch1 -p branch2 < commit message)
-            cmd_args = %w|-c| << "user.name=#{User.current.firstname} #{User.current.lastname}"
-            cmd_args << '-c' << 'user.email='
+            cmd_args = %w||
+            cmd_args << '-c' << "user.name=#{options[:author_name]}" if options[:author_name]
+            cmd_args << '-c' << "user.email=#{options[:author_email]}" if options[:author_email]
             cmd_args << 'commit-tree'
             cmd_args << write_tree
             cmd_args << '-p' << commit_base
             cmd_args << '-p' << commit_head
-            cmd_args << '-m' << "Merge pull request \"##{pull_number}\":/pulls/#{pull_number} from #{commit_head}"
+            cmd_args << '-m' << options[:message] || "Merge #{commit_head} into #{commit_base}"
             commit_hash = git_cmd_output(cmd_args)
 
             raise 'Invalid or missing hash' unless commit_hash
@@ -116,4 +117,3 @@ end
 unless Redmine::Scm::Adapters::GitAdapter.included_modules.include?(RedminePulls::Patches::Adapters::GitAdapterPatch)
   Redmine::Scm::Adapters::GitAdapter.send(:include, RedminePulls::Patches::Adapters::GitAdapterPatch)
 end
-

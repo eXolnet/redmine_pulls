@@ -125,7 +125,13 @@ module PullsHelper
   def merge_pull(pull)
     return unless pull.mergable?
 
-    pull.repository.merge(pull.id, pull.commit_base, pull.commit_head)
+    pull.repository.merge(
+      pull.commit_base,
+      pull.commit_head,
+      message: pull.merge_commit_message,
+      author_name: pull.merge_commit_author_name,
+      author_email: pull.merge_commit_author_email
+    )
 
     pull.mark_as_merged
   end

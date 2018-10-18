@@ -734,6 +734,18 @@ class Pull < ActiveRecord::Base
     "[#{project.name}] #{subject} (##{id})"
   end
 
+  def merge_commit_message
+    "Merge pull request \"##{id}\":/pulls/#{id} from #{commit_head}"
+  end
+
+  def merge_commit_author_name
+    "#{User.current.firstname} #{User.current.lastname}"
+    end
+
+  def merge_commit_author_email
+    User.current.email_address.address
+  end
+
   private
 
   def user_permission?(user, permission)
