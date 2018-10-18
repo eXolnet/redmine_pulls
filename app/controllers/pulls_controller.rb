@@ -234,6 +234,7 @@ class PullsController < ApplicationController
     if params[:review_status]
       review = @pull.review
       review.status = params[:review_status]
+      review.last_revision = @pull.commit_head_revision
     end
 
     true
