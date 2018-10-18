@@ -735,7 +735,7 @@ class Pull < ActiveRecord::Base
   end
 
   def merge_commit_message
-    "Merge pull request \"##{id}\":/pulls/#{id} from #{commit_head}"
+    "Merge pull request ##{id} from #{commit_head}\n\n#{subject}"
   end
 
   def merge_commit_author_name
