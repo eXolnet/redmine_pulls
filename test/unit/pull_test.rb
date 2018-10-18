@@ -30,13 +30,18 @@ class PullTest < ActiveSupport::TestCase
 
   def test_create_minimal
     pull = Pull.new(:project_id => 1,
-                    :repository_id => 1,
+                    :repository_id => 10,
                     :author_id => 1,
                     :commit_base => 'master',
+                    :commit_head_revision => 'd24335d81240b6f1b98fb0a1b4fe8bb91bab7a83',
                     :commit_head => 'develop',
+                    :commit_base_revision => 'cf291599d4e280ba7c6f30481ae401c29a715f50',
                     :subject => 'Example pull request')
 
-    assert pull.save
+    pull.repository.stub :branches, ['master', 'develop'] do
+      assert pull.save
+    end
+
     pull.reload
 
     assert_equal IssuePriority.default.id, pull.priority_id

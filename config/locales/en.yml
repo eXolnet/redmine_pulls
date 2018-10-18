@@ -106,6 +106,8 @@ en:
   notice_pull_branch_successful_delete: "Pull request branch successfully deleted."
   notice_pull_branch_successful_restore: "Pull request branch successfully restored."
   notice_pull_update_conflict: The pull request has been updated by an other user while you were editing it.
+  error_branch_doesnt_exist: "%{which} branch \"%{branch}\" doesn't exist."
+  error_anything_to_compare: "There isn't anything to compare between %{base} and %{compare}."
   text_pull_conflict_resolution_overwrite: Apply my changes anyway (previous notes will be kept but some changes may be overwritten)
   text_pull_conflict_resolution_add_notes: Add my notes and discard my other changes
   text_pull_conflict_resolution_cancel: Discard all my changes and redisplay %{link}
