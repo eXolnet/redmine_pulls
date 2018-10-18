@@ -629,7 +629,7 @@ class Pull < ActiveRecord::Base
   end
 
   def base_branch_exists?
-    repository.branches.include? commit_base
+    repository.branches.include? commit_base if repository.branches
   end
 
   def head_branch_exists?
