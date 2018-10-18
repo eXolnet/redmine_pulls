@@ -34,12 +34,12 @@ class Pull < ActiveRecord::Base
   attr_reader :current_journal
   delegate :notes, :notes=, :private_notes, :private_notes=, :to => :current_journal, :allow_nil => true
 
+  validate :branch_exists
+  validate :commit_revisions_not_nil
   validates_presence_of :subject, :project, :commit_base, :commit_head
   validates_presence_of :priority, :if => Proc.new {|issue| issue.new_record? || issue.priority_id_changed?}
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
   validates_length_of :subject, :maximum => 255
-  validate :head_base_validation
-  validate :branch_exists
 
   attr_protected :id
 
@@ -788,14 +788,11 @@ class Pull < ActiveRecord::Base
     @previous_assigned_to_id = nil
   end
 
-  def head_base_validation
-    if commit_head == commit_base
-      errors[:base] << l(:error_create_pull_same_branches)
-    end
+  def branch_exists
+    errors[:base] << l(:error_branch_doesnt_exist, :which => 'Base', :branch => commit_base) unless base_branch_exists?
   end
 
-  def branch_exists
-    errors[:base] << l(:error_branch_doesnt_exist, :branch => commit_base) unless base_branch_exists?
-    errors[:base] << l(:error_branch_doesnt_exist, :branch => commit_head) unless head_branch_exists?
+  def commit_revisions_not_nil
+    errors[:base] << l(:error_anything_to_compare, :base=> commit_base, :compare => commit_head) unless commit_head_revision && commit_base_revision
   end
 end

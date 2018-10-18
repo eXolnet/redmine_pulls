@@ -12,14 +12,6 @@ module RedminePulls
         # do nothing
       end
 
-      private
-
-      def close_when_head_is_missing
-        return if @pull.head_branch_exists?
-
-        @pull.close
-      end
-
       def detect_new_commits
         return if @pull.closed? || @pull.branch_missing?
 
@@ -36,6 +28,14 @@ module RedminePulls
         return if commit_base_revision.blank? || commit_base_revision == @pull.commit_head_revision
 
         @pull.commit_base_revision = commit_base_revision
+      end
+
+      private
+
+      def close_when_head_is_missing
+        return if @pull.head_branch_exists?
+
+        @pull.close
       end
 
       def detect_manually_merged
@@ -59,8 +59,6 @@ module RedminePulls
       def notify_about_new_commits
         #
       end
-
-      private
 
       def is_merged
         @pull.repository.is_ancestor? @pull.commit_head_revision, @pull.commit_base
