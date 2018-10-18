@@ -29,6 +29,10 @@ module RedminePulls
             false
           end
 
+          def merge(commit_base, commit_head, options = {})
+            nil
+          end
+
           def revision(identifier)
             nil
           end
