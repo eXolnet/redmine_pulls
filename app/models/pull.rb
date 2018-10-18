@@ -37,8 +37,10 @@ class Pull < ActiveRecord::Base
   validates_presence_of :subject, :project, :commit_base, :commit_head
   validates_presence_of :priority, :if => Proc.new {|issue| issue.new_record? || issue.priority_id_changed?}
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
-
   validates_length_of :subject, :maximum => 255
+  validate :head_base_validation
+  validate :branch_exists
+
   attr_protected :id
 
   scope :open, lambda {|*args|
@@ -784,5 +786,16 @@ class Pull < ActiveRecord::Base
   def clear_assigned_to_was
     @assigned_to_was = nil
     @previous_assigned_to_id = nil
+  end
+
+  def head_base_validation
+    if commit_head == commit_base
+      errors[:base] << l(:error_create_pull_same_branches)
+    end
+  end
+
+  def branch_exists
+    errors[:base] << l(:error_branch_doesnt_exist, :branch => commit_base) unless base_branch_exists?
+    errors[:base] << l(:error_branch_doesnt_exist, :branch => commit_head) unless head_branch_exists?
   end
 end
