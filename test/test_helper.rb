@@ -1,5 +1,7 @@
 $VERBOSE = nil # for hide ruby warnings
 
+require 'minitest/autorun'
+
 # Load the Redmine helper
 require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')
 
