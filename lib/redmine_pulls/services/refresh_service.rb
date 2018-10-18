@@ -13,7 +13,7 @@ module RedminePulls
       end
 
       def detect_new_commits
-        return if @pull.closed? || @pull.branch_missing?
+        return if @pull.closed? || ! @pull.base_branch_exists?
 
         # First, detect the last commit in the head branch
         commit_base_revision = @pull.repository.revision(@pull.commit_head)
