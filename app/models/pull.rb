@@ -202,6 +202,10 @@ class Pull < ActiveRecord::Base
     editable?(user) && ! closed?
   end
 
+  def add_reviewers?(user=User.current)
+    ! closed? && user.allowed_to?(:add_pull_reviewers, self.project)
+  end
+
   def reviewable?(user=User.current)
     ! closed? && user.allowed_to?(:review_pull, self.project) && user != self.author
   end
