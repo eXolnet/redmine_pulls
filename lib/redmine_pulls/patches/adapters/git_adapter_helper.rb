@@ -81,6 +81,10 @@ module RedminePulls
 
             ancestor_revision == merge_base
           end
+
+          def get_conflicted_files
+            'Hello, world!'
+          end
         end
       end
     end

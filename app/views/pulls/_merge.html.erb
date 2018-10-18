@@ -22,6 +22,16 @@
     <% else %>
       <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
       <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
+
+      <% if pull.merge_status == 'conflicts_detected' %>
+        <ul>
+          <li>File 1</li>
+          <li>File 1</li>
+          <li>File 1</li>
+          <li>File 1</li>
+          <li>File 1</li>
+        </ul>
+      <% end %>
     <% end %>
 
     <% if pull.commitable? %>

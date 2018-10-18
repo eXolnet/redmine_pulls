@@ -36,6 +36,10 @@ module RedminePulls
           def is_ancestor?(commit_ancestor, commit_descendant)
             false
           end
+
+          def get_conflicted_files
+            nil
+          end
         end
       end
     end
