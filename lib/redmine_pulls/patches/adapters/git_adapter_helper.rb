@@ -47,18 +47,6 @@ module RedminePulls
           end
 
           def mergable?(commit_base, commit_head)
-            # merge_base = merge_base(commit_base, commit_head)
-
-            # # We need a common ancestor to perform a merge
-            # return false unless merge_base
-
-            # cmd_args = %w|merge-tree|
-            # cmd_args << merge_base
-            # cmd_args << commit_base
-            # cmd_args << commit_head
-
-            # merge_result = git_cmd_output(cmd_args)
-
             merge_result = merge_tree(commit_base, commit_head)
 
             # Split the regex to avoid conflict detection when working with this file
