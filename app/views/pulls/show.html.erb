@@ -2,6 +2,10 @@
 
 <h2><%= l(:label_pull_request) %> #<%= @pull.id %></h2>
 
+<% if @pull.broken? %>
+  <p class="warning"><span class="icon icon-lock"><%= l(:text_pull_broken) %></span></p>
+<% end %>
+
 <div class="<%= @pull.css_classes %> issue details">
   <div class="subject">
     <h3><%= @pull.subject %></h3>
@@ -67,7 +71,7 @@
 <%= render :partial => 'pulls/merge', :locals => {:pull => @pull} %>
 
 <div class="pull__tabs">
-  <%= render_tabs pull_tabs %>
+  <%= render_tabs pull_tabs(@pull) %>
 </div>
 
 <% html_title l(:label_pull_request) + " ##{@pull.id}: #{@pull.subject}" %>

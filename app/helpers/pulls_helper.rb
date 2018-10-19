@@ -67,12 +67,15 @@ module PullsHelper
     list.join(', ')
   end
 
-  def pull_tabs
+  def pull_tabs(pull)
     tabs = [
       {:name => 'conversation', :partial => 'pulls/conversation', :label => :label_conversation},
-      {:name => 'commits', :partial => 'pulls/commits', :label => :label_commits},
-      {:name => 'changes', :partial => 'pulls/changes', :label => :label_changes},
     ]
+
+    tabs << {:name => 'commits', :partial => 'pulls/commits', :label => :label_commits} unless pull.broken?
+    tabs << {:name => 'changes', :partial => 'pulls/changes', :label => :label_changes} unless pull.broken?
+
+    tabs
   end
 
   def available_pull_priorities

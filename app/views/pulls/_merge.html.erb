@@ -1,71 +1,73 @@
-<%= labelled_form_for pull, :html => {:id => 'pull-merge-form'} do |f| %>
-  <div class="box pulls__merge">
-    <% if ! pull.closed? && pull.review_status != 'unreviewed' %>
-      <strong><%= l(("label_review_" + pull.review_status + "_title").to_sym) %></strong>
-      <em class="info"><%= pull_review_description(pull) %>.</em>
+<% unless pull.broken? %>
+  <%= labelled_form_for pull, :html => {:id => 'pull-merge-form'} do |f| %>
+    <div class="box pulls__merge">
+      <% if ! pull.closed? && pull.review_status != 'unreviewed' %>
+        <strong><%= l(("label_review_" + pull.review_status + "_title").to_sym) %></strong>
+        <em class="info"><%= pull_review_description(pull) %>.</em>
 
-      <hr>
-    <% end %>
-
-    <% if pull.merged? %>
-      <strong><%= l(("label_merge_merged_title").to_sym) %></strong>
-      <em class="info">
-        <% if pull.head_branch_deletable? %>
-          <%= l(:label_merge_merged_help, :branch => pull.commit_head).html_safe %>
-        <% else %>
-          <%= l(:label_merge_merged_and_deleted_help, :branch => pull.commit_head).html_safe %>
-        <% end %>
-      </em>
-    <% elsif pull.closed? %>
-      <strong><%= l(("label_merge_closed_title").to_sym) %></strong>
-      <em class="info"><%= l(:label_merge_closed_help, :branch => pull.commit_head).html_safe %></em>
-    <% else %>
-      <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
-      <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
-
-      <% unless pull.conflicting_files.empty? %>
         <hr>
+      <% end %>
 
-        <p>
-          <strong>
-            <%= l(:conflicting_files) %>
-          </strong>
-        </p>
-
-        <ul>
-          <% pull.conflicting_files.each do |file_name| %>
-            <li>
-              <%= file_name %>
-            </li>
+      <% if pull.merged? %>
+        <strong><%= l(("label_merge_merged_title").to_sym) %></strong>
+        <em class="info">
+          <% if pull.head_branch_deletable? %>
+            <%= l(:label_merge_merged_help, :branch => pull.commit_head).html_safe %>
+          <% else %>
+            <%= l(:label_merge_merged_and_deleted_help, :branch => pull.commit_head).html_safe %>
           <% end %>
-        </ul>
+        </em>
+      <% elsif pull.closed? %>
+        <strong><%= l(("label_merge_closed_title").to_sym) %></strong>
+        <em class="info"><%= l(:label_merge_closed_help, :branch => pull.commit_head).html_safe %></em>
+      <% else %>
+        <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
+        <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
+
+        <% unless pull.conflicting_files.empty? %>
+          <hr>
+
+          <p>
+            <strong>
+              <%= l(:conflicting_files) %>
+            </strong>
+          </p>
+
+          <ul>
+            <% pull.conflicting_files.each do |file_name| %>
+              <li>
+                <%= file_name %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <% if pull.commitable? %>
-      <% if pull.mergable? %>
-        <hr>
+      <% if pull.commitable? %>
+        <% if pull.mergable? %>
+          <hr>
 
-        <%= submit_tag l(:button_merge_pull_request), :name => 'merge' %>
-        <em class="info">or view <a href="#">command line instructions</a>.</em>
+          <%= submit_tag l(:button_merge_pull_request), :name => 'merge' %>
+          <em class="info">or view <a href="#">command line instructions</a>.</em>
 
-        <div id="pull-merge-instructions" style="display: none;">
-          <h4><%= l(:label_merge_instructions_title) %></h4>
-          <p><%= l(:label_merge_instructions_description) %></p>
+          <div id="pull-merge-instructions" style="display: none;">
+            <h4><%= l(:label_merge_instructions_title) %></h4>
+            <p><%= l(:label_merge_instructions_description) %></p>
 
-          <pre>git checkout <%= pull.commit_base %></pre>
-          <pre>git merge --no-ff <%= pull.commit_head %></pre>
-          <pre>git push origin <%= pull.commit_base %></pre>
-        </div>
-      <% elsif pull.head_branch_deletable? %>
-        <hr>
+            <pre>git checkout <%= pull.commit_base %></pre>
+            <pre>git merge --no-ff <%= pull.commit_head %></pre>
+            <pre>git push origin <%= pull.commit_base %></pre>
+          </div>
+        <% elsif pull.head_branch_deletable? %>
+          <hr>
 
-        <%= submit_tag l(:button_delete_branch), :name => 'delete_branch' %>
-      <% elsif pull.head_branch_restorable? %>
-        <hr>
+          <%= submit_tag l(:button_delete_branch), :name => 'delete_branch' %>
+        <% elsif pull.head_branch_restorable? %>
+          <hr>
 
-        <%= submit_tag l(:button_restore_branch), :name => 'restore_branch' %>
+          <%= submit_tag l(:button_restore_branch), :name => 'restore_branch' %>
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 <% end %>

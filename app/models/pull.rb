@@ -188,6 +188,11 @@ class Pull < ActiveRecord::Base
     state :cannot_be_merged
   end
 
+  # If you change this condition, please review the text `text_pull_broken`.
+  def broken?
+    ! repository
+  end
+
   # Returns true if usr or current user is allowed to view the issue
   def visible?(user=User.current)
     user.allowed_to?(:view_pulls, self.project)
@@ -195,7 +200,7 @@ class Pull < ActiveRecord::Base
 
   # Returns true if user or current user is allowed to edit or add notes to the issue
   def editable?(user=User.current)
-    attributes_editable?(user)
+    ! broken? && attributes_editable?(user)
   end
 
   def closable?(user=User.current)
@@ -207,7 +212,7 @@ class Pull < ActiveRecord::Base
   end
 
   def reviewable?(user=User.current)
-    ! closed? && user.allowed_to?(:review_pull, self.project) && user != self.author
+    ! broken? && ! closed? && user.allowed_to?(:review_pull, self.project) && user != self.author
   end
 
   def mergable?(user=User.current)
@@ -630,11 +635,11 @@ class Pull < ActiveRecord::Base
   end
 
   def base_branch_exists?
-    repository.branches&.include? commit_base
+    repository&.branches&.include? commit_base
   end
 
   def head_branch_exists?
-    repository.branches&.include? commit_head
+    repository&.branches&.include? commit_head
   end
 
   def branch_missing?
@@ -649,6 +654,8 @@ class Pull < ActiveRecord::Base
   end
 
   def revisions_ids
+    return [] if broken?
+
     commit_from = commit_base_revision || commit_head
     commit_to   = commit_head_revision || commit_base
 
@@ -656,6 +663,8 @@ class Pull < ActiveRecord::Base
   end
 
   def revisions
+    return [] if broken?
+
     @revisions ||= repository.changesets.where(revision: revisions_ids).all
   end
 
