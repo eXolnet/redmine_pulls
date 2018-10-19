@@ -9,7 +9,7 @@ Allows users to create pull requests for repositories linked to projects.
 
 ## Compatibility
 
-This plugin version is compatible only with Redmine 3.3 and later.
+This plugin version is compatible only with Redmine 3.4 and later.
 
 ## Installation
 
