@@ -41,7 +41,7 @@ module RedminePulls
             false
           end
 
-          def get_conflicted_files(commit_base, commit_head)
+          def conflicting_files(commit_base, commit_head)
             nil
           end
         end

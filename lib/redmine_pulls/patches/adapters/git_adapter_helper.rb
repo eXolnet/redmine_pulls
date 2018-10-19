@@ -103,7 +103,7 @@ module RedminePulls
             ancestor_revision == merge_base
           end
 
-          def get_conflicted_files(commit_base, commit_head)
+          def conflicting_files(commit_base, commit_head)
             merge_result = merge_tree(commit_base, commit_head)
 
             matches = merge_result.split(/^\s+their\s+\d+\s+[a-f0-9]+\s(.+)$/)

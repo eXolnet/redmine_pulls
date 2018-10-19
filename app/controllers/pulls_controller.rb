@@ -85,7 +85,7 @@ class PullsController < ApplicationController
 
     @diff_type = get_pull_diff_type
 
-    @conflicting_files = @pull.repository.conflicted_files(@pull.commit_base, @pull.commit_head)
+    @conflicting_files = @pull.repository.conflicting_files(@pull.commit_base, @pull.commit_head)
 
     respond_to do |format|
       format.html {
