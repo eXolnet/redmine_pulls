@@ -21,7 +21,7 @@
 
   <% diff = @pull.diff(@changes_from) %>
 
-  <% if diff && ! diff.empty? %>
+  <% unless diff&.empty? %>
     <%= render :partial => 'common/diff', :locals => {:diff => diff, :diff_type => @diff_type, :diff_style => @pull.repository.class.scm_name} %>
   <% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
