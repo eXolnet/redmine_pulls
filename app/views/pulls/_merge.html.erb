@@ -23,13 +23,21 @@
       <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
       <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
 
-      <% if pull.merge_status == 'conflicts_detected' %>
+      <% if pull.merge_status == 'conflicts_detected' && @conflicting_files&.length %>
+        <hr>
+
+        <p>
+          <strong>
+            <%= l(:conflicting_files) %>
+          </strong>
+        </p>
+
         <ul>
-          <li>File 1</li>
-          <li>File 1</li>
-          <li>File 1</li>
-          <li>File 1</li>
-          <li>File 1</li>
+          <% @conflicting_files.each do |file_name| %>
+            <li>
+              <%= file_name %>
+            </li>
+          <% end %>
         </ul>
       <% end %>
     <% end %>
@@ -38,7 +46,7 @@
       <% if pull.mergable? %>
         <hr>
 
-        <%= submit_tag l(:button_merge_pull_request), :name => 'merge', :disabled => true %>
+        <%= submit_tag l(:button_merge_pull_request), :name => 'merge' %>
         <em class="info">or view <a href="#">command line instructions</a>.</em>
 
         <div id="pull-merge-instructions" style="display: none;">

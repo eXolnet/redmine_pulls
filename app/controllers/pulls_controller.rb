@@ -50,6 +50,8 @@ class PullsController < ApplicationController
   def create
     raise Unauthorized unless User.current.allowed_to?(:add_pulls, @pull.project)
 
+    RedminePulls::Services::RefreshService.new(@pull).detect_new_commits
+
     unless @pull.save
       return respond_to do |format|
         format.html { render :action => 'new' }
@@ -82,6 +84,8 @@ class PullsController < ApplicationController
     end
 
     @diff_type = get_pull_diff_type
+
+    @conflicting_files = @pull.repository.conflicted_files(@pull.commit_base, @pull.commit_head)
 
     respond_to do |format|
       format.html {

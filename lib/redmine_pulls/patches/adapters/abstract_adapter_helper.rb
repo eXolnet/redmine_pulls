@@ -29,6 +29,10 @@ module RedminePulls
             false
           end
 
+          def merge(commit_base, commit_head, options = {})
+            nil
+          end
+
           def revision(identifier)
             nil
           end
@@ -37,7 +41,7 @@ module RedminePulls
             false
           end
 
-          def get_conflicted_files
+          def get_conflicted_files(commit_base, commit_head)
             nil
           end
         end

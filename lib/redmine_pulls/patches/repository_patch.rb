@@ -28,6 +28,10 @@ module RedminePulls
           scm.mergable?(commit_base, commit_head)
         end
 
+        def merge(commit_base, commit_head, options = {})
+          scm.merge(commit_base, commit_head, options)
+        end
+
         def revision(identifier)
           scm.revision(identifier)
         end
@@ -36,8 +40,8 @@ module RedminePulls
           scm.is_ancestor?(commit_ancestor, commit_descendant)
         end
 
-        def get_conflicted_files
-          scm.get_conflicted_files
+        def conflicted_files(commit_base, commit_head)
+          scm.get_conflicted_files(commit_base, commit_head)
         end
       end
     end

@@ -34,11 +34,13 @@ class Pull < ActiveRecord::Base
   attr_reader :current_journal
   delegate :notes, :notes=, :private_notes, :private_notes=, :to => :current_journal, :allow_nil => true
 
+  validate :branch_exists
+  validate :commit_revisions_not_nil
   validates_presence_of :subject, :project, :commit_base, :commit_head
   validates_presence_of :priority, :if => Proc.new {|issue| issue.new_record? || issue.priority_id_changed?}
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
-
   validates_length_of :subject, :maximum => 255
+
   attr_protected :id
 
   scope :open, lambda {|*args|
@@ -627,11 +629,11 @@ class Pull < ActiveRecord::Base
   end
 
   def base_branch_exists?
-    repository.branches.include? commit_base
+    repository.branches&.include? commit_base
   end
 
   def head_branch_exists?
-    repository.branches.include? commit_head
+    repository.branches&.include? commit_head
   end
 
   def branch_missing?
@@ -711,6 +713,18 @@ class Pull < ActiveRecord::Base
     "[#{project.name}] #{subject} (##{id})"
   end
 
+  def merge_commit_message
+    "Merge pull request ##{id} from #{commit_head}\n\n#{subject}"
+  end
+
+  def merge_commit_author_name
+    "#{User.current.firstname} #{User.current.lastname}"
+    end
+
+  def merge_commit_author_email
+    User.current.email_address.address
+  end
+
   private
 
   def user_permission?(user, permission)
@@ -772,5 +786,13 @@ class Pull < ActiveRecord::Base
   def clear_assigned_to_was
     @assigned_to_was = nil
     @previous_assigned_to_id = nil
+  end
+
+  def branch_exists
+    errors[:base] << l(:error_branch_doesnt_exist, :which => 'Base', :branch => commit_base) unless base_branch_exists?
+  end
+
+  def commit_revisions_not_nil
+    errors[:base] << l(:error_anything_to_compare, :base=> commit_base, :compare => commit_head) unless commit_head_revision && commit_base_revision
   end
 end
