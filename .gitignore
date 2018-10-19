@@ -2,4 +2,5 @@
 /.vscode
 /.vagrant
 .DS_Store
+Gemfile.lock
 Thumbs.db

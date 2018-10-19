@@ -202,6 +202,10 @@ class Pull < ActiveRecord::Base
     editable?(user) && ! closed?
   end
 
+  def add_reviewers?(user=User.current)
+    ! closed? && user.allowed_to?(:add_pull_reviewers, self.project)
+  end
+
   def reviewable?(user=User.current)
     ! closed? && user.allowed_to?(:review_pull, self.project) && user != self.author
   end
@@ -251,7 +255,6 @@ class Pull < ActiveRecord::Base
     @assignable_versions = nil
     @last_updated_by = nil
     @last_notes = nil
-    @diff = nil
     @revision_ids = nil
     @revisions = nil
     base_reload(*args)
@@ -320,7 +323,6 @@ class Pull < ActiveRecord::Base
     write_attribute(:commit_base_revision, arg)
 
     if commit_base_revision_changed?
-      @diff = nil
       @revision_ids = nil
       @revisions = nil
 
@@ -332,7 +334,6 @@ class Pull < ActiveRecord::Base
     write_attribute(:commit_head_revision, arg)
 
     if commit_head_revision_changed?
-      @diff = nil
       @revision_ids = nil
       @revisions = nil
 
@@ -640,11 +641,11 @@ class Pull < ActiveRecord::Base
     !base_branch_exists? || !head_branch_exists?
   end
 
-  def diff
-    commit_from = commit_head_revision || commit_base
-    commit_to   = commit_base_revision || commit_head
+  def diff(changes_from=nil)
+    commit_from = commit_head_revision || commit_head
+    commit_to   = changes_from || commit_base_revision || commit_base
 
-    @diff ||= repository.diff(nil, commit_from, commit_to)
+    repository.diff(nil, commit_from, commit_to)
   end
 
   def revisions_ids

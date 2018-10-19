@@ -1,4 +1,4 @@
-<% if User.current.allowed_to?(:add_pull_reviewers, pull.project) && pull.reviewable? %>
+<% if User.current.allowed_to?(:add_pull_reviewers, pull.project) && pull.add_reviewers? %>
   <div class="contextual">
     <%= link_to l(:button_add), new_pull_reviewer_path(:pull_id => pull), :remote => true, :method => 'get' %>
   </div>

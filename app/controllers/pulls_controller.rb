@@ -83,7 +83,9 @@ class PullsController < ApplicationController
       @journals.reverse!
     end
 
+    @review = @pull.review
     @diff_type = get_pull_diff_type
+    @changes_from = get_pull_changes_from
 
     respond_to do |format|
       format.html {
@@ -234,6 +236,7 @@ class PullsController < ApplicationController
     if params[:review_status]
       review = @pull.review
       review.status = params[:review_status]
+      review.last_revision = @pull.commit_head_revision
     end
 
     true

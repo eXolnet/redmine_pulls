@@ -90,6 +90,9 @@ en:
   label_request_changes_help: Submit feedback that must be addressed before merging.
   label_choose_base_branch: Choose a base branch
   label_choose_head_branch: Choose a head branch
+  label_changes_to_show: Changes to show
+  label_all_changes: all changes
+  label_all_changes_since_last_review: all changes since last review
   button_select: Select
   button_submit_review: Submit review
   button_merge_pull_request: Merge pull request
