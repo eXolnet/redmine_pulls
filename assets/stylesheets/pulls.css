@@ -115,3 +115,7 @@ a.pull__commit:hover {
 .pull__status-actions {
   float: right;
 }
+
+.pulls__merge :last-child {
+  margin-bottom: 0;
+}

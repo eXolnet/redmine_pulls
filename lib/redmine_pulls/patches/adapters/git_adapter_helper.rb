@@ -108,7 +108,7 @@ module RedminePulls
 
             matches = merge_result.split(/^\s+their\s+\d+\s+[a-f0-9]+\s(.+)$/)
 
-            (1..matches.size - 1).step(2).map{ |i| matches[i] if i > 0 }.uniq
+            (1..matches.size - 1).step(2).map{ |i| matches[i] }.uniq.sort
           end
 
           private

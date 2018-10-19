@@ -23,7 +23,7 @@
       <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
       <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
 
-      <% if pull.merge_status == 'conflicts_detected' && @conflicting_files&.length %>
+      <% unless pull.conflicting_files.empty? %>
         <hr>
 
         <p>
@@ -33,7 +33,7 @@
         </p>
 
         <ul>
-          <% @conflicting_files.each do |file_name| %>
+          <% pull.conflicting_files.each do |file_name| %>
             <li>
               <%= file_name %>
             </li>
