@@ -106,6 +106,10 @@ module PullsHelper
     diff_type
   end
 
+  def get_pull_changes_from
+    params[:changes_from].presence
+  end
+
   def calculate_pull_review_status(pull)
     changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
     pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
