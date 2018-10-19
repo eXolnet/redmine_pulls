@@ -14,6 +14,7 @@ class PullIssuesController < ApplicationController
     end
 
     if @issue
+      @pull.init_journal(User.current)
       @pull.issues << @issue
     end
   end
@@ -22,6 +23,7 @@ class PullIssuesController < ApplicationController
     @issue = Issue.visible.find_by_id(params[:issue_id])
 
     if @issue
+      @pull.init_journal(User.current)
       @pull.issues.delete(@issue)
     end
   end

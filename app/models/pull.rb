@@ -14,7 +14,7 @@ class Pull < ActiveRecord::Base
   has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all, :autosave => true
   has_many :reviewers, :through => :reviews, :source => :reviewer, :validate => false
 
-  has_and_belongs_to_many :issues, :join_table => 'pull_issues'
+  has_and_belongs_to_many :issues, :join_table => 'pull_issues', :after_add => :relation_added, :after_remove => :relation_removed
 
   attr_protected :review_ids, :reviewer_ids
 
@@ -793,6 +793,32 @@ class Pull < ActiveRecord::Base
   def clear_assigned_to_was
     @assigned_to_was = nil
     @previous_assigned_to_id = nil
+  end
+
+  # Called after a relation is added
+  def relation_added(issue)
+    return unless current_journal
+
+    current_journal.details << JournalDetail.new(
+      :property  => 'relation',
+      :prop_key  => 'relates',
+      :value => issue.try(:id)
+    )
+
+    current_journal.save
+  end
+
+  # Called after a relation is removed
+  def relation_removed(issue)
+    return unless current_journal
+
+    current_journal.details << JournalDetail.new(
+      :property  => 'relation',
+      :prop_key  => 'relates',
+      :old_value => issue.try(:id)
+    )
+
+    current_journal.save
   end
 
   def branch_exists
