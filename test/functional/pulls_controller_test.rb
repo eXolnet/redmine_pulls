@@ -7,9 +7,11 @@ class PullsControllerTest < ActionController::TestCase
            :members,
            :member_roles,
            :enabled_modules,
+           :enumerations,
            :repositories,
            :changesets,
-           :changes
+           :changes,
+           :pulls
 
   def setup
     @project1 = Project.find(1)
@@ -19,7 +21,23 @@ class PullsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
   end
 
-  def test_example
-    assert true
+  def test_get_index_without_project
+    get :index
+
+    assert_response :success
+  end
+
+  def test_get_index_with_project
+    get :index, :project_id => 'ecookbook'
+
+    assert_response :success
+  end
+
+  #def test_show_with_repository
+  #  get :show, :id => 1
+  #
+  #  assert_response :success
+  #  assert_select '#content .warning', false, :text => /This pull request’s repository is missing/
+  #end
   end
 end

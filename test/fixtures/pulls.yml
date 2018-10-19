@@ -1,9 +1,10 @@
 ---
 pulls_001:
+  id: 1
   project_id: 1
   subject: Subject
   description: Description
-  repository_id: 1
+  repository_id: 10
   commit_base: master
   commit_head: features/pull-requests
   status: opened
@@ -11,7 +12,25 @@ pulls_001:
   merge_status: unchecked
   category_id: 1
   assigned_to_id: 1
-  priority_id: 1
+  priority_id: 4
+  fixed_version_id: 1
+  author_id: 1
+  created_on: <%= 3.days.ago.to_s(:db) %>
+  updated_on: <%= 3.days.ago.to_s(:db) %>
+pulls_002:
+  id: 2
+  project_id: 1
+  subject: Missing repository
+  description: Description
+  repository_id: 999
+  commit_base: master
+  commit_head: features/pull-requests
+  status: opened
+  review_status: unreviewed
+  merge_status: unchecked
+  category_id: 1
+  assigned_to_id: 1
+  priority_id: 4
   fixed_version_id: 1
   author_id: 1
   created_on: <%= 3.days.ago.to_s(:db) %>
