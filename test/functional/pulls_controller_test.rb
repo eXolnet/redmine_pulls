@@ -39,5 +39,4 @@ class PullsControllerTest < ActionController::TestCase
   #  assert_response :success
   #  assert_select '#content .warning', false, :text => /This pull request’s repository is missing/
   #end
-  end
 end
