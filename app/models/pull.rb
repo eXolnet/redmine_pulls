@@ -445,7 +445,7 @@ class Pull < ActiveRecord::Base
 
   # Returns the names of attributes that are journalized when updating the issue
   def journalized_attribute_names
-    Pull.column_names - %w(id status review_status merge_status merge_user_id created_on updated_on merged_on closed_on)
+    Pull.column_names - %w(id review_status merge_status merge_user_id created_on updated_on merged_on closed_on)
   end
 
   # Returns the id of the last journal or nil
