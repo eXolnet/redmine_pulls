@@ -22,6 +22,24 @@
     <% else %>
       <strong><%= l(("label_merge_" + pull.merge_status + "_title").to_sym) %></strong>
       <em class="info"><%= l(("label_merge_" + pull.merge_status + "_help").to_sym) %></em>
+
+      <% unless pull.conflicting_files.empty? %>
+        <hr>
+
+        <p>
+          <strong>
+            <%= l(:conflicting_files) %>
+          </strong>
+        </p>
+
+        <ul>
+          <% pull.conflicting_files.each do |file_name| %>
+            <li>
+              <%= file_name %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     <% end %>
 
     <% if pull.commitable? %>

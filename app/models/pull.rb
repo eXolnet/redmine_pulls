@@ -726,6 +726,12 @@ class Pull < ActiveRecord::Base
     User.current.email_address.address
   end
 
+  def conflicting_files
+    return [] unless merge_status == 'conflicts_detected'
+
+    @conflicting_files ||= repository.conflicting_files(commit_base, commit_head)
+  end
+
   private
 
   def user_permission?(user, permission)

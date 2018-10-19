@@ -39,6 +39,10 @@ module RedminePulls
         def is_ancestor?(commit_ancestor, commit_descendant)
           scm.is_ancestor?(commit_ancestor, commit_descendant)
         end
+
+        def conflicting_files(commit_base, commit_head)
+          scm.conflicting_files(commit_base, commit_head)
+        end
       end
     end
   end

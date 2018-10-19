@@ -131,3 +131,4 @@ en:
   permission_add_pull_reviewers: Add reviewers
   permission_delete_pull_reviewers: Delete reviewers
   permission_manage_pull_relations: Manage related issues
+  conflicting_files: Conflicting files

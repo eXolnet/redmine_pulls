@@ -119,3 +119,7 @@ a.pull__commit:hover {
 .pull__diff-options span + span {
   margin-left: 30px;
 }
+
+.pulls__merge :last-child {
+  margin-bottom: 0;
+}
