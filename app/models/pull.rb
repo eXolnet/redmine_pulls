@@ -696,10 +696,22 @@ class Pull < ActiveRecord::Base
 
   def delete_head_branch
     repository.delete_branch(commit_head)
+
+    journalize_action(
+      :property  => 'attr',
+      :prop_key  => 'branch',
+      :old_value => commit_head
+    )
   end
 
   def restore_head_branch
     repository.create_branch(commit_head, commit_head_revision)
+
+    journalize_action(
+      :property  => 'attr',
+      :prop_key  => 'branch',
+      :value => commit_head
+    )
   end
 
   # Finds an issue that can be referenced by the commit message
@@ -797,27 +809,26 @@ class Pull < ActiveRecord::Base
 
   # Called after a relation is added
   def relation_added(issue)
-    return unless current_journal
-
-    current_journal.details << JournalDetail.new(
+    journalize_action(
       :property  => 'relation',
       :prop_key  => 'relates',
       :value => issue.try(:id)
     )
-
-    current_journal.save
   end
 
   # Called after a relation is removed
   def relation_removed(issue)
-    return unless current_journal
-
-    current_journal.details << JournalDetail.new(
+    journalize_action(
       :property  => 'relation',
       :prop_key  => 'relates',
       :old_value => issue.try(:id)
     )
+  end
 
+  def journalize_action(*args)
+    return unless current_journal
+
+    current_journal.details << JournalDetail.new(*args)
     current_journal.save
   end
 
