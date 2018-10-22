@@ -28,7 +28,7 @@ class Pull < ActiveRecord::Base
                 :url => Proc.new {|o| {:controller => 'pulls', :action => 'show', :id => o.id}},
                 :type => Proc.new {|o| 'pull' + (o.closed? ? '-closed' : '') }
 
-  acts_as_activity_provider :scope => preload(:project, :author),
+  acts_as_activity_provider :scope => joins(:project).preload(:project, :author),
                             :author_key => :author_id
 
   attr_reader :current_journal
