@@ -10,9 +10,9 @@ module PullsHelper
   end
 
   def ensure_project_has_repository
-    if @project && ! @project.repository
-      render :template => 'pulls/no_repository'
-    end
+    return if @project&.repository&.default_branch.present?
+
+    render :template => 'pulls/no_repository'
   end
 
   # Returns an array of users that are proposed as watchers

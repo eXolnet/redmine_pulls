@@ -188,9 +188,13 @@ class Pull < ActiveRecord::Base
     state :cannot_be_merged
   end
 
+  def not_broken?
+    repository&.default_branch.present?
+  end
+
   # If you change this condition, please review the text `text_pull_broken`.
   def broken?
-    ! repository
+    ! not_broken?
   end
 
   # Returns true if usr or current user is allowed to view the issue

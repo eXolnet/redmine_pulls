@@ -3,7 +3,7 @@
 <h2><%= l(:label_pull_request) %> #<%= @pull.id %></h2>
 
 <% if @pull.broken? %>
-  <p class="warning"><span class="icon icon-lock"><%= l(:text_pull_broken) %></span></p>
+  <p class="warning"><span class="icon icon-link-break"><%= l(:text_pull_broken) %></span></p>
 <% end %>
 
 <div class="<%= @pull.css_classes %> issue details">
