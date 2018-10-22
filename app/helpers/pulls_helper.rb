@@ -10,7 +10,10 @@ module PullsHelper
   end
 
   def ensure_project_has_repository
-    return if @project&.repository&.default_branch.present?
+    # Do not validate on the global pulls page
+    return unless @project
+
+    return if @project.repository&.default_branch.present?
 
     render :template => 'pulls/no_repository'
   end
