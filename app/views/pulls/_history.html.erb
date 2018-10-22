@@ -22,7 +22,12 @@
             </div>
           <% end %>
         <% end %>
-        <%= render_notes(pull, journal, :reply_links => reply_links) unless journal.notes.blank? %>
+
+        <% unless journal.notes.blank? %>
+          <% notes = Nokogiri::HTML.fragment(render_notes(pull, journal, :reply_links => reply_links)) %>
+          <% notes.search('.contextual').each(&:remove) %>
+          <%= raw notes %>
+        <% end %>
       </div>
     </div>
     <%= call_hook(:view_pulls_history_journal_bottom, { :journal => journal }) %>
