@@ -15,7 +15,7 @@ module PullsHelper
 
     return if @project.repository&.default_branch.present?
 
-    render :template => 'pulls/no_repository'
+    render :template => 'pulls/no_repository', :status => 404
   end
 
   # Returns an array of users that are proposed as watchers

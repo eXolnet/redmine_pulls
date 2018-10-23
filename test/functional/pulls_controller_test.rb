@@ -19,6 +19,8 @@ class PullsControllerTest < ActionController::TestCase
     EnabledModule.create(:project => @project1, :name => 'pulls')
     EnabledModule.create(:project => @project2, :name => 'pulls')
     @request.session[:user_id] = 1
+
+    Repository.any_instance.stubs(:default_branch).returns('master')
   end
 
   def test_get_index_without_project
