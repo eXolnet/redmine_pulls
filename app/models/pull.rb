@@ -14,7 +14,7 @@ class Pull < ActiveRecord::Base
   has_many :reviews, :class_name => 'PullReview', :dependent => :delete_all, :autosave => true
   has_many :reviewers, :through => :reviews, :source => :reviewer, :validate => false
 
-  has_and_belongs_to_many :issues, :join_table => 'pull_issues'
+  has_and_belongs_to_many :issues, :join_table => 'pull_issues', :after_add => :relation_added, :after_remove => :relation_removed
 
   attr_protected :review_ids, :reviewer_ids
 
@@ -454,7 +454,7 @@ class Pull < ActiveRecord::Base
 
   # Returns the names of attributes that are journalized when updating the issue
   def journalized_attribute_names
-    Pull.column_names - %w(id status review_status merge_status merge_user_id created_on updated_on merged_on closed_on)
+    Pull.column_names - %w(id review_status merge_status merge_user_id created_on updated_on merged_on closed_on)
   end
 
   # Returns the id of the last journal or nil
@@ -709,10 +709,22 @@ class Pull < ActiveRecord::Base
 
   def delete_head_branch
     repository.delete_branch(commit_head)
+
+    journalize_action(
+      :property  => 'attr',
+      :prop_key  => 'branch',
+      :old_value => commit_head
+    )
   end
 
   def restore_head_branch
     repository.create_branch(commit_head, commit_head_revision)
+
+    journalize_action(
+      :property  => 'attr',
+      :prop_key  => 'branch',
+      :value => commit_head
+    )
   end
 
   # Finds an issue that can be referenced by the commit message
@@ -806,6 +818,31 @@ class Pull < ActiveRecord::Base
   def clear_assigned_to_was
     @assigned_to_was = nil
     @previous_assigned_to_id = nil
+  end
+
+  # Called after a relation is added
+  def relation_added(issue)
+    journalize_action(
+      :property  => 'relation',
+      :prop_key  => 'relates',
+      :value => issue.try(:id)
+    )
+  end
+
+  # Called after a relation is removed
+  def relation_removed(issue)
+    journalize_action(
+      :property  => 'relation',
+      :prop_key  => 'relates',
+      :old_value => issue.try(:id)
+    )
+  end
+
+  def journalize_action(*args)
+    return unless current_journal
+
+    current_journal.details << JournalDetail.new(*args)
+    current_journal.save
   end
 
   def branch_exists
