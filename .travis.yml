@@ -10,7 +10,7 @@ rvm:
 cache: bundler
 
 env:
-  - REDMINE_VER=3.4.6 DB=mysql
+  - REDMINE_VER=3.4.6 DB=mysql CC_COVERAGE=true
   - REDMINE_VER=3.4.6 DB=postgresql
 
 before_install:
@@ -26,6 +26,17 @@ before_script:
   - bundle exec rake db:create
   - bundle exec rake db:migrate
   - bundle exec rake redmine:plugins:migrate
+  - if [ ! -z "$CC_COVERAGE" ] && [ ! -z "$CC_TEST_REPORTER_ID" ]; then
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $HOME/cc-test-reporter;
+      chmod +x $HOME/cc-test-reporter;
+      $HOME/cc-test-reporter before-build;
+    fi
 
 script:
-  - bundle exec rake redmine:plugins:test NAME=$PLUGIN_NAME RUBYOPT="-W0"
+  - bundle exec rake redmine:plugins:test NAME=$PLUGIN_NAME REDMINE_PULLS_COVERAGE=true RUBYOPT="-W0"
+
+after_script:
+  - cd $TRAVIS_BUILD_DIR
+  - if [ ! -z "$CC_COVERAGE" ] && [ ! -z "$CC_TEST_REPORTER_ID" ]; then
+      $HOME/cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT --prefix $REDMINE_PATH/plugins/redmine_pulls;
+    fi
