@@ -1,3 +1,5 @@
+require 'redmine_pulls/hooks/views_layouts_hook'
+
 require 'redmine_pulls/patches/adapters/abstract_adapter_helper'
 require 'redmine_pulls/patches/adapters/git_adapter_helper'
 require 'redmine_pulls/patches/application_helper_patch'

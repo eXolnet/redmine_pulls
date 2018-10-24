@@ -31,6 +31,9 @@ Redmine::Plugin.register :redmine_pulls do
     # Related issues
     permission :manage_pull_relations, {}
   end
+
+  # Pulls are added to the activity view
+  activity_provider :pulls, :class_name => ['Pull', 'Journal']
 end
 
 require 'redmine_pulls'

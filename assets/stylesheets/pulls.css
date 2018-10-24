@@ -1,3 +1,11 @@
+.icon-pull {
+  background-image: url(../images/pull.png);
+}
+
+.icon-pull-closed {
+  background-image: url(../images/pull_checked.png);
+}
+
 table.pulls td.description,
 table.pulls td.last_notes {
   color: #777;
