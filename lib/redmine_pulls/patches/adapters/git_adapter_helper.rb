@@ -56,8 +56,14 @@ module RedminePulls
           end
 
           def merge(commit_base, commit_head, options = {})
-            # $ git read-tree -i -m branch1 branch2
+            old_ref = revision(commit_base)
+            base_ref = merge_base(commit_base, commit_head)
+
+            git_cmd_output(%w|read-tree --empty|)
+
+            # $ git read-tree -i -m base branch1 branch2
             cmd_args = %w|read-tree -i -m|
+            cmd_args << base_ref
             cmd_args << commit_base
             cmd_args << commit_head
             git_cmd_output(cmd_args)
@@ -84,6 +90,7 @@ module RedminePulls
             cmd_args = %w|update-ref|
             cmd_args << "refs/heads/#{commit_base}"
             cmd_args << commit_hash
+            cmd_args << old_ref
             git_cmd_output(cmd_args)
 
             commit_hash
