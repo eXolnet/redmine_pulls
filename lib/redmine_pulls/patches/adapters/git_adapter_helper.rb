@@ -56,17 +56,30 @@ module RedminePulls
           end
 
           def merge(commit_base, commit_head, options = {})
-            # $ git read-tree -i -m branch1 branch2
+            # Retrieve the current commit to avoid overwriting to avoid
+            # losing changes that may arrive while we're merging
+            old_ref = revision(commit_base)
+            base_ref = merge_base(commit_base, commit_head)
+
+            # Make sure the tree index is empty
+            git_cmd_output(%w|read-tree --empty|)
+
+            # Load the tree index with the result of a 3-way merge
+            # between our fork point, the base branch and the head branch
+            # $ git read-tree -i -m base branch1 branch2
             cmd_args = %w|read-tree -i -m|
+            cmd_args << base_ref
             cmd_args << commit_base
             cmd_args << commit_head
             git_cmd_output(cmd_args)
 
+            # Write a tree object with the loaded state
             # $ git write-tree
             write_tree = git_cmd_output(%w|write-tree|)
 
             raise 'Invalid or missing hash' unless write_tree
 
+            # Create a commit object pointing to the created tree object
             # $ COMMIT=$(git commit-tree $(git write-tree) -p branch1 -p branch2 < commit message)
             cmd_args = %w||
             cmd_args << '-c' << "user.name=#{options[:author_name]}" if options[:author_name]
@@ -80,10 +93,12 @@ module RedminePulls
 
             raise 'Invalid or missing hash' unless commit_hash
 
+            # Update the base branch to point to our new commit
             # $ git update-ref mergedbranch $COMMIT
             cmd_args = %w|update-ref|
             cmd_args << "refs/heads/#{commit_base}"
             cmd_args << commit_hash
+            cmd_args << old_ref
             git_cmd_output(cmd_args)
 
             commit_hash
