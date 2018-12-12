@@ -18,6 +18,14 @@ module PullsHelper
     render :template => 'pulls/no_repository', :status => 404
   end
 
+  def default_pull_description(pull)
+    default_branch = pull.repository.default_branch
+    template_extension = Setting.text_formatting == 'markdown' ? 'md' : Setting.text_formatting;
+    template_file = ".redmine/PULL_REQUEST_TEMPLATE.#{template_extension}"
+
+    pull.repository.cat(template_file, default_branch)
+  end
+
   # Returns an array of users that are proposed as watchers
   # on the new issue form
   def users_for_new_pull_reviewers(pull)
