@@ -28,6 +28,7 @@ before_script:
   - bundle exec rake db:create
   - bundle exec rake db:migrate
   - bundle exec rake redmine:plugins:migrate
+  - bundle exec rake test:scm:setup:git
   - if [ ! -z "$CC_COVERAGE" ] && [ ! -z "$CC_TEST_REPORTER_ID" ]; then
       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $HOME/cc-test-reporter;
       chmod +x $HOME/cc-test-reporter;

@@ -53,6 +53,12 @@ Run tests using the following command:
 bundle exec rake redmine:plugins:test NAME=redmine_pulls RAILS_ENV=development
 ```
 
+In order to run integration tests, you have to create a test Git repository with this command:
+
+```bash
+bundle exec rake test:scm:setup:git RAILS_ENV=development
+```
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE OF CONDUCT](CODE_OF_CONDUCT.md) for details.
