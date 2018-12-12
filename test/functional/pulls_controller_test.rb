@@ -35,6 +35,15 @@ class PullsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  def test_get_new_with_pull_request_template
+    Repository.any_instance.stubs(:cat).returns('Pull request template example')
+
+    get :new, :project_id => 'ecookbook'
+
+    assert_response :success
+    assert_select '#pull_description', :text => /Pull request template example/
+  end
+
   #def test_show_with_repository
   #  get :show, :id => 1
   #

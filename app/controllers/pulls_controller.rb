@@ -197,6 +197,8 @@ class PullsController < ApplicationController
     @pull.commit_base = default_branch
     @pull.commit_head = default_branch
 
+    @pull.description = default_pull_description(@pull)
+
     attrs = (params[:pull] || {}).deep_dup
     @pull.safe_attributes = attrs
   end
