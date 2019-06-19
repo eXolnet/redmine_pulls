@@ -131,3 +131,7 @@ a.pull__commit:hover {
 .pulls__merge :last-child {
   margin-bottom: 0;
 }
+
+#pull_relations table.pulls {
+  border: 0;
+}
