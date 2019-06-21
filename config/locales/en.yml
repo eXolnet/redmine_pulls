@@ -5,6 +5,7 @@ en:
   label_pull_request: Pull request
   label_pull_id: '#'
   label_new_pull: New pull request
+  label_default_branch: Default branch
   label_pull_watchers: Watchers
   label_opened: Opened
   label_conversation: Conversation
@@ -84,6 +85,7 @@ en:
   field_merged_on: Merged
   field_related_issue: Related issue
   field_branch: Branch
+  field_pull_default_branch: Default branch
   label_comment: Comment
   label_comment_help: Submit general feedback without explicit approval.
   label_approve: Approve
@@ -119,6 +121,7 @@ en:
   text_pulls_destroy_confirmation: 'Are you sure you want to delete the selected pull request(s)?'
   text_configured_repository_present: In order to use the pull request module, a project must have a working repository configured.
   text_pull_broken: "This pull request’s repository is missing."
+  text_default_branch: "When creating a new pull request, this branch will be used as the default “base” branch."
   mail_pull_added: "%{author} created pull request %{id}."
   mail_pull_review_requested: "%{initiator} asked you to review pull request %{id}."
   mail_pull_approved: "%{reviewer} approved pull request %{id}."

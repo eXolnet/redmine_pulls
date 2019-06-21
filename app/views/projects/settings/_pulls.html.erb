@@ -1,0 +1,16 @@
+<% repository = @project.repository %>
+
+<%= labelled_form_for repository,
+            :url => project_update_pull_settings_path(@project),
+            :as => 'repository',
+            :html => {:id => 'pulls-form',
+                      :method => :post} do |f| %>
+  <div class="box tabular">
+    <p>
+      <%= f.select :pull_default_branch, repository.branches, :required => true %>
+      <em class="info"><%= l(:text_default_branch) %></em>
+    </p>
+  </div>
+
+  <p><%= submit_tag l(:button_save) %></p>
+<% end %>
