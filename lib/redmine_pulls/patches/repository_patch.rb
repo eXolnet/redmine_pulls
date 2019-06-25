@@ -43,6 +43,16 @@ module RedminePulls
         def conflicting_files(commit_base, commit_head)
           scm.conflicting_files(commit_base, commit_head)
         end
+
+        def pull_default_branch
+          h = extra_info || {}
+
+          h["pull_default_branch"] || scm.default_branch
+        end
+
+        def pull_default_branch=(branch)
+          merge_extra_info "pull_default_branch" => branch
+        end
       end
     end
   end

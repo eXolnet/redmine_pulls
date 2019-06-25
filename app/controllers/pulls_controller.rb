@@ -193,7 +193,7 @@ class PullsController < ApplicationController
     @pull.author ||= User.current
     @pull.repository ||= @project.repository
 
-    default_branch = @pull.repository.scm.default_branch
+    default_branch = @pull.repository.pull_default_branch
     @pull.commit_base = default_branch
     @pull.commit_head = default_branch
 

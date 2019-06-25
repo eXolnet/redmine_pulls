@@ -30,6 +30,9 @@ Redmine::Plugin.register :redmine_pulls do
 
     # Related issues
     permission :manage_pull_relations, {}
+
+    # Related issues
+    permission :manage_pulls, {}
   end
 
   # Pulls are added to the activity view

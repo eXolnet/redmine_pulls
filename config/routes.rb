@@ -7,6 +7,8 @@ post '/pulls/:id/quoted', :to => 'pulls#quoted', :id => /\d+/, :as => 'quoted_pu
 get '/pulls/commit/new/:project_id', :to => 'pulls#commit', :as => 'commit_new_pull'
 
 resources :projects do
+  post '/pulls/settings', :to => 'pull_settings#update', :as => 'update_pull_settings'
+
   resources :pulls, :only => [:index, :new, :create]
 end
 
