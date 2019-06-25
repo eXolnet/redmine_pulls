@@ -1,0 +1,21 @@
+<% if issue.pulls.present? %>
+  <hr>
+
+  <div id="pull_relations">
+    <p><strong><%=l(:label_pulls)%></strong></p>
+
+    <table class="list pulls odd-even">
+      <tbody>
+        <% issue.pulls.each do |pull| %>
+          <tr class="<%= pull.css_classes %>">
+            <td class="subject">
+              <a href="<%= pull_path(pull) %>">PR#<%= pull.id %></a>:
+              <%= pull.subject %>
+            </td>
+            <td class="status"><%= pull.status_label %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
