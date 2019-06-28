@@ -40,8 +40,17 @@ span.search_for_reviewers {
   white-space: nowrap;
 }
 
-.pulls__changes .line-code {
+.pulls__changes table.filecontent th.line-num {
+  vertical-align: top;
+}
+
+.pulls__changes table.filecontent td.line-code:nth-child(2),
+.pulls__changes table.filecontent td.line-code:nth-child(4) {
   width: 48%;
+}
+
+.pulls__changes table.filecontent td.line-code pre {
+  word-break: break-word;
 }
 
 .pulls__status {
