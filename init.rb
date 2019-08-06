@@ -13,8 +13,8 @@ Redmine::Plugin.register :redmine_pulls do
 
   requires_redmine :version_or_higher => '2.3'
 
-  menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues
-  menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues, :param => :project_id
+  menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => Proc.new {|project| RedminePulls.menu_caption(project) }, :after => :issues
+  menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => Proc.new {|project| RedminePulls.menu_caption(project) }, :after => :issues, :param => :project_id
   menu :project_menu, :new_pull, { :controller => 'pulls', :action => 'new' }, :caption => :label_new_pull, :after => :new_issue_sub, :param => :project_id, :parent => :new_object
 
   project_module :pulls do
