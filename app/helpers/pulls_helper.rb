@@ -9,6 +9,16 @@ module PullsHelper
     render_404
   end
 
+  def find_repository
+    repository_id = params.dig(:pull, :repository_id) || params[:repository_id]
+
+    @repository = Repository.find(repository_id)
+    @project = @repository.project
+    puts @project
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
   def ensure_project_has_repository
     # Do not validate on the global pulls page
     return unless @project

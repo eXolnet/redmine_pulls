@@ -3,7 +3,7 @@
 <p><%= text_field_tag 'commit', nil, :placeholder => 'Branch, tag, commit, or history marker', :id => 'pull-commit-custom' %></p>
 
 <ul>
-  <% pull.repository.branches.each  do|branch| %>
+  <% repository.branches.each  do|branch| %>
     <li><a href="#" onclick="pullSelectBranch('<%= kind %>', '<%= branch %>'); hideModal(this); return false;"><%= branch %></a></li>
   <% end %>
 </ul>

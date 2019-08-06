@@ -4,7 +4,8 @@
 match '/pulls/preview/new/:project_id', :to => 'pulls#preview', :as => 'preview_new_pull', :via => [:get, :post, :put, :patch]
 match '/pulls/preview/edit/:id', :to => 'pulls#preview', :as => 'preview_edit_pull', :via => [:get, :post, :put, :patch]
 post '/pulls/:id/quoted', :to => 'pulls#quoted', :id => /\d+/, :as => 'quoted_pull'
-get '/pulls/commit/new/:project_id', :to => 'pulls#commit', :as => 'commit_new_pull'
+get '/pulls/compare/:repository_id/branches', :to => 'pulls#compare_branches', :as => 'compare_branches_pull'
+get '/pulls/compare', :to => 'pulls#compare', :as => 'compare_pull'
 
 resources :projects do
   post '/pulls/settings', :to => 'pull_settings#update', :as => 'update_pull_settings'
