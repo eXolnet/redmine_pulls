@@ -22,14 +22,14 @@ class PullSettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_without_any_parameters
-    post :update, :project_id => 'ecookbook'
+    compatible_request :post, :update, :project_id => 'ecookbook'
 
     assert_redirected_to :controller => 'projects', :action => 'settings', :id => 'ecookbook', :tab => 'pulls'
     assert_match(/Successful update/, flash[:notice])
   end
 
   def test_update_default_branch
-    post :update, :project_id => 'ecookbook', :params => {
+    compatible_request :post, :update, :project_id => 'ecookbook', :params => {
         :Repository => {
           :pull_defaukt_repository => 'develop'
         }

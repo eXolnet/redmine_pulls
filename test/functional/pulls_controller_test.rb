@@ -52,7 +52,7 @@ class PullsControllerTest < ActionController::TestCase
   #end
 
   def test_show_with_repository_deleted
-    get :show, :id => 2
+    compatible_request :get, :show, :id => 2
 
     assert_response :success
     assert_select '#content .warning', :text => /This pull request’s repository is missing/

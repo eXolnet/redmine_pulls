@@ -38,14 +38,14 @@ class IssuesControllerTest < ActionController::TestCase
   end
 
   def test_get_show_with_related_pull
-    get :show, :id => 1
+    compatible_request :get, :show, :id => 1
 
     assert_response :success
     assert_select '#pull_relations a', :text => /PR#1/
   end
 
   def test_get_show_without_related_pull
-    get :show, :id => 2
+    compatible_request :get, :show, :id => 2
 
     assert_response :success
     assert_select '#pull_relations', 0
