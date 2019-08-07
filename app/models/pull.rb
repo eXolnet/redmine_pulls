@@ -16,7 +16,7 @@ class Pull < ActiveRecord::Base
 
   has_and_belongs_to_many :issues, :join_table => 'pull_issues', :after_add => :relation_added, :after_remove => :relation_removed
 
-  attr_protected :review_ids, :reviewer_ids
+  attr_protected :review_ids, :reviewer_ids if ActiveRecord::VERSION::MAJOR <= 4
 
   acts_as_customizable
   acts_as_watchable
@@ -41,7 +41,7 @@ class Pull < ActiveRecord::Base
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
   validates_length_of :subject, :maximum => 255
 
-  attr_protected :id
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
 
   scope :open, lambda {|*args|
     is_closed = args.size > 0 ? !args.first : false
