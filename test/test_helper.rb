@@ -40,3 +40,9 @@ module RedminePulls
 end
 
 include RedminePulls::TestHelper
+
+if ActiveRecord::VERSION::MAJOR >= 4
+  class RedminePulls::IntegrationTest < Redmine::IntegrationTest; end
+else
+  class RedminePulls::IntegrationTest < ActionController::IntegrationTest; end
+end
