@@ -14,7 +14,11 @@
     <% if @pull.notes_addable? %>
       <fieldset><legend><%= l(:field_notes) %></legend>
         <%= f.text_area :notes, :cols => 60, :rows => 10, :class => 'wiki-edit', :no_label => true %>
-        <%= wikitoolbar_for 'pull_notes' %>
+        <% if Redmine::VERSION.to_s >= '4.0' %>
+          <%= wikitoolbar_for 'pull_notes', preview_edit_pull_path(:project_id => @project, :id => @pull) %>
+        <% else %>
+          <%= wikitoolbar_for 'pull_notes' %>
+        <% end %>
 
         <% if @pull.safe_attribute? 'private_notes' %>
           <%= f.check_box :private_notes, :no_label => true %> <label for="pull_private_notes"><%= l(:field_private_notes) %></label>
@@ -25,8 +29,12 @@
 
   <%= hidden_field_tag 'last_journal_id', params[:last_journal_id] || @pull.last_journal_id %>
   <%= submit_tag l(:button_submit) %>
-  <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-form' %>
-  | <%= link_to l(:button_cancel), pull_path(id: @pull.id), :onclick => params[:action] == 'show' ? "$('#update').hide(); return false;" : '' %>
+  <% if Redmine::VERSION.to_s < '4.0' %>
+    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-form' %> |
+  <% end %>
+  <%= link_to l(:button_cancel), pull_path(id: @pull.id), :onclick => params[:action] == 'show' ? "$('#update').hide(); return false;" : '' %>
 <% end %>
 
-<div id="preview" class="wiki"></div>
+<% if Redmine::VERSION.to_s < '4.0' %>
+  <div id="preview" class="wiki"></div>
+<% end %>

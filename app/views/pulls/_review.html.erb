@@ -4,7 +4,11 @@
   <div class="box">
       <p>
         <%= f.text_area :notes, :cols => 60, :rows => 10, :class => 'wiki-edit', :no_label => true, :id => 'pull_review_notes', :placeholder => l(:label_review_summary) %>
-        <%= wikitoolbar_for 'pull_review_notes' %>
+        <% if Redmine::VERSION.to_s >= '4.0' %>
+          <%= wikitoolbar_for 'pull_review_notes', preview_edit_pull_path(:project_id => @project, :id => @pull) %>
+        <% else %>
+          <%= wikitoolbar_for 'pull_review_notes' %>
+        <% end %>
       </p>
 
       <label class="pulls__status">
@@ -28,8 +32,12 @@
 
   <p class="audit-buttons">
     <%= submit_tag l(:button_submit_review), :name => 'review' %>
-    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-review-form', 'preview-review' %>
+    <% if Redmine::VERSION.to_s < '4.0' %>
+      <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-review-form', 'preview-review' %>
+    <% end %>
   </p>
 
-  <div id="preview-review" class="wiki"></div>
+  <% if Redmine::VERSION.to_s < '4.0' %>
+    <div id="preview-review" class="wiki"></div>
+  <% end %>
 <% end %>
