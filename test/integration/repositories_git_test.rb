@@ -40,14 +40,13 @@ class RepositoriesGitTest < RedminePulls::IntegrationTest
 
       # Post the pull creation page with valid informations
       pull = new_record(Pull) do
-        compatible_request :post, '/projects/subproject1/pulls', :params => {
+        compatible_request :post, '/projects/subproject1/pulls',
           :pull => {
             :commit_base => "master",
             :commit_head => "test-latin-1",
             :subject => "new test pull",
             :priority_id => "4"
           }
-        }
       end
 
       # Check redirection

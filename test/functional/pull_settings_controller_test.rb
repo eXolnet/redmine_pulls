@@ -29,13 +29,14 @@ class PullSettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_default_branch
-    compatible_request :post, :update, :project_id => 'ecookbook', :params => {
-        :Repository => {
-          :pull_defaukt_repository => 'develop'
-        }
+    compatible_request :post, :update, :project_id => 'ecookbook',
+      :repository => {
+        :pull_default_branch => 'develop'
       }
 
     assert_redirected_to :controller => 'projects', :action => 'settings', :id => 'ecookbook', :tab => 'pulls'
     assert_match(/Successful update/, flash[:notice])
+
+    assert_equal 'develop', Repository.find(10).pull_default_branch
   end
 end
