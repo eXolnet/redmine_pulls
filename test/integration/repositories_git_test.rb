@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class RepositoriesGitTest < Redmine::IntegrationTest
+class RepositoriesGitTest < RedminePulls::IntegrationTest
   fixtures :projects,
            :users,
            :roles,
@@ -35,19 +35,18 @@ class RepositoriesGitTest < Redmine::IntegrationTest
       log_user("admin", "admin")
 
       # Navigate to the new pull page
-      get '/projects/subproject1/pulls/new'
+      compatible_request :get, '/projects/subproject1/pulls/new'
       assert_response :success
 
       # Post the pull creation page with valid informations
       pull = new_record(Pull) do
-        post '/projects/subproject1/pulls', :params => {
+        compatible_request :post, '/projects/subproject1/pulls',
           :pull => {
             :commit_base => "master",
             :commit_head => "test-latin-1",
             :subject => "new test pull",
             :priority_id => "4"
           }
-        }
       end
 
       # Check redirection

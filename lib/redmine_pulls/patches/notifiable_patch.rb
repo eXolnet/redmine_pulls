@@ -8,7 +8,8 @@ module RedminePulls
           unloadable # Send unloadable so it will not be unloaded in development
 
           class << self
-            alias_method_chain :all, :pulls
+            alias_method :all_without_pulls, :all
+            alias_method :all, :all_with_pulls
           end
         end
       end
