@@ -1,0 +1,11 @@
+<h3><%=l(:label_pull_plural)%></h3>
+<ul>
+  <li>
+    <%= link_to l(:label_assigned_pulls), pulls_path(:set_filter => 1, :assigned_to_id => ([@user.id] + @user.group_ids).join("|"), :sort => 'updated_on:desc') %>:
+    <%= Pull.open.assigned_to(@user).count %>
+  </li>
+  <li>
+    <%= link_to l(:label_authored_pulls), pulls_path(:set_filter => 1, :f => ['author_id'], :op => {:author_id => '='}, :v => {:author_id => ['me']}, :sort => 'created_on:desc') %>:
+    <%= Pull.where(:author_id => @user.id).count %>
+  </li>
+</ul>
