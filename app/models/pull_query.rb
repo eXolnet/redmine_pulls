@@ -30,19 +30,19 @@ class PullQuery < Query
   end
 
   def initialize_available_filters
-    add_available_filter"project_id", :type => :list, :values => lambda { project_values } if project.nil?
+    add_available_filter "project_id", :type => :list, :values => lambda { project_values } if project.nil?
     add_available_filter "priority_id", :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s] }
-    add_available_filter"author_id", :type => :list, :values => lambda { author_values }
-    add_available_filter"assigned_to_id", :type => :list_optional, :values => lambda { assigned_to_values }
-    add_available_filter"member_of_group", :type => :list_optional, :values => lambda { Group.givable.visible.collect {|g| [g.name, g.id.to_s] } }
-    add_available_filter"assigned_to_role", :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
+    add_available_filter "author_id", :type => :list, :values => lambda { author_values }
+    add_available_filter "assigned_to_id", :type => :list_optional, :values => lambda { assigned_to_values }
+    add_available_filter "member_of_group", :type => :list_optional, :values => lambda { Group.givable.visible.collect {|g| [g.name, g.id.to_s] } }
+    add_available_filter "assigned_to_role", :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
     add_available_filter "fixed_version_id", :type => :list_optional, :values => lambda { fixed_version_values }
     add_available_filter "fixed_version.due_date", :type => :date, :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
     add_available_filter "fixed_version.status", :type => :list, :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)), :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
     add_available_filter "category_id", :type => :list_optional, :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
-    add_available_filter"status", :type => :list, :values => STATUS_OPTIONS.map{|s| [l("label_status_#{s}"), s] }
-    add_available_filter"merge_status", :type => :list, :values => MERGE_OPTIONS.map{|s| [l("label_merge_status_#{s}"), s] }
-    add_available_filter"review", :type => :list, :values => REVIEW_OPTIONS.map{|s| [l("label_review_#{s}"), s] }
+    add_available_filter "status", :type => :list, :values => STATUS_OPTIONS.map{|s| [l("label_status_#{s}"), s] }
+    add_available_filter "merge_status", :type => :list, :values => MERGE_OPTIONS.map{|s| [l("label_merge_status_#{s}"), s] }
+    add_available_filter "review", :type => :list, :values => REVIEW_OPTIONS.map{|s| [l("label_review_#{s}"), s] }
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
     add_available_filter "commit_base", :type => :text
@@ -52,8 +52,8 @@ class PullQuery < Query
     add_available_filter "merged_on", :type => :date_past
     add_available_filter "closed_on", :type => :date_past
     add_available_filter "watcher_id", :type => :list, :values => [["<< #{l(:label_me)} >>", "me"]] if User.current.logged?
-    add_available_filter"updated_by", :type => :list, :values => lambda { author_values }
-    add_available_filter"last_updated_by", :type => :list, :values => lambda { author_values }
+    add_available_filter "updated_by", :type => :list, :values => lambda { author_values }
+    add_available_filter "last_updated_by", :type => :list, :values => lambda { author_values }
     add_available_filter "subproject_id", :type => :list_subprojects, :values => lambda { subproject_values } if project && !project.leaf?
     add_available_filter "related_issue", :type => :relation, :label => options[:name], :values => lambda {all_projects_values}
     add_available_filter "pull_id", :type => :integer, :label => :label_pull_request
