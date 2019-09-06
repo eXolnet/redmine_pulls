@@ -3,9 +3,10 @@ class PullsController < ApplicationController
   menu_item :pulls
 
   before_action :find_pull, :only => [:show, :edit, :update, :destroy, :quoted]
-  before_action :find_optional_project, :only => [:index, :new, :create, :commit]
+  before_action :find_optional_project, :only => [:index, :new, :create]
+  before_action :find_repository, :only => [:compare, :compare_branches]
   before_action :ensure_project_has_repository
-  before_action :build_new_pull_from_params, :only => [:new, :create, :commit]
+  before_action :build_new_pull_from_params, :only => [:new, :create]
 
   rescue_from Query::StatementInvalid, :with => :query_statement_invalid
 
@@ -145,7 +146,14 @@ class PullsController < ApplicationController
     end
   end
 
-  def commit
+  def compare
+    raise Unauthorized unless User.current.allowed_to?(:add_pulls, @project)
+
+    @commit_base = @repository.default_branch
+    @commit_head = @repository.default_branch
+  end
+
+  def compare_branches
     raise Unauthorized unless User.current.allowed_to?(:add_pulls, @project)
 
     @kind = params[:kind] || 'base'

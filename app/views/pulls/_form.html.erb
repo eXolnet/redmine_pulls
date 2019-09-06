@@ -1,11 +1,14 @@
 <%= labelled_fields_for :pull, @pull do |f| %>
+  <% if (@pull.safe_attribute?('repository_id') && @project.repositories.count > 1) %>
+    <p><%= f.select :repository_id, @project.repositories.collect {|r| [r.name, r.id]}, {:required => true}, :data => { :remote => true, :method => 'get', :url => compare_pull_path } %></p>
+  <% end %>
+
   <% if @pull.safe_attribute?('commit_base') && @pull.safe_attribute?('commit_head') %>
     <p>
       <%= f.label_for_field :between, :required => true %>
-      <a href="<%= commit_new_pull_path(:project_id => @pull.project, :kind => 'base') %>" data-remote="true" data-method="get" class="pull__commit">base: <strong id="pull-commit-label-base"><%= @pull.commit_base %></strong></a>
-      ..
-      <a href="<%= commit_new_pull_path(:project_id => @pull.project, :kind => 'head') %>" data-remote="true" data-method="get" class="pull__commit">compare: <strong id="pull-commit-label-head"><%= @pull.commit_head %></strong></a>
-      <em class="info">Compare changes across branches, commits, tags and more.</em>
+      <span id="pull-new-compare">
+        <%= render :partial => 'pulls/compare', :locals => {:repository => @pull.repository, :commit_base => @pull.commit_base, :commit_head => @pull.commit_head} %>
+      </span>
 
       <%= f.hidden_field :commit_base, :value => @pull.commit_base, :id => 'pull-commit-input-base' %>
       <%= f.hidden_field :commit_head, :value => @pull.commit_head, :id => 'pull-commit-input-head' %>

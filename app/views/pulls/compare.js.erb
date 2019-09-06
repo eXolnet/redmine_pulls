@@ -1,0 +1,4 @@
+$('#pull-new-compare').html('<%= escape_javascript(render(:partial => 'pulls/compare', :locals => {:repository => @repository, :commit_base => @commit_base, :commit_head => @commit_head})) %>');
+
+$('#pull-commit-input-base').val('<%= escape_javascript(@commit_base) %>');
+$('#pull-commit-input-head').val('<%= escape_javascript(@commit_head) %>');

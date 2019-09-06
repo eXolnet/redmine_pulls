@@ -77,6 +77,7 @@ en:
   label_merge_instructions_description: If you do not want to use the merge button or an automatic merge cannot be performed, you can perform a manual merge on the command line.
   label_assigned_pulls: Assigned pulls
   label_authored_pulls: Authored pulls
+  field_repository: Repository
   field_between: Between
   field_status: Status
   field_review_status: Review status

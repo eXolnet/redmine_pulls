@@ -1,0 +1,4 @@
+<a href="<%= compare_branches_pull_path(:repository_id => repository, :kind => 'base') %>" data-remote="true" data-method="get" class="pull__commit">base: <strong id="pull-commit-label-base"><%= commit_base %></strong></a>
+..
+<a href="<%= compare_branches_pull_path(:repository_id => repository, :kind => 'head') %>" data-remote="true" data-method="get" class="pull__commit">compare: <strong id="pull-commit-label-head"><%= commit_head %></strong></a>
+<em class="info">Compare changes across branches, commits, tags and more.</em>
