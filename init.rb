@@ -8,13 +8,13 @@ Redmine::Plugin.register :redmine_pulls do
   author 'eXolnet'
   description 'Allows users to create pull requests for repositories linked to projects.'
   version PULLS_VERSION_NUMBER
-  url 'https://github.com/eXolnet/redmine-pulls'
+  url 'https://github.com/eXolnet/redmine_pulls'
   author_url 'https://www.exolnet.com'
 
   requires_redmine :version_or_higher => '2.3'
 
-  menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues
-  menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => :label_pulls, :after => :issues, :param => :project_id
+  menu :application_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => Proc.new {|project| RedminePulls.menu_caption(project) }, :after => :issues, :if => Proc.new { User.current.allowed_to?(:view_pulls, nil, :global => true) }
+  menu :project_menu, :pulls, { :controller => 'pulls', :action => 'index' }, :caption => Proc.new {|project| RedminePulls.menu_caption(project) }, :after => :issues, :param => :project_id
   menu :project_menu, :new_pull, { :controller => 'pulls', :action => 'new' }, :caption => :label_new_pull, :after => :new_issue_sub, :param => :project_id, :parent => :new_object
 
   project_module :pulls do

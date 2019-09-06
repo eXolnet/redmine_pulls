@@ -1,10 +1,16 @@
 <%  if pull.notes_addable? %>
   <%= labelled_form_for pull, :html => {:id => 'pull-comment-form', :style => 'display:none'} do |f| %>
     <%= f.text_area :notes, :cols => 60, :rows => 7, :class => 'wiki-edit', :no_label => true, :placeholder => l(:label_leave_comment), :id => 'pull_notes' %>
-    <%= wikitoolbar_for 'pull_notes' %>
+    <% if Redmine::VERSION.to_s >= '4.0' %>
+      <%= wikitoolbar_for 'pull_notes', preview_edit_pull_path(:project_id => @project, :id => @pull) %>
+    <% else %>
+      <%= wikitoolbar_for 'pull_notes' %>
+    <% end %>
 
     <%= submit_tag l(:button_comment) %>
-    <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-comment-form', 'preview-comment' %>
+    <% if Redmine::VERSION.to_s < '4.0' %>
+      <%= preview_link preview_edit_pull_path(:project_id => @project, :id => @pull), 'pull-comment-form', 'preview-comment' %>
+    <% end %>
 
     <% if pull.safe_attribute? 'status' %>
       <div class="pull__status-actions">
@@ -16,6 +22,8 @@
       </div>
     <% end %>
 
-    <div id="preview-comment" class="wiki"></div>
+    <% if Redmine::VERSION.to_s < '4.0' %>
+      <div id="preview-comment" class="wiki"></div>
+    <% end %>
   <% end %>
 <% end %>

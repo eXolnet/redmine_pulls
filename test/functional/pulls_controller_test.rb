@@ -24,13 +24,13 @@ class PullsControllerTest < ActionController::TestCase
   end
 
   def test_get_index_without_project
-    get :index
+    compatible_request :get, :index
 
     assert_response :success
   end
 
   def test_get_index_with_project
-    get :index, :project_id => 'ecookbook'
+    compatible_request :get, :index, :project_id => 'ecookbook'
 
     assert_response :success
   end
@@ -38,21 +38,21 @@ class PullsControllerTest < ActionController::TestCase
   def test_get_new_with_pull_request_template
     Repository.any_instance.stubs(:cat).returns('Pull request template example')
 
-    get :new, :project_id => 'ecookbook'
+    compatible_request :get, :new, :project_id => 'ecookbook'
 
     assert_response :success
     assert_select '#pull_description', :text => /Pull request template example/
   end
 
   #def test_show_with_repository
-  #  get :show, :id => 1
+  #  compatible_request get, :show, :id => 1
   #
   #  assert_response :success
   #  assert_select '#content .warning', false, :text => /This pull request’s repository is missing/
   #end
 
   def test_show_with_repository_deleted
-    get :show, :id => 2
+    compatible_request :get, :show, :id => 2
 
     assert_response :success
     assert_select '#content .warning', :text => /This pull request’s repository is missing/

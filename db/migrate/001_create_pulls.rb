@@ -1,4 +1,6 @@
-class CreatePulls < ActiveRecord::Migration
+migration_class = ActiveRecord::VERSION::MAJOR >= 5 ? ActiveRecord::Migration[4.2] : ActiveRecord::Migration
+
+class CreatePulls < migration_class
   def change
     create_table :pulls do |t|
       t.integer  :project_id,            :null => false

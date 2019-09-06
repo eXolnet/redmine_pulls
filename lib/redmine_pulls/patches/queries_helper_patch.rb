@@ -9,7 +9,8 @@ module RedminePulls
         base.class_eval do
           unloadable # Send unloadable so it will not be unloaded in development
 
-          alias_method_chain :column_value, :pulls
+          alias_method :column_value_without_pulls, :column_value
+          alias_method :column_value, :column_value_with_pulls
         end
       end
 

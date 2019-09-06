@@ -16,7 +16,7 @@ class Pull < ActiveRecord::Base
 
   has_and_belongs_to_many :issues, :join_table => 'pull_issues', :after_add => :relation_added, :after_remove => :relation_removed
 
-  attr_protected :review_ids, :reviewer_ids
+  attr_protected :review_ids, :reviewer_ids if ActiveRecord::VERSION::MAJOR <= 4
 
   acts_as_customizable
   acts_as_watchable
@@ -41,7 +41,7 @@ class Pull < ActiveRecord::Base
   validates_presence_of :author, :if => Proc.new {|issue| issue.new_record? || issue.author_id_changed?}
   validates_length_of :subject, :maximum => 255
 
-  attr_protected :id
+  attr_protected :id if ActiveRecord::VERSION::MAJOR <= 4
 
   scope :open, lambda {|*args|
     is_closed = args.size > 0 ? !args.first : false
@@ -83,6 +83,47 @@ class Pull < ActiveRecord::Base
   scope :reviewed_by, lambda { |user_id|
     joins(:reviewers).
       where("#{PullReview.table_name}.reviewer_id = ?", user_id)
+  }
+
+  scope :actionable, lambda { |*args|
+    user = args.shift || User.current
+
+    subqueryRequested = PullReview.
+      where(reviewer_id: user.id, status: PullReview::STATUS_REQUESTED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    subqueryConcerned = PullReview.
+      where(status: PullReview::STATUS_CONCERNED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    subqueryApproved = PullReview.
+      where(status: PullReview::STATUS_APPROVED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    subqueryNotApproved = PullReview.
+      where("#{PullReview.table_name}.status <> ?", PullReview::STATUS_APPROVED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    # This request will return opened pull requests that are
+    open
+      .where(
+        # (1) Review has been requested to the user
+        "EXISTS (#{subqueryRequested}) OR " +
+        "(" +
+          # (2) Assigned to the user AND one of the following
+          "#{table_name}.assigned_to_id = ? AND (" +
+            # (2a) A concern has been raised
+            "EXISTS (#{subqueryConcerned}) OR "+
+            # (2b) All reviewers has approved
+            "EXISTS (#{subqueryApproved}) AND NOT EXISTS (#{subqueryNotApproved})"+
+          ")" +
+        ")",
+        user.id
+      )
   }
 
   before_save :force_updated_on_change, :update_closed_on, :set_assigned_to_was
@@ -404,6 +445,10 @@ class Pull < ActiveRecord::Base
   # attr_accessible is too rough because we still want things like
   # Issue.new(:project => foo) to work
   def safe_attributes=(attrs, user=User.current)
+    if attrs.respond_to?(:to_unsafe_hash)
+      attrs = attrs.to_unsafe_hash
+    end
+
     @attributes_set_by = user
     return unless attrs.is_a?(Hash)
 
@@ -419,8 +464,7 @@ class Pull < ActiveRecord::Base
       attrs['custom_fields'].select! {|c| editable_custom_field_ids.include?(c['id'].to_s)}
     end
 
-    # mass-assignment security bypass
-    assign_attributes attrs, :without_protection => true
+    super(attrs, user)
   end
 
   def status_label
