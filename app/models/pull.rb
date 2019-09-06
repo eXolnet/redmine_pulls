@@ -85,6 +85,47 @@ class Pull < ActiveRecord::Base
       where("#{PullReview.table_name}.reviewer_id = ?", user_id)
   }
 
+  scope :actionable, lambda { |*args|
+    user = args.shift || User.current
+
+    subqueryRequested = PullReview.
+      where(reviewer_id: user.id, status: PullReview::STATUS_REQUESTED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    subqueryConcerned = PullReview.
+      where(status: PullReview::STATUS_CONCERNED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    subqueryApproved = PullReview.
+      where(status: PullReview::STATUS_APPROVED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    subqueryNotApproved = PullReview.
+      where("#{PullReview.table_name}.status <> ?", PullReview::STATUS_APPROVED).
+      where("#{table_name}.id = #{PullReview.table_name}.pull_id").
+      to_sql
+
+    # This request will return opened pull requests that are
+    open
+      .where(
+        # (1) Review has been requested to the user
+        "EXISTS (#{subqueryRequested}) OR " +
+        "(" +
+          # (2) Assigned to the user AND one of the following
+          "#{table_name}.assigned_to_id = ? AND (" +
+            # (2a) A concern has been raised
+            "EXISTS (#{subqueryConcerned}) OR "+
+            # (2b) All reviewers has approved
+            "EXISTS (#{subqueryApproved}) AND NOT EXISTS (#{subqueryNotApproved})"+
+          ")" +
+        ")",
+        user.id
+      )
+  }
+
   before_save :force_updated_on_change, :update_closed_on, :set_assigned_to_was
   after_save :create_journal
   after_create :send_added_notification

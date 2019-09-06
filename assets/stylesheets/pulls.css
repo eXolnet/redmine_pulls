@@ -144,3 +144,11 @@ a.pull__commit:hover {
 #pull_relations table.pulls {
   border: 0;
 }
+
+.tabs .count::before {
+  content: '(';
+}
+
+.tabs .count::after {
+  content: ')';
+}
