@@ -1,4 +1,5 @@
 require 'redmine_pulls/hooks/views_layouts_hook'
+require 'redmine_pulls/hooks/display_pull_statistics_in_user_profile'
 require 'redmine_pulls/hooks/display_related_pulls_in_issues'
 
 require 'redmine_pulls/patches/adapters/abstract_adapter_helper'
