@@ -1,16 +1,20 @@
 <% repository = @project.repository %>
 
-<%= labelled_form_for repository,
-            :url => project_update_pull_settings_path(@project),
-            :as => 'repository',
-            :html => {:id => 'pulls-form',
-                      :method => :post} do |f| %>
-  <div class="box tabular">
-    <p>
-      <%= f.select :pull_default_branch, repository.branches, :required => true %>
-      <em class="info"><%= l(:text_default_branch) %></em>
-    </p>
-  </div>
+<% if repository.present? %>
+  <%= labelled_form_for repository,
+              :url => project_update_pull_settings_path(@project),
+              :as => 'repository',
+              :html => {:id => 'pulls-form',
+                        :method => :post} do |f| %>
+    <div class="box tabular">
+      <p>
+        <%= f.select :pull_default_branch, repository.branches, :required => true %>
+        <em class="info"><%= l(:text_default_branch) %></em>
+      </p>
+    </div>
 
-  <p><%= submit_tag l(:button_save) %></p>
+    <p><%= submit_tag l(:button_save) %></p>
+  <% end %>
+<% else %>
+  <p class="nodata"><%= l(:text_configured_repository_present) %></p>
 <% end %>
