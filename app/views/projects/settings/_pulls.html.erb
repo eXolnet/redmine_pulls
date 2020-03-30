@@ -1,6 +1,6 @@
 <% repository = @project.repository %>
 
-<% if repository.present? %>
+<% if repository&.default_branch.present? %>
   <%= labelled_form_for repository,
               :url => project_update_pull_settings_path(@project),
               :as => 'repository',
