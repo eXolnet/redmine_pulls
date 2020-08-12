@@ -7,7 +7,7 @@
       <p><%= authoring journal.created_on, journal.user, :label => :label_updated_time_by %></p>
       <% if journal.details.any? %>
       <ul class="details">
-        <% details_to_strings(journal.details).each do |string| %>
+        <% pull_details_to_strings(journal.details).each do |string| %>
          <li><%= string %></li>
         <% end %>
       </ul>

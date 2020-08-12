@@ -58,6 +58,16 @@ module PullsHelper
     pull_users_checkboxes('watcher_user_ids', object, users, checked)
   end
 
+  def pull_details_to_strings(details, no_html=false, options={})
+    # The plugin Redmine Checklists patch the method IssuesHelper::details_to_strings and suppose
+    # that it's only used for issues. Thus, if the unpatched version exists, we'll use it instead.
+    if respond_to?('details_to_strings_without_checklists')
+      return details_to_strings_without_checklists(details, no_html, options)
+    end
+
+    details_to_strings(details, no_html, options)
+  end
+
   def pull_review_title(pull)
     changes_count = pull.reviews.where(:status => PullReview::STATUS_CONCERNED).count
     pending_count = pull.reviews.where(:status => PullReview::STATUS_REQUESTED).count
