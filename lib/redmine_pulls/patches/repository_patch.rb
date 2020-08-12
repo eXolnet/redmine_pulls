@@ -53,6 +53,16 @@ module RedminePulls
         def pull_default_branch=(branch)
           merge_extra_info "pull_default_branch" => branch
         end
+
+        def pull_delete_branch
+          h = extra_info || {}
+
+          h["pull_delete_branch"] || false
+        end
+
+        def pull_delete_branch=(value)
+          merge_extra_info "pull_delete_branch" => value
+        end
       end
     end
   end

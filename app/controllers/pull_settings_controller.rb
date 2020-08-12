@@ -8,6 +8,7 @@ class PullSettingsController < ApplicationController
 
     repository = @project.repository
     repository.pull_default_branch = attrs[:pull_default_branch]
+    repository.pull_delete_branch = attrs[:pull_delete_branch] == '1'
     repository.save!
 
     flash[:notice] = l(:notice_successful_update)

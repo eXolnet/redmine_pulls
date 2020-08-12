@@ -89,6 +89,7 @@ en:
   field_related_issue: Related issue
   field_branch: Branch
   field_pull_default_branch: Default branch
+  field_pull_delete_branch: Delete head branches
   label_comment: Comment
   label_comment_help: Submit general feedback without explicit approval.
   label_approve: Approve

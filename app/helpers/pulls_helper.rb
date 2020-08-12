@@ -172,6 +172,10 @@ module PullsHelper
     )
 
     pull.mark_as_merged
+
+    if pull.repository.pull_delete_branch
+      pull.delete_head_branch
+    end
   end
 
   private

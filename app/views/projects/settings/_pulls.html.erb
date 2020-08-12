@@ -11,6 +11,10 @@
         <%= f.select :pull_default_branch, repository.branches, :required => true %>
         <em class="info"><%= l(:text_default_branch) %></em>
       </p>
+
+      <p>
+        <%= f.check_box :pull_delete_branch %>
+      </p>
     </div>
 
     <p><%= submit_tag l(:button_save) %></p>
