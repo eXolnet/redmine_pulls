@@ -2,6 +2,18 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.0 - 2020-08-14
+### Added
+
+* Allow head branches to be automatically deleted after a merge
+* Add permissions to manage pull's watchers
+
+### Fixed
+
+* Reviewers and watchers are now assigned on pull creation on Redmine 3.4.x
+* Compatibility with latest Redmine Checklist plugin
+
+
 ## 1.1.0 - 2019-10-17
 ### Added
 
