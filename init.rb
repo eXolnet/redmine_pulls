@@ -28,6 +28,11 @@ Redmine::Plugin.register :redmine_pulls do
     permission :add_pull_reviewers,    {}
     permission :delete_pull_reviewers, {}
 
+    # Watchers
+    permission :view_pull_watchers, {}, :read => true
+    permission :add_pull_watchers, {:watchers => [:new, :create, :append, :autocomplete_for_user]}
+    permission :delete_pull_watchers, {:watchers => :destroy}
+
     # Related issues
     permission :manage_pull_relations, {}
 
