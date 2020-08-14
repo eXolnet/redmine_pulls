@@ -464,7 +464,12 @@ class Pull < ActiveRecord::Base
       attrs['custom_fields'].select! {|c| editable_custom_field_ids.include?(c['id'].to_s)}
     end
 
-    super(attrs, user)
+    if ActiveRecord::VERSION::MAJOR <= 4
+      # mass-assignment security bypass
+      assign_attributes attrs, :without_protection => true
+    else
+      assign_attributes attrs
+    end
   end
 
   def status_label
