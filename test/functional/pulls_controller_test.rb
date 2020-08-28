@@ -21,6 +21,7 @@ class PullsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
 
     Repository.any_instance.stubs(:default_branch).returns('master')
+    Repository.any_instance.stubs(:pull_default_branch).returns('develop')
   end
 
   def test_get_index_without_project
@@ -39,6 +40,19 @@ class PullsControllerTest < ActionController::TestCase
     compatible_request :get, :new, :project_id => 'ecookbook'
 
     assert_response :success
+    assert_select '#pull-commit-label-base', :text => /develop/
+    assert_select '#pull-commit-label-head', :text => /develop/
+  end
+
+  def test_get_new_with_commit_overwrite
+    compatible_request :get, :new, :project_id => 'ecookbook', :pull => {
+      :commit_base => 'master',
+      :commit_head => 'feature/not-merged',
+    }
+
+    assert_response :success
+    assert_select '#pull-commit-label-base', :text => 'master'
+    assert_select '#pull-commit-label-head', :text => 'feature/not-merged'
   end
 
   def test_post_create
@@ -87,7 +101,7 @@ class PullsControllerTest < ActionController::TestCase
   end
 
   #def test_show_with_repository
-  #  compatible_request get, :show, :id => 1
+  #  compatible_request :get, :show, :id => 1
   #
   #  assert_response :success
   #  assert_select '#content .warning', false, :text => /This pull request’s repository is missing/
