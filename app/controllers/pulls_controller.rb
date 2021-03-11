@@ -243,7 +243,7 @@ class PullsController < ApplicationController
     @pull.init_journal(User.current)
     @pull.safe_attributes = pull_attributes
 
-    if params[:review_status]
+    if params[:review_status].present?
       review = @pull.review
       review.status = params[:review_status]
       review.last_revision = @pull.commit_head_revision
