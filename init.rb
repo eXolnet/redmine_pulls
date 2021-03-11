@@ -1,6 +1,6 @@
 require 'redmine'
 
-PULLS_VERSION_NUMBER = '1.2.0'
+PULLS_VERSION_NUMBER = '1.2.1'
 PULLS_VERSION_TYPE = "Light version"
 
 Redmine::Plugin.register :redmine_pulls do

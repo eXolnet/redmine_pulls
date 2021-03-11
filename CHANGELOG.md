@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.1
+
+* Fix mail sending in Redmine 4
+
 ## 1.2.0 - 2020-08-14
 ### Added
 
