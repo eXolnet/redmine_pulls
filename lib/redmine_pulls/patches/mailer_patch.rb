@@ -3,91 +3,108 @@ require_dependency 'mailer'
 module RedminePulls
   module Patches
     module Mailer
-      def self.included(base) # :nodoc:
-        base.send(:include, InstanceMethods)
+      extend ActiveSupport::Concern
 
-        base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-        end
+      included do
+        include InstanceMethods
       end
 
-      module InstanceMethods
-        def pull_added(pull)
-          pull_headers(pull)
-
+      class_methods do
+        def deliver_pull_added(pull)
           # Reviewers should not be notified since they will recived a separate
           # email asking them to review the pull request
-          mail :to => @pull.notified_users - @pull.reviewers,
-               :cc => @pull.notified_following_users - @pull.reviewers,
-               :subject => @pull.mail_subject
+          users = pull_recipients(pull) - pull.reviewers
+
+          users.each { |user| pull_added(user, pull).deliver_later }
         end
 
-        def pull_merged(pull)
-          pull_headers(pull)
-
-          mail :to => @pull.notified_users,
-               :cc => @pull.notified_following_users,
-               :subject => @pull.mail_subject
+        def deliver_pull_merged(pull)
+          pull_recipients(pull).each { |user| pull_merged(user, pull).deliver_later }
         end
 
-        def pull_closed(pull)
-          pull_headers(pull)
-
-          mail :to => @pull.notified_users,
-               :cc => @pull.notified_following_users,
-               :subject => @pull.mail_subject
+        def deliver_pull_closed(pull)
+          pull_recipients(pull).each { |user| pull_closed(user, pull).deliver_later }
         end
 
-        def pull_reopen(pull)
-          pull_headers(pull)
-
-          mail :to => @pull.notified_users,
-               :cc => @pull.notified_following_users,
-               :subject => @pull.mail_subject
+        def deliver_pull_reopen(pull)
+          pull_recipients(pull).each { |user| pull_reopen(user, pull).deliver_later }
         end
 
-        def pull_push(pull)
+        def deliver_pull_push(pull)
           #
         end
 
-        def pull_unmergable(pull)
-          pull_headers(pull)
-
-          mail :to => @pull.notified_users,
-               :cc => @pull.notified_following_users,
-               :subject => @pull.mail_subject
+        def deliver_pull_unmergable(pull)
+          pull_recipients(pull).each { |user| pull_unmergable(user, pull).deliver_later }
         end
 
-        def pull_new_mentions(pull)
+        def deliver_pull_new_mentions(pull)
           #
         end
 
-        def pull_approved(review)
-          pull_review_headers(review)
-
-          mail :to => @pull.notified_users,
-               :cc => @pull.notified_following_users,
-               :subject => @pull.mail_subject
+        def deliver_pull_approved(review)
+          pull_recipients(review.pull).each { |user| pull_approved(user, review).deliver_later }
         end
 
-        def pull_changes_requested(review)
-          pull_review_headers(review)
-
-          mail :to => @pull.notified_users,
-               :cc => @pull.notified_following_users,
-               :subject => @pull.mail_subject
+        def deliver_pull_changes_requested(review)
+          pull_recipients(review.pull).each { |user| pull_changes_requested(user, review).deliver_later }
         end
 
-        def pull_review_requested(review)
-          pull_review_headers(review)
-
-          mail :to => review.reviewer,
-               :subject => @pull.mail_subject
+        def deliver_pull_review_requested(review)
+          pull_review_requested(review.reviewer, review).deliver_later
         end
 
         private
 
-        def pull_headers(pull)
+        def pull_recipients(pull)
+          pull.notified_users | pull.notified_following_users
+        end
+      end
+
+      module InstanceMethods
+        def pull_added(user, pull)
+          pull_mail(user, pull)
+        end
+
+        def pull_merged(user, pull)
+          pull_mail(user, pull)
+        end
+
+        def pull_closed(user, pull)
+          pull_mail(user, pull)
+        end
+
+        def pull_reopen(user, pull)
+          pull_mail(user, pull)
+        end
+
+        def pull_push(user, pull)
+          #
+        end
+
+        def pull_unmergable(user, pull)
+          pull_mail(user, pull)
+        end
+
+        def pull_new_mentions(user, pull)
+          #
+        end
+
+        def pull_approved(user, review)
+          pull_review_mail(user, review.pull, review)
+        end
+
+        def pull_changes_requested(user, review)
+          pull_review_mail(user, review.pull, review)
+        end
+
+        def pull_review_requested(user, review)
+          pull_mail(user, review.pull, review)
+        end
+
+        private
+
+        def pull_mail(user, pull, review = nil)
           @author = User.current
           @pull = pull
           @pull_url = url_for(:controller => 'pulls', :action => 'show', :id => @pull)
@@ -97,15 +114,15 @@ module RedminePulls
                           'Pull-Author' => @pull.author.login
           redmine_headers 'Pull-Assignee' => @pull.assigned_to.login if @pull.assigned_to
           message_id @pull
-        end
 
-        def pull_review_headers(review)
-          pull_headers(review.pull)
+          if review
+            @review = review
+            @reviewer = review.reviewer
+  
+            redmine_headers 'Pull-Reviewer' => @reviewer.login
+          end
 
-          @review = review
-          @reviewer = review.reviewer
-
-          redmine_headers 'Pull-Reviewer' => @reviewer.login
+          mail :to => user, :subject => pull.mail_subject
         end
       end
     end

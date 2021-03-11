@@ -46,19 +46,19 @@ class PullReview < ActiveRecord::Base
 
   def send_notification_requested
     if Setting.notified_events.include?('pull_review_requested')
-      Mailer.pull_review_requested(self).deliver
+      Mailer.deliver_pull_review_requested(self)
     end
   end
 
   def send_notification_concerned
     if Setting.notified_events.include?('pull_changes_requested')
-      Mailer.pull_changes_requested(self).deliver
+      Mailer.deliver_pull_changes_requested(self)
     end
   end
 
   def send_notification_approved
     if Setting.notified_events.include?('pull_approved')
-      Mailer.pull_approved(self).deliver
+      Mailer.deliver_pull_approved(self)
     end
   end
 end

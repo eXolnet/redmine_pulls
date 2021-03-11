@@ -162,19 +162,19 @@ class Pull < ActiveRecord::Base
 
     after_transition any => :merged do |pull, transition|
       if Setting.notified_events.include?('pull_merged')
-        Mailer.pull_merged(pull).deliver
+        Mailer.deliver_pull_merged(pull)
       end
     end
 
     after_transition any => :closed do |pull, transition|
       if Setting.notified_events.include?('pull_closed')
-        Mailer.pull_closed(pull).deliver
+        Mailer.deliver_pull_closed(pull)
       end
     end
 
     after_transition from: :closed, to: :opened do |pull, transition|
       if Setting.notified_events.include?('pull_reopen')
-        Mailer.pull_reopen(pull).deliver
+        Mailer.deliver_pull_reopen(pull)
       end
     end
 
@@ -848,13 +848,13 @@ class Pull < ActiveRecord::Base
   def send_added_notification
     return unless Setting.notified_events.include?('pull_added')
 
-    Mailer.pull_added(self).deliver
+    Mailer.deliver_pull_added(self)
   end
 
   def send_updated_notification
     return unless merge_status_changed? && merge_status == 'cannot_be_merged' && Setting.notified_events.include?('pull_unmergable')
 
-    Mailer.pull_unmergable(self).deliver
+    Mailer.deliver_pull_unmergable(self)
   end
 
   # Stores the previous assignee so we can still have access
