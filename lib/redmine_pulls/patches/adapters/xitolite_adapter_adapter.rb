@@ -4,13 +4,7 @@ module RedminePulls
   module Patches
     module Adapters
       module XitoliteAdapterPatch
-        def self.included(base) # :nodoc:
-          base.send(:include, RedminePulls::Patches::Adapters::GitAdapterPatch::InstanceMethods)
-
-          base.class_eval do
-            unloadable # Send unloadable so it will not be unloaded in development
-          end
-        end
+        extend RedminePulls::Patches::Adapters::GitAdapterPatch
       end
     end
   end

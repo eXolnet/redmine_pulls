@@ -3,15 +3,13 @@ require_dependency 'queries_helper'
 module RedminePulls
   module Patches
     module QueriesHelperPatch
-      def self.included(base) # :nodoc:
-        base.send(:include, InstanceMethods)
+      extend ActiveSupport::Concern
 
-        base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
+      included do
+        include InstanceMethods
 
-          alias_method :column_value_without_pulls, :column_value
-          alias_method :column_value, :column_value_with_pulls
-        end
+        alias_method :column_value_without_pulls, :column_value
+        alias_method :column_value, :column_value_with_pulls
       end
 
       module InstanceMethods

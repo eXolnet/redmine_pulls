@@ -3,18 +3,10 @@ require_dependency 'issue'
 module RedminePulls
   module Patches
     module IssuePatch
-      def self.included(base) # :nodoc:
-        base.send(:include, InstanceMethods)
+      extend ActiveSupport::Concern
 
-        base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-
-          has_and_belongs_to_many :pulls, :join_table => 'pull_issues', :readonly => true
-        end
-      end
-
-      module InstanceMethods
-        #
+      included do
+        has_and_belongs_to_many :pulls, :join_table => 'pull_issues', :readonly => true
       end
     end
   end

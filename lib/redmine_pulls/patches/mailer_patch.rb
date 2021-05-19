@@ -2,7 +2,7 @@ require_dependency 'mailer'
 
 module RedminePulls
   module Patches
-    module Mailer
+    module MailerPatch
       extend ActiveSupport::Concern
 
       included do
@@ -129,6 +129,6 @@ module RedminePulls
   end
 end
 
-unless Mailer.included_modules.include?(RedminePulls::Patches::Mailer)
-  Mailer.send(:include, RedminePulls::Patches::Mailer)
+unless Mailer.included_modules.include?(RedminePulls::Patches::MailerPatch)
+  Mailer.send(:include, RedminePulls::Patches::MailerPatch)
 end

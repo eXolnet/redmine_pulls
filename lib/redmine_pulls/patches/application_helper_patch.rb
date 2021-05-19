@@ -3,12 +3,10 @@ require_dependency 'application_helper'
 module RedminePulls
   module Patches
     module ApplicationHelperPatch
-      def self.included(base) # :nodoc:
-        base.send(:include, InstanceMethods)
+      extend ActiveSupport::Concern
 
-        base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-        end
+      included do
+        include InstanceMethods
       end
 
       module InstanceMethods

@@ -1,20 +1,16 @@
 module RedminePulls
   module Patches
-    module Notifiable
-      def self.included(base) # :nodoc:
-        base.extend ClassMethods
+    module NotifiablePatch
+      extend ActiveSupport::Concern
 
-        base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-
-          class << self
-            alias_method :all_without_pulls, :all
-            alias_method :all, :all_with_pulls
-          end
+      included do
+        class << self
+          alias_method :all_without_pulls, :all
+          alias_method :all, :all_with_pulls
         end
       end
 
-      module ClassMethods
+      class_methods do
         def all_with_pulls
           notifications = all_without_pulls
 
@@ -36,6 +32,6 @@ module RedminePulls
   end
 end
 
-unless Redmine::Notifiable.included_modules.include?(RedminePulls::Patches::Notifiable)
-  Redmine::Notifiable.send(:include, RedminePulls::Patches::Notifiable)
+unless Redmine::Notifiable.included_modules.include?(RedminePulls::Patches::NotifiablePatch)
+  Redmine::Notifiable.send(:include, RedminePulls::Patches::NotifiablePatch)
 end
