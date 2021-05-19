@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.2
+
+* Refactor patches loading
+* Fix a compatibility issue with Redmine Agile
+
 ## 1.2.1
 
 * Fix mail sending in Redmine 4
